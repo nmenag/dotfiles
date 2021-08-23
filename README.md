@@ -11,7 +11,7 @@ $ sudo apt-get install git
 After installing git, clone the repository:
 
 ```
-$ git clone https://github.com/mdcg/dotfiles.git
+$ git clone https://github.com/nmenag/dotfiles.git
 ```
 
 To use the installation script, go to the directory of the operating system you want to use (in the example below I am using Ubuntu) and run the installation script:
