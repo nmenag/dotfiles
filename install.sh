@@ -1,11 +1,10 @@
-#! /bin/bash env
+#!/bin/bash
 
+# ./copy.sh
 
-./copy.sh
-
-echo "Updating the system!!!"
+echo "Updating System!!!"
 sudo apt update && sudo apt full-upgrade -y
-echo "Finished!!"
+echo "Updated System!!!"
 
 function install {
   which $1 &> /dev/null
@@ -29,6 +28,7 @@ install wget
 install curl
 install llvm
 install libncurses5-dev
+install tilix
 
 sudo apt upgrade -y
 sudo apt autoremove -y
