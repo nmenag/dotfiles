@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo apt install zsh
+sudo apt install zsh -y
 chsh -s $(which zsh)
 wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
 echo "Now run `sh install.sh`"
