@@ -30,6 +30,7 @@ pkglist=(
   iampeterbanjo.elixirlinter
   streetsidesoftware.code-spell-checker
   HookyQR.beautify
+  liximomo.sftp
 )
 
 for i in ${pkglist[@]}; do
