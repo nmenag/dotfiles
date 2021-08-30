@@ -40,6 +40,6 @@ echo "Install Java"
 asdf plugin-add java
 asdf install java openjdk-14.0.1
 asdf global java openjdk-14.0.1
-$(. ~/.asdf/plugins/java/set-java-home.zsh) # set JAVA_HOME
+. ~/.asdf/plugins/java/set-java-home.zsh # set JAVA_HOME
 
 source ~/.zshrc
