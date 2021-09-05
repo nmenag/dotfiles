@@ -1,7 +1,8 @@
 
 #!/bin/bash
 
-sudo apt-get update -y && sudo apt-get upgrade -y
+echo "Configuration Git"
+
 ssh-keygen -t ed25519 -C echo $EMAIL
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
@@ -42,3 +43,5 @@ cat <<EOT >> ~/.gitconfig
 [alias]
         lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 EOT
+
+echo "finished Git config"
