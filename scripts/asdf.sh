@@ -31,8 +31,8 @@ asdf global elixir latest
 echo "Install Java"
 
 asdf plugin-add java
-asdf install java openjdk-14.0.1
-asdf global java openjdk-14.0.1
+asdf install java openjdk-17
+asdf global java openjdk-17
 
 export ERL_AFLAGS="-kernel shell_history enabled"
 
