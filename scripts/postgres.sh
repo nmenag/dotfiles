@@ -3,7 +3,6 @@
 echo "Updating System!!"
 sudo apt-get update -y && sudo apt-get upgrade -y
 
-
 echo 'Installing Postgres'
 
 sudo apt-get install wget ca-certificates -y
