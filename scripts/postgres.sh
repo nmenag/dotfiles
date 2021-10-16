@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Updating System!!"
+echo 'Updating System!!'
 sudo apt-get update -y && sudo apt-get upgrade -y
 
 echo 'Installing Postgres'
@@ -15,6 +15,6 @@ sudo apt-get update
 sudo apt-get install postgresql postgresql-contrib
 
 
-echo "Creating the Rol"
+echo 'Creating the Rol'
 
 $(createuser -U "$USERNAME" --superuser)

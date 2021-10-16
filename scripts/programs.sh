@@ -1,0 +1,57 @@
+#!/bin/bash
+
+echo 'Updating System!!'
+sudo apt-get update -y && sudo apt-get upgrade -y
+
+echo 'Install okular' # PDF viewer
+sudo apt install okular
+
+echo 'Install skype'
+
+# way 1
+sudo snap install skype –classic
+
+# way 2
+# wget https://go.skype.com/skypeforlinux-64.deb
+# sudo apt install ./skypeforlinux-64.deb
+
+echo 'Install postman'
+sudo snap install postman
+
+echo 'Install zoom'
+$ sudo snap install zoom-client
+
+echo 'Install dropbox'
+
+cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
+~/.dropbox-dist/dropboxd
+
+echo 'Install Flameshot' # screenshots
+sudo apt install flameshot
+
+echo 'Install Filezilla' # sftp client
+sudo apt-get install filezilla
+
+echo 'Install VLC' # media player
+sudo apt-get install VLC
+
+echo 'Install Brave' # browser
+
+sudo apt install apt-transport-https curl
+
+sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+
+echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+
+sudo apt update
+
+sudo apt install brave-browser
+
+echo 'Install Chrome'
+
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install ./google-chrome-stable_current_amd64.deb
+
+echo 'Install Firefox'
+
+sudo apt-get install firefox
