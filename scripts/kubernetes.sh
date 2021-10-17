@@ -14,3 +14,8 @@ echo "Install k9s"
 asdf plugin add k9s
 asdf install k9s latest
 asdf global k9s latest
+
+echo 'Install helm'
+asdf plugin-add helm
+asdf install helm latest
+asdf global helm latest

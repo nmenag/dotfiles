@@ -55,3 +55,20 @@ sudo apt install ./google-chrome-stable_current_amd64.deb
 echo 'Install Firefox'
 
 sudo apt-get install firefox
+
+echo 'Install Dbeaver'  # Database tool
+
+wget -O - https://dbeaver.io/debs/dbeaver.gpg.key | sudo apt-key add -
+echo "deb https://dbeaver.io/debs/dbeaver-ce /" | sudo tee /etc/apt/sources.list.d/dbeaver.list
+
+sudo apt update
+
+sudo apt install dbeaver-ce
+
+echo 'Robomongo 3T'
+
+sudo snap install robo3t-snap
+
+echo 'Bleachbit' # clean tool
+
+sudo apt install bleachbit
