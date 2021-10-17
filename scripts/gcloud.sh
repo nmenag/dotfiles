@@ -1,6 +1,12 @@
 #!/bin/bash
 
-echo "Install gcloud "
+echo 'Install python'
+
+asdf plugin add gcloud
+asdf install gcloud latest
+asdf global gcloud latest
+
+echo 'Install gcloud'
 
 asdf plugin add gcloud
 asdf install gcloud latest
