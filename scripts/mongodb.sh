@@ -10,6 +10,8 @@ sudo apt-get update -y
 
 sudo apt-get install -y mongodb-org
 
+sudo systemctl start mongod
 
+# if failed the start mongoDB
 
-
+# sudo systemctl daemon-reload
