@@ -8,12 +8,8 @@ sudo apt install okular
 
 echo 'Install skype'
 
-# way 1
-sudo snap install skype –classic
-
-# way 2
-# wget https://go.skype.com/skypeforlinux-64.deb
-# sudo apt install ./skypeforlinux-64.deb
+wget https://go.skype.com/skypeforlinux-64.deb
+sudo apt install ./skypeforlinux-64.deb
 
 echo 'Install postman'
 sudo snap install postman
