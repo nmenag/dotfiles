@@ -15,6 +15,15 @@ sudo apt-get update
 sudo apt-get install postgresql postgresql-contrib
 
 
-echo 'Creating the Rol'
+# Add a new line to the top of pg_hba.conf:
 
-$(createuser -U "$USERNAME" --superuser)
+# local    postgres     postgres     peer
+# Then restart/reload PostgreSQL:
+
+# /etc/init.d/postgresql reload\
+# and run:
+
+# sudo -u postgres psql
+# From the resulting prompt:
+
+# ALTER USER postgres PASSWORD 'my_postgres_password';
