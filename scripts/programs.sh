@@ -48,10 +48,6 @@ echo 'Install Chrome'
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install ./google-chrome-stable_current_amd64.deb
 
-echo 'Install Firefox'
-
-sudo apt-get install firefox
-
 echo 'Install Dbeaver'  # Database tool
 
 wget -O - https://dbeaver.io/debs/dbeaver.gpg.key | sudo apt-key add -
