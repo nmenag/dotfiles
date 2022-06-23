@@ -16,14 +16,18 @@ sudo apt-get install postgresql postgresql-contrib
 
 
 # Add a new line to the top of pg_hba.conf:
+# sudo nano /etc/postgresql/14/main/pg_hba.conf
 
 # local    postgres     postgres     peer
 # Then restart/reload PostgreSQL:
 
-# /etc/init.d/postgresql reload\
+# /etc/init.d/postgresql reload
 # and run:
 
 # sudo -u postgres psql
 # From the resulting prompt:
 
-# ALTER USER postgres PASSWORD 'my_postgres_password';
+# ALTER USER postgres PASSWORD 'postgres';
+
+# connect to postgres
+# psql -h localhost -U postgres -d postgres
