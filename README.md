@@ -28,6 +28,27 @@ $ cd dotfiles/scripts
 $ ./chrome.sh
 ```
 
+Install oh-myzsh
+
+```
+$ cd dotfiles/scripts
+$ ./ohmyzsh.sh
+```
+
+Install asdf
+
+```
+$ cd dotfiles/scripts
+$ ./asdf.sh
+```
+
+Install an editor code
+
+```
+$ cd dotfiles/scripts
+$ ./asdf.sh
+```
+
 ## References
 
 * [mdcg dotfiles](https://github.com/mdcg/dotfiles)
