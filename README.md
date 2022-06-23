@@ -21,6 +21,13 @@ $ cd dotfiles
 $ ./install.sh
 ```
 
+Install a browser:
+
+```
+$ cd dotfiles/scripts
+$ ./chrome.sh
+```
+
 ## References
 
 * [mdcg dotfiles](https://github.com/mdcg/dotfiles)
