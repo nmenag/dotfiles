@@ -29,6 +29,7 @@ install curl
 install llvm
 install libncurses5-dev
 install tilix
+install snapd
 
 sudo apt upgrade -y
 sudo apt autoremove -y

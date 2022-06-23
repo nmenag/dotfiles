@@ -37,4 +37,7 @@ for i in ${pkglist[@]}; do
   code --install-extension $i
 done
 
+# Install theme
+ext install one-monokai
+
 echo "Finished VS code"
