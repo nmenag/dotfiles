@@ -29,7 +29,7 @@ echo 'Install Filezilla' # sftp client
 sudo apt-get install filezilla
 
 echo 'Install VLC' # media player
-sudo apt-get install VLC
+sudo apt-get install vlc
 
 echo 'Install Brave' # browser
 
