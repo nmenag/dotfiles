@@ -52,6 +52,7 @@ $ ./asdf.sh
 ## References
 
 * [mdcg dotfiles](https://github.com/mdcg/dotfiles)
+* [snap](https://snapcraft.io/)
 
 ## Contributing
 

@@ -14,9 +14,6 @@ sudo apt install ./skypeforlinux-64.deb
 echo 'Install postman'
 sudo snap install postman
 
-echo 'Install zoom'
-$ sudo snap install zoom-client
-
 echo 'Install dropbox'
 
 cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
@@ -64,3 +61,7 @@ sudo snap install robo3t-snap
 echo 'Bleachbit' # clean tool
 
 sudo apt install bleachbit
+
+echo "Install zoonavigator"
+
+sudo snap install zoonavigator
