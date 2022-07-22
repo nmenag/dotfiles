@@ -12,7 +12,8 @@ asdf plugin add gcloud
 asdf install gcloud latest
 asdf global gcloud latest
 
-echo "configuring"
+
+# step configuring
 
 # gcloud auth login
 
