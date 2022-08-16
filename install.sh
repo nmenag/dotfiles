@@ -31,6 +31,7 @@ install libncurses5-dev
 install tilix
 install snapd
 install libpq-dev # is required install for pg ge
+install cheese 
 
 sudo apt upgrade -y
 sudo apt autoremove -y
