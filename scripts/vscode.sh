@@ -31,6 +31,7 @@ pkglist=(
   streetsidesoftware.code-spell-checker
   HookyQR.beautify
   liximomo.sftp
+  mrorz.language-gettext
 )
 
 for i in ${pkglist[@]}; do
