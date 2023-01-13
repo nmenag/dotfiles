@@ -3,7 +3,8 @@
 
 echo "Configuration Git"
 
-ssh-keygen -t ed25519 -C echo $EMAIL
+ssh-keygen -t ed25519 -C $(echo "$EMAIL")
+
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_ed25519
 sudo apt-get install xclip
