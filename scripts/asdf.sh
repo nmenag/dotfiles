@@ -56,10 +56,10 @@ asdf global gcloud latest
 # step configuring
 
 # gcloud auth login
-
-# gcloud config set project <<Cluster name>>
-
-# gcloud container clusters get-credentials zubale-staging --region us-central1 --<<cluster name>>
+# Set the project with: gcloud config set project <<Cluster name>>
+# Add the clusters: gcloud container clusters get-credentials  staging --region us-central1 --project <<Cluster name>>
+# gcloud container clusters get-credentials  production --region us-central1 --project <<Cluster name>>
+# install gke-gcloud-auth-plugin https://cloud.google.com/sdk/docs/install-sdk
 
 echo "Install Java"
 
