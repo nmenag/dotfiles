@@ -21,13 +21,6 @@ $ cd dotfiles
 $ ./install.sh
 ```
 
-Install a browser:
-
-```
-$ cd dotfiles/scripts
-$ ./chrome.sh
-```
-
 Install oh-myzsh
 
 ```
