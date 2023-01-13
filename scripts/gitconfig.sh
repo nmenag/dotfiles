@@ -47,7 +47,18 @@ EOT
 
 echo "finished Git config"
 
+
+## ADD SSH KEY 
+# https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?tool=webui
+
+## NOTE:
+
 # Create Personal Access Token on GitHub
 # From your GitHub account, go to Settings => Developer Settings => Personal Access Token => Generate New Token (Give your password) => Fillup the form => click Generate token => Copy the generated Token, it will be something like ghp_sFhFsSHhTzMDreGRLjmks4Tzuzgthdvfsrta
 # git config --global credential.helper cache
 # restart the terminal
+
+# clone the projects  via SSH instead HTTPS
+# example git@github.com:nmenag/dotfiles.git
+#
+
