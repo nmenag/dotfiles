@@ -1,6 +1,8 @@
 #!/bin/bash
 
-echo "config Tilix"
+echo "Install Tilix"
+
+sudo apt-get install tilix
 
 sudo ln -s /etc/profile.d/vte-2.91.sh /etc/profile.d/vte.sh
 

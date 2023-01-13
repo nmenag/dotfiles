@@ -14,10 +14,6 @@ sudo apt install ./skypeforlinux-64.deb
 echo 'Install postman'
 sudo snap install postman
 
-echo 'Install dropbox'
-
-cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
-~/.dropbox-dist/dropboxd
 
 echo 'Install Flameshot' # screenshots
 sudo apt install flameshot

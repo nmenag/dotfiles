@@ -35,3 +35,8 @@ install cheese
 
 sudo apt upgrade -y
 sudo apt autoremove -y
+
+./scripts/ohmyzsh.sh
+./scripts/programs.sh
+./scripts/asdf.sh
+./scripts/vscode.sh

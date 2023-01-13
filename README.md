@@ -11,31 +11,25 @@ $ sudo apt-get install git
 After installing git, clone the repository:
 
 ```
-$ git clone https://github.com/nmenag/dotfiles.git
+$ git clone https://github.com/nmenag/dotfiles.git0
+```
+
+first all install the terminal 
+
+```
+$ ./scripts/tilix.sh
+```
+
+Create the .env file
+
+```
+$ source .env
 ```
 
 I am using linux on Ubuntu based and run the installation script:
 
 ```
 ./install.sh
-```
-
-Install general program 
-
-```
-$ ./scripts/programs.sh
-```
-
-Install terminal
-
-```
-$ ./scripts/tilix.sh
-```
-
-Install oh my ssh
-
-```
-$ ./scripts/mongodb.sh
 ```
 
 Install any program via script
