@@ -21,25 +21,11 @@ $ cd dotfiles
 $ ./install.sh
 ```
 
-Install oh-myzsh
+Install any program via script
 
 ```
 $ cd dotfiles/scripts
-$ ./ohmyzsh.sh
-```
-
-Install asdf
-
-```
-$ cd dotfiles/scripts
-$ ./asdf.sh
-```
-
-Install an editor code
-
-```
-$ cd dotfiles/scripts
-$ ./asdf.sh
+$ ./{script-file-name}.sh
 ```
 
 ## References
