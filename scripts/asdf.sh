@@ -59,7 +59,7 @@ asdf global gcloud latest
 # Set the project with: gcloud config set project <<Cluster name>>
 # Add the clusters: gcloud container clusters get-credentials  staging --region us-central1 --project <<Cluster name>>
 # gcloud container clusters get-credentials  production --region us-central1 --project <<Cluster name>>
-# install gke-gcloud-auth-plugin https://cloud.google.com/sdk/docs/install-sdk
+# install gke-loud-auth-plugin https://cloud.google.com/sdk/docs/install-sdk
 
 echo "Install Java"
 
