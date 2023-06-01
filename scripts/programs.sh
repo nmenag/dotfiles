@@ -61,3 +61,6 @@ sudo apt install bleachbit
 echo "Install zoonavigator"
 
 sudo snap install zoonavigator
+
+echo "Install redis GUI"
+sudo snap install redis-gui
