@@ -24,15 +24,15 @@ install zlib1g-dev
 install libbz2-dev
 install libreadline-dev
 install libsqlite3-dev
+install libyaml-dev # is required asdf install ruby
+install libncurses5-dev
+install libpq-dev # is required install for pg ge
 install wget
 install curl
 install llvm
-install libncurses5-dev
 install tilix
 install snapd
-install libpq-dev # is required install for pg ge
-install cheese 
-
+install cheese # program for video calling
 sudo apt upgrade -y
 sudo apt autoremove -y
 
