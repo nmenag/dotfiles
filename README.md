@@ -11,7 +11,7 @@ $ sudo apt-get install git
 After installing git, clone the repository:
 
 ```
-$ git clone https://github.com/nmenag/dotfiles.git0
+$ git clone https://github.com/nmenag/dotfiles.git
 ```
 
 first all install the terminal 
