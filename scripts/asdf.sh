@@ -47,11 +47,11 @@ asdf global python latest
 asdf install python 3.8.0
 asdf global gcloud 3.8.0
 
-echo 'Install gcloud'
+# echo 'Install gcloud'
 
-asdf plugin add gcloud
-asdf install gcloud latest
-asdf global gcloud latest
+# asdf plugin add gcloud
+# asdf install gcloud latest
+# asdf global gcloud latest
 
 # step configuring
 
@@ -61,32 +61,32 @@ asdf global gcloud latest
 # gcloud container clusters get-credentials  production --region us-central1 --project <<Cluster name>>
 # install gke-loud-auth-plugin https://cloud.google.com/sdk/docs/install-sdk
 
-echo "Install Java"
+# echo "Install Java"
 
-asdf plugin-add java
-asdf install java openjdk-17
-asdf global java openjdk-17
+# asdf plugin-add java
+# asdf install java openjdk-17
+# asdf global java openjdk-17
 
-. ~/.asdf/plugins/java/set-java-home.zsh # set JAVA_HOME
+# . ~/.asdf/plugins/java/set-java-home.zsh # set JAVA_HOME
 
-echo "Install kubectl"
-asdf plugin add kubectl
-asdf install kubectl latest
-asdf global kubectl latest
+# echo "Install kubectl"
+# asdf plugin add kubectl
+# asdf install kubectl latest
+# asdf global kubectl latest
 
-echo "Install kubectx"
-asdf plugin add kubectx
-asdf install kubectx latest
-asdf global kubectx latest
+# echo "Install kubectx"
+# asdf plugin add kubectx
+# asdf install kubectx latest
+# asdf global kubectx latest
 
-echo "Install k9s"
-asdf plugin add k9s
-asdf install k9s latest
-asdf global k9s latest
+# echo "Install k9s"
+# asdf plugin add k9s
+# asdf install k9s latest
+# asdf global k9s latest
 
-echo 'Install helm'
-asdf plugin-add helm
-asdf install helm latest
-asdf global helm latest
+# echo 'Install helm'
+# asdf plugin-add helm
+# asdf install helm latest
+# asdf global helm latest
 
-source ~/.zshrc
+# source ~/.zshrc

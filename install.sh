@@ -39,3 +39,4 @@ sudo apt autoremove -y
 ./scripts/programs.sh
 ./scripts/asdf.sh
 ./scripts/vscode.sh
+./scripts/postgres.sh
