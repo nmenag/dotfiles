@@ -17,7 +17,6 @@ pkglist=(
   WakaTime.vscode-wakatime
   mjmcloug.vscode-elixir
   bung87.vscode-gemfile
-  rebornix.Ruby
   misogi.ruby-rubocop
   castwide.solargraph
   alefragnani.project-manager
@@ -29,8 +28,6 @@ pkglist=(
   donjayamanne.githistory
   iampeterbanjo.elixirlinter
   streetsidesoftware.code-spell-checker
-  HookyQR.beautify
-  liximomo.sftp
   mrorz.language-gettext
 )
 
