@@ -14,7 +14,7 @@ After installing git, clone the repository:
 $ git clone https://github.com/nmenag/dotfiles.git
 ```
 
-first all install the terminal 
+first all install the terminal
 
 ```
 $ ./scripts/tilix.sh
@@ -35,7 +35,7 @@ I am using linux on Ubuntu based and run the installation script:
 Install any program via script
 
 ```
-$ cd dotfiles/scripts
+$ cd /scripts
 $ ./{script-file-name}.sh
 ```
 
