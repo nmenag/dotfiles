@@ -26,6 +26,19 @@ Create the .env file
 $ source .env
 ```
 
+install ohmyzsh
+
+```
+$ ./scripts/ohmyzsh.sh
+```
+
+install docker
+
+```
+$ ./scripts/docker.sh
+```
+
+
 I am using linux on Ubuntu based and run the installation script:
 
 ```
