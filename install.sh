@@ -30,7 +30,6 @@ install libpq-dev # is required install for pg ge
 install wget
 install curl
 install llvm
-install tilix
 install snapd
 install cheese # program for video calling
 sudo apt upgrade -y
