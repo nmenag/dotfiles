@@ -38,7 +38,6 @@ install docker
 $ ./scripts/docker.sh
 ```
 
-
 I am using linux on Ubuntu based and run the installation script:
 
 ```
