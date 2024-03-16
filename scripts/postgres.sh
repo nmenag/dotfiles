@@ -19,7 +19,7 @@ sudo apt-get install postgresql postgresql-contrib
 
 # 1) open the file pg_hba.conf
 
-# sudo nano /etc/postgresql/14/main/pg_hba.conf
+# sudo nano /etc/postgresql/{PGVersion}/main/pg_hba.conf
 
 # 2) Add a new line in pg_hba.conf:
 
@@ -40,3 +40,6 @@ sudo apt-get install postgresql postgresql-contrib
 # 6) connect to postgres
 
 # psql -h localhost -U postgres -d postgres
+
+# 7) CREATE ROLE
+# CREATE USER $username SUPERUSER;
