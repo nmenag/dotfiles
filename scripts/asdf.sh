@@ -64,8 +64,8 @@ asdf global gcloud 3.8.0
 # echo "Install Java"
 
 # asdf plugin-add java
-# asdf install java openjdk-{version}
-# asdf global java openjdk--{version}
+# asdf install java openjdk{version}
+# asdf global java openjdk-{version}
 
 # . ~/.asdf/plugins/java/set-java-home.zsh # set JAVA_HOME
 
