@@ -12,3 +12,12 @@ echo "INSTALL ANDROID STUDIO"
 
 sudo snap install android-studio --classic
 
+cat <<EOT >> ~/.zshrc
+export ANDROID_HOME="~/Android/Sdk"
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+EOT
+
+source ~/.zshrc
+
+echo "android-studio installed"

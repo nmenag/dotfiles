@@ -81,4 +81,4 @@ asdf global gcloud 3.8.0
 # asdf install helm latest
 # asdf global helm latest
 
-# source ~/.zshrc
+source ~/.zshrc
