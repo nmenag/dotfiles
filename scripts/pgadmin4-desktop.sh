@@ -16,7 +16,6 @@ echo 'Install for desktop mode only'
 
 sudo apt install pgadmin4-desktop
 
-# # Install for web mode only: 
+#  Install for web mode only: 
 # sudo apt install pgadmin4-web 
-
 # info: https://www.pgadmin.org/download/pgadmin-4-apt/
