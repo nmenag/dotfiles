@@ -16,4 +16,6 @@ EOT
 
 source ~/.zshrc
 
+dconf load /com/gexperts/Tilix/ < tilix.dconf
+
 echo "Tilix configured!!"
