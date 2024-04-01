@@ -44,11 +44,6 @@ asdf plugin-add python
 asdf install python latest
 asdf global python latest
 
-asdf install python 3.8.0
-asdf global gcloud 3.8.0
-
-# echo 'Install gcloud'
-
 # asdf plugin add gcloud
 # asdf install gcloud latest
 # asdf global gcloud latest
