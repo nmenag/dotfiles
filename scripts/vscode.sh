@@ -14,28 +14,38 @@ echo "Install extensions"
 
 # Visual Studio Code :: Package list
 pkglist=(
-  WakaTime.vscode-wakatime
-  mjmcloug.vscode-elixir
-  bung87.vscode-gemfile
-  misogi.ruby-rubocop
-  castwide.solargraph
   alefragnani.project-manager
-  esbenp.prettier-vscode
-  one-monokai
-  MS-vsliveshare.vsliveshare
-  oderwat.indent-rainbow
-  eamodio.gitlens
+  azemoh.one-monokai
+  bradlc.vscode-tailwindcss
+  bung87.vscode-gemfile
+  castwide.solargraph
+  craigmaslowski.erb
+  dbaeumer.vscode-eslint
   donjayamanne.githistory
+  eamodio.gitlens
+  esbenp.prettier-vscode
+  florinpatrascu.vscode-elixir-snippets
+  googlecloudtools.cloudcode
   iampeterbanjo.elixirlinter
-  streetsidesoftware.code-spell-checker
+  jakebecker.elixir-ls
+  maxmellen.elixir-language-support
+  mermade.openapi-lint
+  misogi.ruby-rubocop
   mrorz.language-gettext
+  ms-vscode-remote.remote-containers
+  ms-vscode.vscode-typescript-next
+  ms-vsliveshare.vsliveshare
+  oderwat.indent-rainbow
+  redhat.vscode-yaml
+  streetsidesoftware.code-spell-checker
+  streetsidesoftware.code-spell-checker-spanish
+  techer.open-in-browser
+  wakatime.vscode-wakatime
+  yoavbls.pretty-ts-errors
 )
 
 for i in ${pkglist[@]}; do
   code --install-extension $i
 done
-
-# Install theme
-ext install one-monokai
 
 echo "Finished VS code"
