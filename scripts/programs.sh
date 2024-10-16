@@ -7,6 +7,10 @@ echo 'INSTALL POSTMAN'
 sudo snap install postman
 echo 'finished postman!!!'
 
+echo 'INSTALL DBGATE'
+sudo snap install dbgate
+echo 'finished DBGATE!!!'
+
 echo 'INSTALL FLAMESHOT' # screenshots
 sudo apt install flameshot
 
