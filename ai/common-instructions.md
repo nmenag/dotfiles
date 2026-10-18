@@ -1,6 +1,6 @@
 # Universal AI Agent Engineering Guidelines
 
-These guidelines provide the common source of truth for coding assistants and agent CLIs operating in this environment (**Claude Code**, **OpenCode**, **Codex**, **Kilo CLI**, and **Agy / Antigravity**).
+These guidelines provide the common source of truth for coding assistants and agent CLIs operating in this environment (**Claude Code**, **OpenCode**, **Codex**, **Kilo CLI**, **Agy / Antigravity**, and **Pi Coding Agent**).
 
 ---
 

@@ -11,7 +11,7 @@ Automated workstation provisioning, development environment setup, unified shell
   - Centralized shell configuration under `shell/` for aliases, environment variables, PATH deduplication, and helper functions.
   - Oh My Zsh custom plugins (`zsh-autosuggestions`, `zsh-syntax-highlighting`) and a lightweight custom prompt theme (`devex.zsh-theme`).
   - Useful DevEx functions: `mkcd`, `extract`, `path_inspect`, `ai-status`, and `reload_shell`.
-- **5-in-1 AI Coding Assistant Integration**:
+- **6-in-1 AI Coding Assistant Integration**:
   - Unified source of instructions (`ai/common-instructions.md`), rules (`ai/rules/`), and reusable skills (`ai/skills/`).
   - Specialized adapters with non-destructive symlinks for:
     1. **Claude Code** (`~/.claude`)
@@ -19,6 +19,7 @@ Automated workstation provisioning, development environment setup, unified shell
     3. **Codex CLI** (`~/.codex`)
     4. **Kilo CLI** (`~/.config/kilo`)
     5. **Agy / Antigravity CLI** (`~/.gemini` and root `.agents/`)
+    6. **Pi Coding Agent** (`~/.pi/agent`)
 - **Modern APT Keyrings & Security**: Uses `/etc/apt/keyrings/` instead of deprecated `apt-key`. Strictly enforces `.gitignore` rules against tokens, keys, and credentials.
 - **Distribution Agnostic**: Automatically resolves Ubuntu release codenames across standard Ubuntu and derivatives like Pop!_OS and Linux Mint.
 - **Developer Tools & Desktop Suites**: Automated setup for ASDF (Node.js, Ruby, Python, Elixir, Erlang), Docker Engine, VS Code (+ curated extensions), Git (+ SSH ED25519), and Android Studio.
@@ -41,7 +42,7 @@ Automated workstation provisioning, development environment setup, unified shell
 │   ├── common-instructions.md # Universal principles, coding styles & Context7 docs rule
 │   ├── rules/                 # Shared modular rules (Context7, Bash standards, Safety)
 │   ├── skills/                # Reusable Agent Skills (open SKILL.md format)
-│   └── adapters/              # CLI-specific adapters (Claude, OpenCode, Codex, Kilo, Agy)
+│   └── adapters/              # CLI-specific adapters (Claude, OpenCode, Codex, Kilo, Agy, Pi)
 ├── shell/                     # Centralized shell dotfiles
 │   ├── env.sh                 # Idempotent PATH & environment variables loader
 │   ├── aliases.sh             # Shared Git, Docker, and navigation shortcuts
@@ -53,13 +54,14 @@ Automated workstation provisioning, development environment setup, unified shell
 │   ├── rules/
 │   └── skills/
 └── scripts/                   # Modular installer scripts
-    ├── ai-tools.sh            # Synchronizes all 5 AI CLI adapters
+    ├── ai-tools.sh            # Synchronizes all 6 AI CLI adapters
     ├── android-studio.sh      # Java OpenJDK & Android Studio
     ├── asdf.sh                # ASDF runtime manager & plugins
     ├── docker.sh              # Docker Engine, CLI, Buildx, and Compose v2
     ├── ghostty.sh             # Fast native terminal emulator via Snap
     ├── gitconfig.sh           # Git identity, aliases, and SSH ED25519 generation
     ├── herdr.sh               # Terminal workspace manager for AI coding agents
+    ├── ohmyzsh.sh             # Installs Zsh and Oh My Zsh (unattended)
     ├── programs.sh            # Desktop essentials (Chrome, Flameshot, VLC, BleachBit)
     ├── shell.sh               # Configures Bash & Oh My Zsh dotfiles, plugins, and themes
     ├── verify.sh              # Automated repository linting & integrity verification
@@ -93,7 +95,7 @@ nano .env   # Set EMAIL and USERNAME
 ### 4. Run Installation
 
 #### Standard Setup (Recommended)
-Installs core system dependencies, shell configurations (Bash & Oh My Zsh), desktop tools, ASDF runtimes, VS Code extensions, Git configuration, and synchronizes all 5 AI CLI adapters:
+Installs core system dependencies, shell configurations (Bash & Oh My Zsh), desktop tools, ASDF runtimes, VS Code extensions, Git configuration, and synchronizes all 6 AI CLI adapters:
 ```bash
 ./install.sh
 ```
@@ -101,7 +103,7 @@ Installs core system dependencies, shell configurations (Bash & Oh My Zsh), desk
 #### Selective Setup Options
 ```bash
 ./install.sh --shell    # Configures only Bash, Oh My Zsh, plugins and themes
-./install.sh --ai       # Synchronizes only AI tools adapters (Claude, OpenCode, Codex, Kilo, Agy)
+./install.sh --ai       # Synchronizes only AI tools adapters (Claude, OpenCode, Codex, Kilo, Agy, Pi)
 ./install.sh --zed      # Installs only Zed editor
 ./install.sh --ghostty  # Installs only Ghostty terminal
 ./install.sh --herdr    # Installs only Herdr workspace manager
@@ -139,7 +141,7 @@ Running `./scripts/shell.sh` automatically configures:
 
 ## Unified AI Agent Integration
 
-This repository bridges 5 distinct AI CLI assistants through a common source of instructions and skills:
+This repository bridges 6 distinct AI CLI assistants through a common source of instructions and skills:
 
 | Assistant | CLI Command | Instructions Path | Skills Target Directory |
 | :--- | :--- | :--- | :--- |
@@ -148,6 +150,7 @@ This repository bridges 5 distinct AI CLI assistants through a common source of 
 | **Codex CLI** | `codex` | `~/.codex/AGENTS.md` | `~/.codex/skills/` |
 | **Kilo CLI** | `kilo` | `~/.config/kilo/AGENTS.md` | `~/.config/kilo/skills/` |
 | **Agy / Antigravity** | `agy` | `~/.gemini/GEMINI.md` | `~/.gemini/skills/` & `.agents/skills/` |
+| **Pi Coding Agent** | `pi` | `~/.pi/agent/AGENTS.md` | `~/.pi/agent/skills/` & `.agents/skills/` |
 
 ### Synchronizing Adapters
 Run the synchronizer at any time to link updated rules or skills:
@@ -176,7 +179,7 @@ All modules in `scripts/` can be executed independently from any directory:
 
 | Script | Description | Run Command |
 | :--- | :--- | :--- |
-| [`ai-tools.sh`](./scripts/ai-tools.sh) | Synchronizes common instructions & skills across all 5 AI CLIs | `./scripts/ai-tools.sh` |
+| [`ai-tools.sh`](./scripts/ai-tools.sh) | Synchronizes common instructions & skills across all 6 AI CLIs | `./scripts/ai-tools.sh` |
 | [`android-studio.sh`](./scripts/android-studio.sh) | Installs Java OpenJDK and Android Studio via Snap | `./scripts/android-studio.sh` |
 | [`asdf.sh`](./scripts/asdf.sh) | Installs ASDF v0.15.0 and runtime plugins (Node, Ruby, Python, Elixir, Erlang) | `./scripts/asdf.sh` |
 | [`docker.sh`](./scripts/docker.sh) | Installs Docker CE, CLI, Containerd, Buildx, and Compose v2 plugin | `./scripts/docker.sh` |

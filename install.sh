@@ -31,7 +31,7 @@ Options:
   --all           Run full installation (Core packages, Shell, Desktop apps, ASDF, VS Code, Zed, Ghostty, Herdr, Git, AI tools, Docker, Android Studio)
   --core          Install only core build tools and essential system libraries
   --shell         Configure only Bash and Oh My Zsh dotfiles and plugins
-  --ai            Configure only AI CLI adapters (Claude, OpenCode, Codex, Kilo, Agy)
+  --ai            Configure only AI CLI adapters (Claude, OpenCode, Codex, Kilo, Agy, Pi)
   --zed           Install only Zed editor
   --ghostty       Install only Ghostty terminal
   --herdr         Install only Herdr workspace manager
@@ -70,6 +70,43 @@ if [[ -f "$ROOT_DIR/.env" ]]; then
   source "$ROOT_DIR/.env"
 else
   log_warn "No .env file found. You can copy .env.sample to .env to configure EMAIL and USERNAME."
+fi
+
+# Modular component execution
+run_script() {
+  local script_name="$1"
+  local script_path="$ROOT_DIR/scripts/$script_name"
+
+  if [[ -f "$script_path" ]]; then
+    log_info "Running $script_name..."
+    bash "$script_path"
+    log_success "Finished $script_name"
+  else
+    log_warn "Script not found: $script_path"
+  fi
+}
+
+# Selective execution for user-space configs
+if [[ "$MODE" == "shell" ]]; then
+  run_script "shell.sh"
+  log_success "Shell dotfiles installation completed!"
+  exit 0
+elif [[ "$MODE" == "ai" ]]; then
+  run_script "ai-tools.sh"
+  log_success "AI tools synchronization completed!"
+  exit 0
+elif [[ "$MODE" == "zed" ]]; then
+  run_script "zed.sh"
+  log_success "Zed installation completed!"
+  exit 0
+elif [[ "$MODE" == "ghostty" ]]; then
+  run_script "ghostty.sh"
+  log_success "Ghostty installation completed!"
+  exit 0
+elif [[ "$MODE" == "herdr" ]]; then
+  run_script "herdr.sh"
+  log_success "Herdr installation completed!"
+  exit 0
 fi
 
 log_info "Updating package lists..."
@@ -119,42 +156,6 @@ sudo apt-get autoremove -y
 
 if [[ "$MODE" == "core" ]]; then
   log_success "Core system packages installed successfully!"
-  exit 0
-fi
-
-# Modular component execution
-run_script() {
-  local script_name="$1"
-  local script_path="$ROOT_DIR/scripts/$script_name"
-
-  if [[ -f "$script_path" ]]; then
-    log_info "Running $script_name..."
-    bash "$script_path"
-    log_success "Finished $script_name"
-  else
-    log_warn "Script not found: $script_path"
-  fi
-}
-
-if [[ "$MODE" == "shell" ]]; then
-  run_script "shell.sh"
-  log_success "Shell dotfiles installation completed!"
-  exit 0
-elif [[ "$MODE" == "ai" ]]; then
-  run_script "ai-tools.sh"
-  log_success "AI tools synchronization completed!"
-  exit 0
-elif [[ "$MODE" == "zed" ]]; then
-  run_script "zed.sh"
-  log_success "Zed installation completed!"
-  exit 0
-elif [[ "$MODE" == "ghostty" ]]; then
-  run_script "ghostty.sh"
-  log_success "Ghostty installation completed!"
-  exit 0
-elif [[ "$MODE" == "herdr" ]]; then
-  run_script "herdr.sh"
-  log_success "Herdr installation completed!"
   exit 0
 fi
 

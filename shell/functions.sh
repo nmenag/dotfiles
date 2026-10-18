@@ -58,7 +58,7 @@ path_inspect() {
 
 # Audit presence and health of AI CLI tools
 ai_status() {
-  local tools=("claude" "opencode" "codex" "kilo" "agy")
+  local tools=("claude" "opencode" "codex" "kilo" "agy" "pi")
   local tool=""
   local tool_path=""
   local tool_version=""

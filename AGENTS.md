@@ -61,10 +61,10 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
 ├── .env.sample                # Sample environment configuration
 ├── .gitignore                 # Excludes .env, secrets, IDE configs, etc.
 ├── ai/                        # Unified AI agent architecture
-│   ├── common-instructions.md # Universal guidelines for all 5 AI CLIs
+│   ├── common-instructions.md # Universal guidelines for all 6 AI CLIs
 │   ├── rules/                 # Shared rules (Context7, Bash standards, Safety)
 │   ├── skills/                # Reusable Agent Skills (SKILL.md format)
-│   └── adapters/              # CLI adapters (claude, opencode, codex, kilo, agy)
+│   └── adapters/              # CLI adapters (claude, opencode, codex, kilo, agy, pi)
 ├── shell/                     # Centralized shell dotfiles
 │   ├── env.sh                 # Environment variables and PATH deduplication
 │   ├── aliases.sh             # Shared Git, Docker, and navigation shortcuts

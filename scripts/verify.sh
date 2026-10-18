@@ -137,13 +137,14 @@ for skill_file in "${SKILL_FILES[@]}"; do
 done
 
 # 6. Check AI Adapters Presence
-echo -e "\n${BLUE}[6/6] Checking AI adapters for 5 CLI tools...${NC}"
+echo -e "\n${BLUE}[6/6] Checking AI adapters for 6 CLI tools...${NC}"
 EXPECTED_ADAPTERS=(
   "ai/adapters/claude.sh"
   "ai/adapters/opencode.sh"
   "ai/adapters/codex.sh"
   "ai/adapters/kilo.sh"
   "ai/adapters/agy.sh"
+  "ai/adapters/pi.sh"
   "ai/adapters/sync-all.sh"
 )
 for adapter in "${EXPECTED_ADAPTERS[@]}"; do
