@@ -65,10 +65,10 @@ else
   ERRORS=$((ERRORS + 1))
 fi
 
-if [[ -f "$ROOT_DIR/.github/workflows/ci.yml" && -f "$ROOT_DIR/.github/workflows/pr-checks.yml" ]]; then
-  echo -e "  ${GREEN}✓${NC} GitHub Actions workflows configured (ci.yml, pr-checks.yml)"
+if [[ -f "$ROOT_DIR/.github/workflows/ci.yml" ]]; then
+  echo -e "  ${GREEN}✓${NC} GitHub Actions CI workflow configured (ci.yml)"
 else
-  echo -e "  ${RED}✗${NC} Missing GitHub Actions workflow files"
+  echo -e "  ${RED}✗${NC} Missing GitHub Actions workflow file: .github/workflows/ci.yml"
   ERRORS=$((ERRORS + 1))
 fi
 

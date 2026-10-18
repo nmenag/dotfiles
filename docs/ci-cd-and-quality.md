@@ -17,21 +17,22 @@ graph TD
         VerifyLocal["./scripts/verify.sh Suite"]
     end
 
-    subgraph Tier2["Tier 2: Pull Request Quality Automation"]
-        PRTitle["Semantic PR Title Action<br/>(action-semantic-pull-request)"]
-        PRSize["PR Size Labeler & Audit<br/>(size-label-action)"]
-    end
-
-    subgraph Tier3["Tier 3: Continuous Integration (Matrix Build)"]
-        Matrix["OS Matrix: ubuntu-24.04 & ubuntu-22.04"]
-        CommitlintCI["Commitlint Validation (from origin/main)"]
-        RepoVerify["Automated ./scripts/verify.sh"]
-        RustBuild["cargo test & cargo build --release"]
-        SmokeTests["Non-Mutating CLI Smoke Tests"]
+    subgraph Tier2["Tier 2: Unified CI Pipeline (.github/workflows/ci.yml)"]
+        subgraph Job1["Job: lint-commits-and-pr"]
+            PRTitle["Native Commitlint PR Title Check"]
+            PRSize["Native Git Diff PR Size Audit"]
+            CommitlintCI["Commitlint Commit History Check"]
+        end
+        subgraph Job2["Job: verify-and-test (Matrix)"]
+            Matrix["OS Matrix: ubuntu-24.04 & ubuntu-22.04"]
+            BashNCI["Bash -n Syntax Validation"]
+            RepoVerify["Automated ./scripts/verify.sh"]
+            RustBuild["cargo test & cargo build --release"]
+            SmokeTests["Non-Mutating CLI Smoke Tests"]
+        end
     end
 
     Tier1 --> Tier2
-    Tier2 --> Tier3
 ```
 
 ---
@@ -82,42 +83,49 @@ The repository follows the [Conventional Commits](https://www.conventionalcommit
 
 ## 4. Continuous Integration Pipeline (`.github/workflows/ci.yml`)
 
-The CI workflow executes automatically on pushes to `main` and all pull requests across an Ubuntu LTS matrix (`ubuntu-24.04` and `ubuntu-22.04`):
+The repository uses a single, unified CI pipeline ([`.github/workflows/ci.yml`](file:///home/nmenag/personal-projects/dotfiles/.github/workflows/ci.yml)) executing on pushes to `main`, `master`, and standard branches (`chore/**`, `feature/**`, `fix/**`), as well as pull requests and manual dispatches:
 
 ```mermaid
 sequenceDiagram
     autonumber
     participant GitHub as GitHub Actions Runner
     participant Node as Node.js & Commitlint
+    participant Git as Git Diff Analyzer
     participant Shell as Bash Test Suite
     participant Rust as Cargo & Rust Toolchain
 
-    GitHub->>GitHub: Checkout repository with full git history (fetch-depth: 0)
-    GitHub->>Node: Setup Node.js & install @commitlint/config-conventional
-    Node->>GitHub: Validates all commit messages in PR branch
-    GitHub->>Shell: Runs bash -n across all 35+ shell scripts
-    GitHub->>Shell: Runs ./scripts/verify.sh 7-step integrity check
-    GitHub->>Rust: Sets up Rust stable with cargo dependency caching
-    Rust->>GitHub: Runs cargo test --manifest-path mena/Cargo.toml (9 unit & integration tests)
-    Rust->>GitHub: Compiles release binary (cargo build --release)
-    GitHub->>Rust: Executes non-mutating smoke tests:
-    Note over GitHub,Rust: mena --help<br/>mena list<br/>mena doctor<br/>mena install --dry-run
-    GitHub->>GitHub: Reports workflow status (Pass / Fail)
+    par Parallel Job: lint-commits-and-pr
+        GitHub->>Node: Setup Node.js 22 & install @commitlint/config-conventional
+        GitHub->>Node: Validate PR Title against Conventional Commits (WIP-aware)
+        GitHub->>Git: Compute PR diff statistics excluding lockfiles
+        Git->>GitHub: Audit PR size (emit warning if >1500 lines)
+        GitHub->>Node: Validate commit history against .commitlintrc.json
+    and Parallel Job: verify-and-test (Matrix: 24.04 & 22.04)
+        GitHub->>Shell: Run bash -n syntax checks across all shell scripts
+        GitHub->>Shell: Run ./scripts/verify.sh 7-step repository verification
+        GitHub->>Rust: Run cargo test --manifest-path mena/Cargo.toml (9 tests)
+        GitHub->>Rust: Build mena release binary
+        GitHub->>Rust: Execute non-mutating CLI smoke tests (--help, list, doctor, install --dry-run)
+    end
+    GitHub->>GitHub: Reports unified workflow status
 ```
 
 ---
 
-## 5. Pull Request Automation (`.github/workflows/pr-checks.yml`)
+## 5. Pull Request Quality Checks (Native In-Runner Execution)
 
-Every pull request is automatically audited by two GitHub Actions:
-1. **Semantic PR Title Check** (`amannn/action-semantic-pull-request@v6`):
-   - Validates that the pull request title conforms to Conventional Commits.
-   - Supports draft / WIP PRs (`wip: true`).
-2. **Pull Request Size Labeler** (`pascalgn/size-label-action@v0.5.7`):
-   - Categorizes diff lines (excluding lockfiles) into distinct labels:
-     - `size/XS` (0–19 lines)
-     - `size/S` (20–99 lines)
-     - `size/M` (100–299 lines)
-     - `size/L` (300–799 lines)
-     - `size/XL` (800–1499 lines)
-     - `size/XXL` (1500+ lines; triggers advisory review warning)
+All pull request quality validations are executed natively within the runner using Node and Bash utilities, requiring only standard read permissions (`contents: read`, `pull-requests: read`) and eliminating external commit status API permission errors:
+
+1. **Native Commitlint PR Title Check**:
+   - Evaluates the pull request title directly against [`.commitlintrc.json`](file:///home/nmenag/personal-projects/dotfiles/.commitlintrc.json).
+   - Intelligently handles draft PRs and `WIP:` / `[WIP]` prefixes without failing prematurely.
+   - Blocks merging if the title fails the Conventional Commits specification.
+2. **Native PR Size Audit**:
+   - Calculates changed lines using `git diff --numstat "origin/$GITHUB_BASE_REF"...HEAD` while ignoring generated files (`Cargo.lock`, `package-lock.json`).
+   - Categorizes pull request magnitude:
+     - `size/XS`: 0–19 lines
+     - `size/S`: 20–99 lines
+     - `size/M`: 100–299 lines
+     - `size/L`: 300–799 lines
+     - `size/XL`: 800–1499 lines
+     - `size/XXL`: 1500+ lines (automatically emits GitHub annotation warning for large PRs)

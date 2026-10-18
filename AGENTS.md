@@ -15,6 +15,7 @@ When reading, updating, or authoring code in this repository, all AI agents must
 5. **Distribution Agility**: Support Ubuntu derivatives (e.g., Pop!_OS, Linux Mint) by determining codenames using `CODENAME="${UBUNTU_CODENAME:-$(lsb_release -cs)}"`.
 6. **User-Managed Commits (No Automated Commits)**: AI agents must never execute `git commit` or create git commits automatically. Always apply, compile, test, and empirically verify code and configuration changes directly in the workspace, leaving Git staging, commits, and commit messages entirely for the user to review and author.
 7. **DRY Principle & Single Source of Truth**: Never duplicate instructions, modular rules, or skills across repository folders. The [`ai/`](./ai) directory is the canonical source of truth for universal instructions ([`ai/common-instructions.md`](./ai/common-instructions.md)), modular rules ([`ai/rules/`](./ai/rules)), and agent skills ([`ai/skills/`](./ai/skills)). Root entrypoints ([`CLAUDE.md`](./CLAUDE.md), [`GEMINI.md`](./GEMINI.md)) and workspace customization bridges ([`.agents/rules/`](./.agents/rules), [`.agents/skills/`](./.agents/skills)) must reference `ai/` strictly via relative symbolic links (`ln -sfn`). Duplicating physical files across `.agents/` and `ai/` (e.g., maintaining twin `system-safety.md` or `bash-standards.md` files) violates this invariant and is strictly prohibited. All rule and skill authoring or updates must occur directly within `ai/`.
+8. **KISS Principle (Keep It Simple & Minimal)**: Always prefer simple, readable, and direct solutions over complex, over-engineered abstractions. Avoid unnecessary layers, premature generalizations, redundant configuration, or excessive file fragmentation. Favor standard shell/CLI tools, built-in features, and unified single files before introducing sprawling multi-file architectures or external dependencies.
 
 ---
 
@@ -58,12 +59,8 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
 ├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
 ├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
 ├── docs/                      # Architecture & system design documentation
-│   ├── README.md              # Architecture index & component map
-│   ├── architecture.md        # High-level architecture & lifecycles
-│   ├── mena-cli.md            # Workstation orchestrator deep dive
-│   ├── shell-and-dotfiles.md  # Unified Bash & Oh My Zsh dotfiles architecture
-│   ├── ai-agent-system.md     # 6-in-1 AI Coding Assistant architecture
-│   ├── security-and-packaging.md # Modern APT keyrings & security model
+│   ├── README.md              # Documentation index & quick reference
+│   ├── architecture.md        # Comprehensive system architecture & subsystem specs
 │   └── ci-cd-and-quality.md   # Quality gates & GitHub Actions CI
 ├── install.sh                 # Master workstation setup entrypoint
 ├── mena/                      # Rust CLI source code (Clap + Dialoguer)

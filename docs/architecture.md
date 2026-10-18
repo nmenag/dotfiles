@@ -1,88 +1,124 @@
-# System Architecture Overview
+# System Architecture & Technical Design
 
-This document describes the high-level system architecture and engineering principles governing the **Developer Dotfiles & Workstation Automation** repository.
+This document provides the comprehensive system architecture, technical specifications, and subsystem design for the **Developer Dotfiles & Workstation Automation** platform on Debian/Ubuntu-based distributions (**Ubuntu 22.04 LTS**, **Ubuntu 24.04 LTS**, and **Pop!_OS 24.04 LTS Noble**).
 
 ---
 
-## 1. Architectural Principles
-
-The repository is designed to automate the provisioning, configuration, and daily operation of developer workstations running Debian/Ubuntu distributions (specifically **Ubuntu 22.04 LTS**, **Ubuntu 24.04 LTS**, and **Pop!_OS 24.04 LTS (Noble)**).
+## 1. Core Architectural Principles
 
 ```mermaid
 flowchart TD
-    A["Principles"] --> B["1. Two-Phase Execution"]
-    A --> C["2. Absolute Idempotency"]
-    A --> D["3. Zero-Mutation Aborts"]
-    A --> E["4. Modern APT Keyrings"]
-    A --> F["5. Multi-Agent Single Source of Truth"]
+    A["Engineering Principles"] --> B["1. KISS Principle (Keep It Simple)"]
+    A --> C["2. Two-Phase Execution"]
+    A --> D["3. Absolute Idempotency"]
+    A --> E["4. Safe Zero-Mutation Cancellation"]
+    A --> F["5. Single Source of Truth (DRY)"]
+    A --> G["6. Modern APT Keyrings & Secret Hygiene"]
 ```
 
-### 1.1 Two-Phase Execution (Planning vs. Execution)
-System mutation is separated strictly into:
-1. **Planning Phase**: Collects user desires, discovers existing host installations, queries versions, resolves the dependency graph topologically, checks for `sudo` requirements, and produces a complete `InstallPlan`.
-2. **Execution Phase**: Iterates only over explicitly approved plan items. Executes shell scripts, APT packages, Snap packages, or AI adapters sequentially while rendering progress via terminal bars.
+1. **KISS Principle (Keep It Simple & Minimal)**:
+   - Prefer simple, direct, and readable implementations over complex, over-engineered abstractions.
+   - Avoid unnecessary layers, premature generalizations, redundant configuration, or sprawling multi-file fragmentation.
+   - Rely on standard shell/CLI tools, built-in features, and unified single files before introducing third-party dependencies.
 
-### 1.2 Absolute Idempotency
-- Every installer and shell script can be run an arbitrary number of times on a fresh or heavily customized machine without altering the intended state.
-- Guard blocks prevent duplicate exports or configuration lines in `~/.bashrc` or `~/.zshrc`.
-- APT repositories check for keyrings in `/etc/apt/keyrings/` before downloading keys.
+2. **Two-Phase Execution (Planning vs. Execution)**:
+   - **Planning Phase**: Discovers host state, queries installed versions, resolves the dependency graph topologically, checks sudo requirements, and builds an explicit `InstallPlan`.
+   - **Execution Phase**: Iterates only over explicitly approved plan items. Executes shell scripts, APT packages, Snap packages, or AI adapters sequentially while rendering progress via terminal bars.
 
-### 1.3 Safe Cancellation Invariant
-If a user aborts during any interactive wizard step, summary review, or confirmation prompt, the planner yields zero actions and terminates immediately. No temporary files are left, no packages are downloaded, and no system files are mutated.
+3. **Absolute Idempotency**:
+   - Every installer and shell script can be run an arbitrary number of times on a fresh or heavily customized machine without altering the intended state.
+   - Guard blocks prevent duplicate exports or configuration lines in `~/.bashrc` or `~/.zshrc`.
+   - APT repositories check for keyrings in `/etc/apt/keyrings/` before downloading keys.
 
-### 1.4 Non-Destructive Backups
-Any operation touching pre-existing user configurations (such as dotfiles or AI adapter directories) creates a timestamped archive under `~/.dotfiles_backup/` before applying updates.
+4. **Safe Cancellation Invariant**:
+   - If a user aborts during any interactive wizard step, summary review, or confirmation prompt, the planner yields zero actions and terminates immediately. No temporary files are left, no packages are downloaded, and no system files are mutated.
 
-### 1.5 Strict Secret & Credential Isolation
-API keys, SSH keys, personal tokens, and OAuth credentials must never exist in repository code or Git tracking. Dynamic values are populated through `.env` (guarded by `.gitignore`) or gathered interactively.
+5. **Non-Destructive Backups**:
+   - Any operation touching pre-existing user configurations (such as dotfiles or AI adapter directories) creates a timestamped archive under `~/.dotfiles_backup/` before applying updates.
+
+6. **Strict Secret & Credential Isolation**:
+   - API keys, SSH keys, personal tokens, and OAuth credentials must never exist in repository code or Git tracking. Dynamic values are populated through `.env` (guarded by `.gitignore`) or gathered interactively.
+
+7. **Distribution Agility**:
+   - Dynamic codename detection prevents repository collisions between Ubuntu upstream (`jammy`, `noble`) and derivative distributions like Pop!_OS and Linux Mint:
+     ```bash
+     CODENAME="${UBUNTU_CODENAME:-$(lsb_release -cs)}"
+     ```
 
 ---
 
-## 2. Layered Architecture
+## 2. Layered Architecture & Component Topology
 
-The workstation automation system is composed of five modular layers:
+The system is structured into five distinct, loosely-coupled layers:
 
 ```mermaid
-flowchart TB
-    subgraph Layer1["Layer 1: Bootstrap & Foundation"]
-        I["install.sh"]
-        Env[".env / .env.sample"]
-        APT["Core Build Essentials (gcc, make, curl, wget, snapd)"]
-        GitDocker["Core Git & Docker CE Automation"]
+graph TD
+    subgraph L1["Layer 1: Bootstrap & Core Foundation"]
+        Bootstrap["install.sh"]
+        GitCore["scripts/gitconfig.sh (Core Git)"]
+        DockerCore["scripts/docker.sh (Core Docker CE)"]
+        BuildTools["Core Build Essentials & APT Caches"]
     end
 
-    subgraph Layer2["Layer 2: Workstation Orchestrator (mena)"]
-        MenaRust["mena CLI Binary (~/.local/bin/mena)"]
-        Cat["Catalog Registry (34 tools)"]
-        PlanEngine["Dependency Graph & Planner"]
-        Wiz["Terminal Multi-Select Wizard"]
-        ExecEngine["Indicatif Execution Engine"]
+    subgraph L2["Layer 2: Interactive Workstation Orchestrator"]
+        MenaCLI["mena CLI (Rust)"]
+        Catalog["Catalog Registry (34 Tools)"]
+        Planner["Two-Phase Planner Engine"]
+        Wizard["Interactive Multi-Select Wizard"]
+        Executor["Execution Engine & Progress Bar"]
     end
 
-    subgraph Layer3["Layer 3: Modular Installers (scripts/)"]
-        APTRepos["Signed APT Repositories (brave, bruno, cursor, docker, mise, pgadmin)"]
-        SnapPkgs["Snap Packages (ghostty, android-studio, postman)"]
-        DirectApps["Vendor Binaries & Debs (asdf, orca, zed, mongocompass, programs)"]
-        ConfigScripts["Dotfiles Linkers (shell.sh, gitconfig.sh)"]
+    subgraph L3["Layer 3: Modular Provisioning Scripts"]
+        Browsers["Browsers (Brave, Chrome)"]
+        Programs["Desktop Programs & API (Bruno, Postman, VLC, etc.)"]
+        Runtimes["Runtimes (ASDF, Mise)"]
+        DevTools["Editors & IDEs (VS Code, Cursor, Zed, Orca)"]
+        ShellScripts["Shell & System (Oh My Zsh, Herdr, Snapd)"]
     end
 
-    subgraph Layer4["Layer 4: Unified Shell & DevEx (shell/)"]
-        EnvSh["shell/env.sh (PATH Deduplication)"]
-        AliasesSh["shell/aliases.sh (Git & Docker Shortcuts)"]
-        FuncsSh["shell/functions.sh (ai-status, mkcd, reload_shell)"]
-        ThemeOMZ["devex.zsh-theme & OMZ Plugins"]
+    subgraph L4["Layer 4: Unified Shell & DevEx Layer"]
+        ShellEnv["shell/env.sh (PATH Deduplication)"]
+        ShellAliases["shell/aliases.sh (Git & Docker Shortcuts)"]
+        ShellFuncs["shell/functions.sh (DevEx Utilities)"]
+        Theme["shell/zsh/custom/themes/devex.zsh-theme"]
+        BashRC["~/.bashrc Integration"]
+        ZshRC["~/.zshrc Integration"]
     end
 
-    subgraph Layer5["Layer 5: Unified AI Agent Layer (ai/ & .agents/)"]
-        AgentDocs["ai/common-instructions.md & ai/rules/"]
-        AgentSkills["ai/skills/ & .agents/skills/ (SKILL.md)"]
-        Adapters["6 CLI Adapters: claude, opencode, codex, kilo, agy, pi"]
+    subgraph L5["Layer 5: Unified Multi-Agent AI System"]
+        CommonInst["ai/common-instructions.md"]
+        Rules["ai/rules/ (Context7, Bash, Safety)"]
+        Skills["ai/skills/ & .agents/skills/ (SKILL.md)"]
+        Adapters["ai/adapters/ (Claude, OpenCode, Codex, Kilo, Agy, Pi)"]
     end
 
-    Layer1 --> Layer2
-    Layer2 --> Layer3
-    Layer3 --> Layer4
-    Layer3 --> Layer5
+    Bootstrap --> BuildTools
+    Bootstrap --> GitCore
+    Bootstrap --> DockerCore
+    Bootstrap --> MenaCLI
+
+    MenaCLI --> Catalog
+    Catalog --> Wizard
+    Wizard --> Planner
+    Planner --> Executor
+
+    Executor --> Browsers
+    Executor --> Programs
+    Executor --> Runtimes
+    Executor --> DevTools
+    Executor --> ShellScripts
+    Executor --> Adapters
+
+    ShellScripts --> ShellEnv
+    ShellScripts --> ShellAliases
+    ShellScripts --> ShellFuncs
+    ShellScripts --> Theme
+    ShellEnv --> BashRC
+    ShellEnv --> ZshRC
+
+    Adapters --> CommonInst
+    Adapters --> Rules
+    Adapters --> Skills
 ```
 
 ---
@@ -121,44 +157,235 @@ sequenceDiagram
 
 ---
 
-## 4. Subsystem Interactions
+## 4. Subsystem 1: Workstation Orchestrator (`mena` CLI)
 
-### 4.1 Bootstrap Hand-off to `mena`
-[`install.sh`](file:///home/nmenag/personal-projects/dotfiles/install.sh) acts as the minimalist entrypoint. It ensures that the machine has a functioning compiler (`build-essential`), cURL, Git, Docker, and Cargo/Rust. Once `mena` is compiled to `mena/target/release/mena`, `install.sh` uses POSIX `exec` to hand off terminal control directly to `mena install`.
+`mena` is written in **pure Rust** using `Clap`, `Dialoguer`, `indicatif`, and `console`.
 
-### 4.2 Script Independence
-Every modular script inside [`scripts/`](file:///home/nmenag/personal-projects/dotfiles/scripts) can be executed independently outside of `mena` or `install.sh`:
-```bash
-./scripts/mise.sh
-./scripts/postman.sh
-./scripts/bruno.sh
+```mermaid
+graph TD
+    Main["main.rs"] --> CLI["cli.rs (Clap Parser)"]
+    Main --> Commands["commands/"]
+
+    Commands --> CmdInstall["commands/install.rs"]
+    Commands --> CmdList["commands/list.rs"]
+    Commands --> CmdDoctor["commands/doctor.rs"]
+    Commands --> CmdUpdate["commands/update.rs"]
+
+    CmdInstall --> Wizard["interactive/wizard.rs"]
+    CmdInstall --> Planner["planner/plan.rs"]
+    CmdInstall --> Executor["executor/runner.rs"]
+
+    Wizard --> Catalog["catalog/model.rs & registry.rs"]
+    Planner --> Catalog
+    Planner --> System["system/package.rs & os.rs"]
+    Executor --> System
 ```
-All scripts derive their own absolute paths (`SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"`) and root paths (`ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"`), making invocation directory-agnostic.
 
-### 4.3 AI Assistant Adapters
-Rather than maintaining divergent configuration files for multiple AI assistants, the repository maintains a single canonical guideline set in [`ai/common-instructions.md`](file:///home/nmenag/personal-projects/dotfiles/ai/common-instructions.md). Specialized adapters in [`ai/adapters/`](file:///home/nmenag/personal-projects/dotfiles/ai/adapters) symlink these instructions and shared skills into each tool's native home configuration directory (`~/.claude`, `~/.config/opencode`, `~/.codex`, `~/.config/kilo`, `~/.gemini`, `~/.pi`).
+### 4.1 Domain Model & Registry
+- **Categories**: `Browsers`, `CliTools` (mandatory core, auto-filtered out from wizard), `Programs` (desktop apps & API clients), `Runtimes` (ASDF, Mise), `DevUtilities` (editors, IDEs), `AiAssistants` (6-in-1 assistants), `SkillManagement`, `ShellEnvironment`.
+- **Install Methods**: `Script(&'static str)`, `AiAdapter(&'static str)`, `AptPackage(&'static str)`, `SnapPackage { name, classic }`, `ShellCommand(&'static str)`.
+- **GUI Version Probing**: For Electron/GUI apps (Cursor, Postman, Bruno, pgAdmin, Android Studio), `version_flag` is set to `None` to prevent background CLI hangs during probing.
+
+### 4.2 Interactive Wizard & Two-Phase Review Loop
+1. Presents multi-select menus grouped by category.
+2. Annotates installed tools with current host versions: `[Installed: Google Chrome 151.0.7922.137]`.
+3. Prompts for Git user identity if missing.
+4. Renders the pre-installation summary table with three paths:
+   - **Proceed**: Hands plan to execution engine.
+   - **Modify**: Loops back to tool selection.
+   - **Cancel**: Terminates immediately with **0 actions and 0 mutations**.
+
+### 4.3 Verified Invariants
+- **Cancellation Safety** (`tests/test_cancellation.rs`): Aborted plans execute zero actions.
+- **Dry-Run Safety** (`test_dry_run_executes_no_mutations`): Simulates the full plan without running any child processes.
+- **Selective Execution** (`test_only_approved_actions_are_executed`): Unselected tools are never queued or executed.
 
 ---
 
-## 5. Directory Structure Mapping
+## 5. Subsystem 2: Unified Shell & Dotfiles (`shell/`)
+
+The shell layer establishes a single source of truth for both Bash and Zsh:
+
+```mermaid
+graph TD
+    subgraph SharedComponents["Centralized Shell Layer (shell/)"]
+        Env["shell/env.sh<br/>(Environment, PATH Deduplication)"]
+        Aliases["shell/aliases.sh<br/>(Git, Docker, Safety Shortcuts)"]
+        Funcs["shell/functions.sh<br/>(DevEx Utilities: mkcd, ai-status)"]
+        Theme["shell/zsh/custom/themes/devex.zsh-theme"]
+    end
+
+    subgraph BashChain["Bash Entrypoint"]
+        BashRC["~/.bashrc"] --> BashIntegration["shell/bashrc.sh"]
+        BashIntegration --> Env
+        BashIntegration --> Aliases
+        BashIntegration --> Funcs
+    end
+
+    subgraph ZshChain["Zsh Entrypoint"]
+        ZshRC["~/.zshrc"] --> ZshIntegration["shell/zshrc.sh"]
+        ZshIntegration --> Env
+        ZshIntegration --> Aliases
+        ZshIntegration --> Funcs
+        ZshIntegration --> Theme
+        ZshIntegration --> OMZPlugins["Oh My Zsh Plugins<br/>(autosuggestions, syntax-highlighting)"]
+    end
+```
+
+### 5.1 PATH Deduplication & Precedence (`shell/env.sh`)
+Prepends user directories only if they exist and are not already in `$PATH`:
+1. `~/.local/bin` (mena, dotctl, pipx, local CLI tools)
+2. `~/.cargo/bin` (Cargo, Rust toolchains)
+3. `~/.asdf/bin` and `~/.asdf/shims` (ASDF version manager)
+4. `~/.local/share/mise/shims` (Mise version manager)
+5. System paths (`/usr/local/bin`, `/usr/bin`, `/bin`)
+
+### 5.2 Safety Aliases & DevEx Utilities
+- **Safety Defaults**: `alias rm='rm -i'`, `alias cp='cp -i'`, `alias mv='mv -i'`.
+- **Git Shortcuts**: `gst`, `gco`, `gcb`, `gd`, `gp`, `gl`, `glog`.
+- **DevEx Functions**: `ai-status` (audits all 6 AI CLIs), `mkcd <dir>`, `extract <archive>`, `path_inspect`, `reload_shell`.
+- **Custom Prompt Theme** (`devex.zsh-theme`): Zero-lag Git branch, dirty status indicator, and exit code styling.
+
+### 5.3 Guarded Appends
+To preserve user configurations, scripts never append blindly:
+```bash
+if [[ -f "$HOME/.zshrc" ]] && ! grep -q "DOTFILES_INTEGRATION" "$HOME/.zshrc"; then
+  cat <<'EOT' >> "$HOME/.zshrc"
+# --- DOTFILES_INTEGRATION ---
+if [ -f "$HOME/personal-projects/dotfiles/shell/zshrc.sh" ]; then
+  source "$HOME/personal-projects/dotfiles/shell/zshrc.sh"
+fi
+# --- END DOTFILES_INTEGRATION ---
+EOT
+fi
+```
+
+---
+
+## 6. Subsystem 3: Security & Packaging Model
+
+### 6.1 Modern Compartmentalized APT Keyrings
+Deprecated `apt-key` trusted keys globally for all repositories. This repository strictly uses scoped `/etc/apt/keyrings/`:
+
+```mermaid
+flowchart LR
+    VendorKey["Vendor GPG Armor Key (HTTPS)"] --> Dearmor["gpg --dearmor"]
+    Dearmor --> KeyringFile["/etc/apt/keyrings/<tool>.gpg"]
+    KeyringFile --> SourcesList["/etc/apt/sources.list.d/<tool>.list"]
+    SourcesList --> ExplicitSign["deb [arch=... signed-by=/etc/apt/keyrings/<tool>.gpg] https://..."]
+    ExplicitSign --> ScopedTrust["Scoped Trust: Key ONLY verifies packages from this specific repo"]
+```
+
+### 6.2 Packaging Strategy Matrix
+| Tool | Installation Channel | Method & Sandbox Properties |
+| :--- | :--- | :--- |
+| **Brave, Bruno, Cursor, Docker, Mise, pgAdmin** | **Signed APT** | Official vendor signed keyrings in `/etc/apt/keyrings/` |
+| **Google Chrome, Orca, MongoDB Compass** | **Official Deb** | Downloaded via HTTPS to `mktemp -d`, installed with `dpkg -i` + `apt-get install -f -y` |
+| **Postman, Ghostty, Android Studio** | **Snap** | Canonical Snap confinement (`--classic` for dev tools requiring full system access) |
+| **ASDF, Zed** | **Vendor Tarball / Script** | User-space installation (`~/.asdf`, `~/.local/bin`), zero root mutations |
+| **Git, Build Essentials, VLC, Flameshot, BleachBit** | **Native Ubuntu APT** | Standard distribution repository packages (`sudo apt-get install -y`) |
+
+### 6.3 Automated Secret Hygiene
+- **Hardened `.gitignore`**: Excludes `.env`, `.env.*`, `*.pem`, `*.key`, `*.token`, `credentials.json`, and `~/.dotfiles_backup/`.
+- **Git Index Scanner** ([`scripts/verify.sh`](file:///home/nmenag/personal-projects/dotfiles/scripts/verify.sh)): Audits all tracked files in Git to prevent staging or committing secrets:
+  ```bash
+  TRACKED_SECRETS="$(git ls-files | grep -E '(\.key|\.pem|\.token|\.secret|credentials\.json|auth\.json)$' || true)"
+  if [[ -n "$TRACKED_SECRETS" ]]; then
+    echo "SECURITY RISK: Detected tracked secrets in Git index"
+    exit 1
+  fi
+  ```
+
+---
+
+## 7. Subsystem 4: Unified Multi-Agent AI System (`ai/`)
+
+Modern workflows utilize multiple AI terminal assistants. This repository connects **6 AI coding assistants** through a shared instruction core, modular rules, and an open skills standard:
+
+| Assistant | CLI Command | Native Instructions Path | Native Skills Path |
+| :--- | :--- | :--- | :--- |
+| **Claude Code** | `claude` | `~/.claude/CLAUDE.md` | `~/.claude/skills/` |
+| **OpenCode** | `opencode` | `~/.config/opencode/AGENTS.md` | `~/.config/opencode/skills/` |
+| **Codex CLI** | `codex` | `~/.codex/AGENTS.md` | `~/.codex/skills/` |
+| **Kilo CLI** | `kilo` | `~/.config/kilo/AGENTS.md` | `~/.config/kilo/skills/` |
+| **Agy / Antigravity** | `agy` | `~/.gemini/GEMINI.md` | `~/.gemini/skills/` & `.agents/skills/` |
+| **Pi Coding Agent** | `pi` | `~/.pi/agent/AGENTS.md` | `~/.pi/agent/skills/` |
+
+```mermaid
+graph TD
+    subgraph CanonicalCore["Unified AI Source of Truth (ai/)"]
+        Common["ai/common-instructions.md<br/>(Core Principles, DevEx Standards)"]
+        Rules["ai/rules/<br/>(Context7, Bash Standards, Safety)"]
+        Skills["ai/skills/<br/>(Reusable Agent Skills in SKILL.md format)"]
+    end
+
+    subgraph AdaptersLayer["Adapter Layer (ai/adapters/)"]
+        SyncAll["sync-all.sh"]
+        Adapters["claude.sh | opencode.sh | codex.sh | kilo.sh | agy.sh | pi.sh"]
+    end
+
+    subgraph NativeTargets["Native Assistant Home Configurations"]
+        Claude["~/.claude/"]
+        OpenCode["~/.config/opencode/"]
+        Codex["~/.codex/"]
+        Kilo["~/.config/kilo/"]
+        Agy["~/.gemini/ & .agents/"]
+        Pi["~/.pi/agent/"]
+    end
+
+    CanonicalCore --> AdaptersLayer
+    SyncAll --> Adapters
+    Adapters --> NativeTargets
+```
+
+### 7.1 Context7 Live Documentation Rule
+Agents are instructed to fetch live official documentation via Context7 MCP rather than relying on frozen model weights:
+1. `resolve-library-id`: Resolve library name to `/org/project` identifier.
+2. `query-docs`: Query focused concept documentation.
+
+### 7.2 Native Antigravity Bridge & DRY Symbolic Links (`.agents/`)
+To uphold the DRY principle, `.agents/` contains zero duplicated physical files:
+- `.agents/rules/` symlinks to `../../ai/rules/<rule>.md`.
+- `.agents/skills/` symlinks to `../../ai/skills/<skill>`.
+- Root entrypoints ([`CLAUDE.md`](file:///home/nmenag/personal-projects/dotfiles/CLAUDE.md), [`GEMINI.md`](file:///home/nmenag/personal-projects/dotfiles/GEMINI.md)) symlink to [`AGENTS.md`](file:///home/nmenag/personal-projects/dotfiles/AGENTS.md).
+- [`ai/adapters/agy.sh`](file:///home/nmenag/personal-projects/dotfiles/ai/adapters/agy.sh) provisions and maintains these links dynamically using relative symlinks without copying.
+
+---
+
+## 8. Directory Layout
 
 ```text
 .
-├── docs/                      # Architectural and system documentation
-│   ├── README.md              # Documentation index and navigation
-│   ├── architecture.md       # High-level architecture and system design (this file)
-│   ├── mena-cli.md            # Workstation orchestrator deep dive
-│   ├── shell-and-dotfiles.md  # Bash and Oh My Zsh dotfiles architecture
-│   ├── ai-agent-system.md     # 6-in-1 AI Coding Assistant architecture
-│   ├── security-and-packaging.md # APT keyrings, permissions, and security
-│   └── ci-cd-and-quality.md   # CI/CD workflows and automated verification
-├── install.sh                 # Master bootstrap entrypoint
-├── mena/                      # Pure Rust workstation orchestrator
+├── AGENTS.md                  # Root workspace rules for AI agents
+├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
+├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
+├── docs/                      # Architecture & system design documentation
+│   ├── README.md              # Documentation index & quick reference
+│   ├── architecture.md        # Comprehensive system architecture & subsystem specs (this file)
+│   └── ci-cd-and-quality.md   # Quality gates & GitHub Actions CI
+├── install.sh                 # Master workstation setup entrypoint
+├── mena/                      # Rust CLI source code (Clap + Dialoguer)
 │   ├── Cargo.toml             # Rust package configuration
 │   ├── src/                   # CLI, catalog, planner, wizard, executor
 │   └── tests/                 # Integration tests (cancellation, planner, catalog)
-├── scripts/                   # Idempotent modular installer scripts
-├── shell/                     # Centralized Bash & Oh My Zsh dotfiles
-├── ai/                        # Unified AI agent instructions, rules, and adapters
-└── .agents/                   # Workspace AI agent customizations and skills
+├── LICENSE                    # MIT license
+├── README.md                  # Human-readable documentation
+├── .env.sample                # Sample environment configuration
+├── .gitignore                 # Excludes .env, secrets, IDE configs, etc.
+├── ai/                        # Unified AI agent architecture
+│   ├── common-instructions.md # Universal guidelines for all 6 AI CLIs
+│   ├── rules/                 # Shared rules (Context7, Bash standards, Safety)
+│   ├── skills/                # Reusable Agent Skills (SKILL.md format)
+│   └── adapters/              # CLI adapters (claude, opencode, codex, kilo, agy, pi)
+├── shell/                     # Centralized shell dotfiles
+│   ├── env.sh                 # Environment variables and PATH deduplication
+│   ├── aliases.sh             # Shared Git, Docker, and navigation shortcuts
+│   ├── functions.sh           # DevEx productivity functions (ai-status, mkcd, etc.)
+│   ├── bashrc.sh              # Bash integration entrypoint
+│   ├── zshrc.sh               # Zsh integration entrypoint
+│   └── zsh/custom/themes/     # Custom prompt themes (devex.zsh-theme)
+├── .agents/                   # Workspace AI agent customizations (Antigravity bridge)
+│   ├── rules/                 # Modular agent rules (symlinked to ai/rules/)
+│   └── skills/                # On-demand agent runbooks (symlinked to ai/skills/)
+└── scripts/                   # Modular installation scripts
 ```

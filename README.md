@@ -28,6 +28,7 @@ Automated workstation provisioning, development environment setup, unified shell
     6. **Pi Coding Agent** (`~/.pi/agent`)
 - **Modern APT Keyrings & Security**: Uses `/etc/apt/keyrings/` instead of deprecated `apt-key`. Strictly enforces `.gitignore` rules against tokens, keys, and credentials.
 - **Distribution Agnostic**: Automatically resolves Ubuntu release codenames across standard Ubuntu and derivatives like Pop!_OS and Linux Mint.
+- **KISS Principle & Minimal Footprint**: Focuses on direct, readable, and essential implementations without over-engineering, unnecessary abstractions, or file fragmentation.
 - **Developer Tools & Desktop Suites**: Automated setup for ASDF and Mise (Node.js, Ruby, Python, Elixir, Erlang, Rust), Docker Engine, VS Code, Cursor (+ curated extensions), Zed, Ghostty, Git (+ SSH ED25519), and Android Studio.
 
 ---
@@ -40,12 +41,8 @@ Automated workstation provisioning, development environment setup, unified shell
 ├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
 ├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
 ├── docs/                      # Architecture & system design documentation
-│   ├── README.md              # Architecture index & component map
-│   ├── architecture.md        # High-level architecture & lifecycles
-│   ├── mena-cli.md            # Workstation orchestrator deep dive
-│   ├── shell-and-dotfiles.md  # Unified Bash & Oh My Zsh dotfiles architecture
-│   ├── ai-agent-system.md     # 6-in-1 AI Coding Assistant architecture
-│   ├── security-and-packaging.md # Modern APT keyrings & security model
+│   ├── README.md              # Documentation index & quick reference
+│   ├── architecture.md        # Comprehensive system architecture & subsystem specs
 │   └── ci-cd-and-quality.md   # Quality gates & GitHub Actions CI
 ├── install.sh                 # Master workstation setup and provisioning entrypoint
 ├── mena/                      # Rust CLI source code (Clap + Dialoguer)
@@ -98,14 +95,10 @@ Automated workstation provisioning, development environment setup, unified shell
 
 ## Architecture Documentation
 
-Detailed architectural blueprints, subsystem deep dives, and security models are documented under [`docs/`](./docs):
+Detailed architectural blueprints, subsystem specifications, and security models are documented under [`docs/`](./docs):
 
-- **[System Architecture Overview](./docs/architecture.md)**: End-to-end architectural blueprint, design principles, system layers, and component topology.
-- **[Workstation Orchestrator: `mena`](./docs/mena-cli.md)**: Deep dive into the pure Rust CLI (`Clap` + `Dialoguer`), two-phase planning engine, and safety invariants.
-- **[Unified Shell & Dotfiles](./docs/shell-and-dotfiles.md)**: Centralized Bash & Oh My Zsh dotfiles architecture, PATH deduplication, and custom DevEx prompt theme.
-- **[Unified Multi-Agent AI System](./docs/ai-agent-system.md)**: 6-in-1 AI Coding Assistant integration (Claude, OpenCode, Codex, Kilo, Agy, Pi) with shared skills and rules.
-- **[Security & Packaging Model](./docs/security-and-packaging.md)**: Modern APT keyrings (`/etc/apt/keyrings/`), secret hygiene, and distribution agility.
-- **[CI/CD & Quality Gates](./docs/ci-cd-and-quality.md)**: GitHub Actions test matrix, Commitlint enforcement, PR checks, and verification suites.
+- **[System Architecture & Subsystems](./docs/architecture.md)**: End-to-end architectural blueprint, engineering principles (including KISS and Idempotency), 5-layer topology, `mena` Rust orchestrator, centralized shell dotfiles, modern APT keyrings, and the 6-in-1 multi-agent AI system.
+- **[CI/CD & Quality Gates](./docs/ci-cd-and-quality.md)**: Unified GitHub Actions CI pipeline (`ci.yml`), Conventional Commits / Commitlint specifications, native in-runner PR title and size audits, and the 7-step local verification suite (`verify.sh`).
 
 ---
 
@@ -326,7 +319,7 @@ The repository includes an automated CI pipeline ([`.github/workflows/ci.yml`](.
 
 All commit messages must adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification defined in [`.commitlintrc.json`](./.commitlintrc.json):
 - **Local Hook**: Automatically configured via [`scripts/gitconfig.sh`](./scripts/gitconfig.sh) in `.git/hooks/commit-msg` with zero-dependency regex fallback.
-- **CI Pipeline**: Evaluated via `wagoid/commitlint-github-action@v6` on pull requests and branch pushes.
+- **CI Pipeline**: Evaluated via native Commitlint CLI in [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) on pull requests and branch pushes.
 - **Format**: `<type>(<optional scope>): <subject>`
 - **Allowed Types**: `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `revert`.
 - **Examples**:
@@ -336,9 +329,9 @@ All commit messages must adhere to the [Conventional Commits](https://www.conven
 
 ### Pull Request Checks (Title & Size)
 
-Pull requests are automatically audited and labeled via [`.github/workflows/pr-checks.yml`](./.github/workflows/pr-checks.yml):
-- **Semantic PR Title Check**: Validates that PR titles conform to Conventional Commits using `amannn/action-semantic-pull-request@v6` (with `wip: true` draft support).
-- **PR Size Labeler & Audit**: Categorizes pull request changes using `pascalgn/size-label-action@v0.5.7` (ignoring lockfiles):
+Pull requests are automatically audited natively in [`.github/workflows/ci.yml`](./.github/workflows/ci.yml):
+- **Native Commitlint PR Title Check**: Validates that PR titles conform to Conventional Commits via Commitlint CLI with WIP/draft tolerance (eliminating external status API errors).
+- **Native PR Size Audit**: Categorizes pull request changes using `git diff --numstat` (ignoring lockfiles):
   - `size/XS`: 0–19 lines
   - `size/S`: 20–99 lines
   - `size/M`: 100–299 lines
