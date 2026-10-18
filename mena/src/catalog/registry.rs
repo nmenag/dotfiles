@@ -121,10 +121,13 @@ pub fn all_tools() -> Vec<Tool> {
             id: "postman",
             name: "Postman",
             category: Category::Programs,
-            description: "Complete API development, testing, and collaboration platform via Snap",
+            description: "Complete API development, testing, and collaboration platform",
             dependencies: &["snapd"],
             install_method: InstallMethod::Script("scripts/postman.sh"),
-            detection: DetectionMethod::Command("postman"),
+            detection: DetectionMethod::CommandOrFlatpak {
+                cmd: "postman",
+                flatpak_id: "com.getpostman.Postman",
+            },
             version_flag: None,
         },
         Tool {

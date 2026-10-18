@@ -17,11 +17,23 @@ pub fn command_path(cmd: &str) -> Option<PathBuf> {
     // Check standard user directories if PATH in subshell is minimal
     if let Ok(home) = env::var("HOME") {
         let home_p = Path::new(&home);
-        for extra in &[".cargo/bin", ".local/bin", "bin", ".asdf/shims"] {
+        for extra in &[
+            ".cargo/bin",
+            ".local/bin",
+            "bin",
+            ".asdf/shims",
+            ".local/share/flatpak/exports/bin",
+        ] {
             let candidate = home_p.join(extra).join(cmd);
             if candidate.is_file() && is_executable(&candidate) {
                 return Some(candidate);
             }
+        }
+    }
+    for extra in &["/snap/bin", "/var/lib/flatpak/exports/bin"] {
+        let candidate = Path::new(extra).join(cmd);
+        if candidate.is_file() && is_executable(&candidate) {
+            return Some(candidate);
         }
     }
     None
@@ -78,6 +90,29 @@ pub fn query_version(cmd: &str, flag: &str) -> Option<String> {
     None
 }
 
+/// Check if a flatpak app is installed and return its version if available
+pub fn check_flatpak_installed(app_id: &str) -> Option<String> {
+    let output = Command::new("flatpak")
+        .args(["info", app_id])
+        .output()
+        .ok()?;
+    if output.status.success() {
+        let text = String::from_utf8_lossy(&output.stdout);
+        for line in text.lines() {
+            let trimmed = line.trim();
+            if let Some(rest) = trimmed.strip_prefix("Version:") {
+                let ver = rest.trim();
+                if !ver.is_empty() {
+                    return Some(ver.to_string());
+                }
+            }
+        }
+        Some(String::new())
+    } else {
+        None
+    }
+}
+
 /// Determine the ToolStatus for a given Tool definition
 pub fn check_tool_status(tool: &Tool) -> ToolStatus {
     match tool.detection {
@@ -89,6 +124,39 @@ pub fn check_tool_status(tool: &Tool) -> ToolStatus {
                 ToolStatus::Installed {
                     version,
                     path: Some(path.to_string_lossy().to_string()),
+                }
+            } else {
+                ToolStatus::NotInstalled
+            }
+        }
+        DetectionMethod::CommandOrFlatpak { cmd, flatpak_id } => {
+            let cmd_path = command_path(cmd);
+            let flatpak_ver = check_flatpak_installed(flatpak_id);
+
+            if let Some(path) = cmd_path {
+                let mut version = tool
+                    .version_flag
+                    .and_then(|flag| query_version(cmd, flag));
+                if version.is_none() {
+                    if let Some(ref fver) = flatpak_ver {
+                        if !fver.is_empty() {
+                            version = Some(fver.clone());
+                        }
+                    }
+                }
+                ToolStatus::Installed {
+                    version,
+                    path: Some(path.to_string_lossy().to_string()),
+                }
+            } else if let Some(ver_str) = flatpak_ver {
+                let version = if ver_str.is_empty() {
+                    None
+                } else {
+                    Some(ver_str)
+                };
+                ToolStatus::Installed {
+                    version,
+                    path: Some(format!("flatpak: {}", flatpak_id)),
                 }
             } else {
                 ToolStatus::NotInstalled

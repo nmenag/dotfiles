@@ -120,6 +120,10 @@ pub enum DetectionMethod {
     Command(&'static str),
     Dpkg(&'static str),
     Path(&'static str),
+    CommandOrFlatpak {
+        cmd: &'static str,
+        flatpak_id: &'static str,
+    },
 }
 
 #[derive(Debug, Clone)]
