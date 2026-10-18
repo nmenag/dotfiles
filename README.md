@@ -7,7 +7,7 @@ Automated workstation provisioning, development environment setup, unified shell
 ## Features
 
 - **Interactive Workstation CLI (`mena`)**:
-  - Written in **pure Rust** (`Clap` + `Dialoguer`), zero Node.js/TypeScript dependencies.
+  - Written in **pure Rust** (`Clap` + `Dialoguer`)
   - Multi-select interactive installation across 7 tool categories with OS, package manager, and installed version pre-detection.
   - Two-phase architecture (Planning vs. Execution): pre-installation summary, review/modification loop, and explicit confirmation.
   - Guaranteed safe cancellation (aborts with zero mutations).
@@ -28,6 +28,7 @@ Automated workstation provisioning, development environment setup, unified shell
     6. **Pi Coding Agent** (`~/.pi/agent`)
 - **Modern APT Keyrings & Security**: Uses `/etc/apt/keyrings/` instead of deprecated `apt-key`. Strictly enforces `.gitignore` rules against tokens, keys, and credentials.
 - **Distribution Agnostic**: Automatically resolves Ubuntu release codenames across standard Ubuntu and derivatives like Pop!_OS and Linux Mint.
+- **KISS Principle & Minimal Footprint**: Focuses on direct, readable, and essential implementations without over-engineering, unnecessary abstractions, or file fragmentation.
 - **Developer Tools & Desktop Suites**: Automated setup for ASDF and Mise (Node.js, Ruby, Python, Elixir, Erlang, Rust), Docker Engine, VS Code, Cursor (+ curated extensions), Zed, Ghostty, Git (+ SSH ED25519), and Android Studio.
 
 ---
@@ -39,6 +40,10 @@ Automated workstation provisioning, development environment setup, unified shell
 ├── AGENTS.md                  # Canonical workspace guidelines for AI coding agents
 ├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
 ├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
+├── docs/                      # Architecture & system design documentation
+│   ├── README.md              # Documentation index & quick reference
+│   ├── architecture.md        # Comprehensive system architecture & subsystem specs
+│   └── ci-cd-and-quality.md   # Quality gates & GitHub Actions CI
 ├── install.sh                 # Master workstation setup and provisioning entrypoint
 ├── mena/                      # Rust CLI source code (Clap + Dialoguer)
 │   ├── Cargo.toml             # Rust dependencies (clap, dialoguer, indicatif, console, serde)
@@ -88,6 +93,15 @@ Automated workstation provisioning, development environment setup, unified shell
 
 ---
 
+## Architecture Documentation
+
+Detailed architectural blueprints, subsystem specifications, and security models are documented under [`docs/`](./docs):
+
+- **[System Architecture & Subsystems](./docs/architecture.md)**: End-to-end architectural blueprint, engineering principles (including KISS and Idempotency), 5-layer topology, `mena` Rust orchestrator, centralized shell dotfiles, modern APT keyrings, and the 6-in-1 multi-agent AI system.
+- **[CI/CD & Quality Gates](./docs/ci-cd-and-quality.md)**: Unified GitHub Actions CI pipeline (`ci.yml`), Conventional Commits / Commitlint specifications, native in-runner PR size audit, and the 7-step local verification suite (`verify.sh`).
+
+---
+
 ## Quickstart
 
 ### 1. Prerequisites
@@ -112,9 +126,17 @@ nano .env   # Set EMAIL and USERNAME
 ### 4. Run Installation
 
 #### Bootstrap Workstation
-Bootstraps core system build tools, installs and configures **Git** and **Docker Engine** (core foundations that are always installed), compiles and links the `mena` CLI to `~/.local/bin/mena` (and `~/.local/bin/dotctl`), and launches the interactive `mena` installation wizard:
+Bootstraps core system build tools, installs and configures **Git** and **Docker Engine** (core foundations that are always installed automatically), compiles and links the `mena` CLI to `~/.local/bin/mena` (and `~/.local/bin/dotctl`), and launches the interactive `mena` installation wizard:
 ```bash
 ./install.sh
+```
+
+#### Re-Execute or Repair Core Foundations
+If core tools need to be reinstalled, repaired, or updated without running the interactive wizard:
+```bash
+mena core               # Run via mena Rust CLI
+./install.sh --core     # Run via bootstrap script and exit
+./scripts/core.sh       # Direct script execution
 ```
 
 #### Tool Management via `mena`
@@ -122,6 +144,7 @@ Once bootstrapped, all workstation tools, browsers, runtimes, editors, and AI as
 
 ```bash
 mena install            # Launch interactive wizard across tool categories
+mena core               # Re-execute core workstation essentials (Git, Docker, Build Tools)
 mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
 mena install programs   # Wizard scoped to desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno)
 mena install runtimes   # Wizard scoped to ASDF and Mise version managers
@@ -136,7 +159,7 @@ mena install --dry-run  # Simulate installation plan without modifying the works
 
 ## Interactive Workstation CLI: `mena`
 
-`mena` is an interactive workstation installation and synchronization tool authored in **Rust** using `Clap` and `Dialoguer` (no TypeScript or Node.js runtime required). It provides a guided terminal experience to configure and manage developer workstations safely and idempotently.
+`mena` is an interactive workstation installation and synchronization tool authored in **Rust** using `Clap` and `Dialoguer`. It provides a guided terminal experience to configure and manage developer workstations safely and idempotently.
 
 ### Core Commands
 
@@ -305,7 +328,7 @@ The repository includes an automated CI pipeline ([`.github/workflows/ci.yml`](.
 
 All commit messages must adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification defined in [`.commitlintrc.json`](./.commitlintrc.json):
 - **Local Hook**: Automatically configured via [`scripts/gitconfig.sh`](./scripts/gitconfig.sh) in `.git/hooks/commit-msg` with zero-dependency regex fallback.
-- **CI Pipeline**: Evaluated via `wagoid/commitlint-github-action@v6` on pull requests and branch pushes.
+- **CI Pipeline**: Evaluated via native Commitlint CLI in [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) on pull requests and branch pushes.
 - **Format**: `<type>(<optional scope>): <subject>`
 - **Allowed Types**: `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `revert`.
 - **Examples**:
@@ -313,11 +336,10 @@ All commit messages must adhere to the [Conventional Commits](https://www.conven
   - `chore(cli): rename dotctl to mena`
   - `ci: add commitlint github action`
 
-### Pull Request Checks (Title & Size)
+### Pull Request Checks (Size)
 
-Pull requests are automatically audited and labeled via [`.github/workflows/pr-checks.yml`](./.github/workflows/pr-checks.yml):
-- **Semantic PR Title Check**: Validates that PR titles conform to Conventional Commits using `amannn/action-semantic-pull-request@v6` (with `wip: true` draft support).
-- **PR Size Labeler & Audit**: Categorizes pull request changes using `pascalgn/size-label-action@v0.5.7` (ignoring lockfiles):
+Pull request size is automatically audited natively in [`.github/workflows/ci.yml`](./.github/workflows/ci.yml):
+- **Native PR Size Audit**: Categorizes pull request changes using `git diff --numstat` (ignoring lockfiles):
   - `size/XS`: 0–19 lines
   - `size/S`: 20–99 lines
   - `size/M`: 100–299 lines

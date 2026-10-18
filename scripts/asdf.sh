@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
 ASDF_DIR="$HOME/.asdf"
 ASDF_VERSION="v0.15.0"
 
@@ -20,17 +23,6 @@ if [[ -f "$ASDF_DIR/asdf.sh" ]]; then
 else
   echo "Error: $ASDF_DIR/asdf.sh not found!"
   exit 1
-fi
-
-# Ensure asdf is sourced in ~/.zshrc idempotently
-if [[ -f "$HOME/.zshrc" ]]; then
-  if ! grep -q "\.asdf/asdf\.sh" "$HOME/.zshrc"; then
-    echo -e "\n# ASDF version manager\n. \"$HOME/.asdf/asdf.sh\"" >> "$HOME/.zshrc"
-    echo "Added ASDF to ~/.zshrc"
-  fi
-  if ! grep -q "shell_history enabled" "$HOME/.zshrc"; then
-    echo 'export ERL_AFLAGS="-kernel shell_history enabled"' >> "$HOME/.zshrc"
-  fi
 fi
 
 # Helper function to add asdf plugins safely

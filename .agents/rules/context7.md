@@ -1,0 +1,1 @@
+../../ai/rules/context7.md

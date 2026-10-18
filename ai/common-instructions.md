@@ -19,6 +19,14 @@ These guidelines provide the common source of truth for coding assistants and ag
 5. **User-Controlled Version Control (No Automated Commits)**:
    - AI agents must never execute `git commit` or create automated commits.
    - Always implement, compile, test, and empirically verify code and configuration changes directly in the workspace, leaving Git staging, commits, and commit messages entirely for the user to review and author.
+6. **DRY Principle & Single Source of Truth**:
+   - Never duplicate instruction documents, modular rules, or skills across directories.
+   - The `ai/` directory is the canonical source of truth (`ai/common-instructions.md`, `ai/rules/`, `ai/skills/`).
+   - Workspace customization bridges (`.agents/rules/`, `.agents/skills/`) and entrypoints (`CLAUDE.md`, `GEMINI.md`) must strictly link to `ai/` via relative symbolic links, never via duplicate copies.
+7. **KISS Principle (Keep It Simple & Minimal)**:
+   - Always choose simple, readable, and direct solutions over complex, over-engineered abstractions.
+   - Avoid unnecessary layers, premature generalizations, redundant configuration, or excessive file fragmentation.
+   - Favor standard shell/CLI tools, built-in features, and unified single files before introducing sprawling multi-file structures or external dependencies.
 
 ---
 

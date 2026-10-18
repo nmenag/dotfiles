@@ -15,6 +15,10 @@ pub fn handle_install(
     non_interactive_yes: bool,
     system: &SystemInfo,
 ) -> Result<()> {
+    if category_arg.as_deref() == Some("core") {
+        return super::core::handle_core(dry_run);
+    }
+
     let filter_category = category_arg.as_deref().and_then(Category::from_str_loose);
 
     if non_interactive_yes {
