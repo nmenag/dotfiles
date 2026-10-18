@@ -28,7 +28,7 @@ pub fn handle_core(dry_run: bool) -> Result<()> {
         .with_context(|| format!("Failed to execute {}", script_path.display()))?;
 
     if !status.success() {
-        anyhow::bail!("Core installation failed with exit code: {}", status);
+        anyhow::bail!("Core installation completed with errors (exit code: {}). Review the failed components in the summary above.", status);
     }
 
     println!("\n{}", "✓ Core workstation foundations are up to date and verified!".green().bold());

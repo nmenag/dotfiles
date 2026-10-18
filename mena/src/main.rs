@@ -12,7 +12,7 @@ fn main() -> Result<()> {
 
     let result = match cli.command {
         Some(Commands::Install { category, core, dry_run, yes }) => {
-            if core {
+            if core || category.as_deref().map(|s| s.eq_ignore_ascii_case("core")).unwrap_or(false) {
                 handle_core(dry_run)
             } else {
                 handle_install(category, dry_run, yes, &system)

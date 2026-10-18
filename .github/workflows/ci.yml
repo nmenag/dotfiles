@@ -165,4 +165,4 @@ jobs:
           ./mena/target/release/mena install --dry-run --yes
 
           # Verify core foundation installation simulation
-          ./mena/target/release/mena core --dry-run
+          ./mena/target/release/mena install core --dry-run

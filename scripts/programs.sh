@@ -5,7 +5,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 echo "Updating system package index..."
-sudo apt-get update -y
+if ! sudo apt-get update -y; then
+  echo "WARNING: apt-get update finished with warnings or errors."
+fi
+
+FAILED_PROGRAMS=()
 
 install_if_missing() {
   local cmd="$1"
@@ -16,7 +20,12 @@ install_if_missing() {
     echo "  $name is already installed ($cmd)."
   else
     echo "  Installing $name ($pkg)..."
-    sudo apt-get install -y "$pkg"
+    if ! sudo apt-get install -y "$pkg"; then
+      echo "  [ERROR] Failed to install $name ($pkg)"
+      FAILED_PROGRAMS+=("$name ($pkg)")
+    else
+      echo "  $name installed successfully!"
+    fi
   fi
 }
 
@@ -32,9 +41,29 @@ else
   TMP_DIR="$(mktemp -d)"
   trap 'rm -rf "$TMP_DIR"' EXIT
   
-  curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o "$TMP_DIR/google-chrome-stable_current_amd64.deb"
-  sudo apt-get install -y "$TMP_DIR/google-chrome-stable_current_amd64.deb"
-  echo "  Google Chrome installed successfully!"
+  if curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o "$TMP_DIR/google-chrome-stable_current_amd64.deb"; then
+    if ! sudo apt-get install -y "$TMP_DIR/google-chrome-stable_current_amd64.deb"; then
+      echo "  [ERROR] Failed to install Google Chrome deb package"
+      FAILED_PROGRAMS+=("Google Chrome")
+    else
+      echo "  Google Chrome installed successfully!"
+    fi
+  else
+    echo "  [ERROR] Failed to download Google Chrome deb package"
+    FAILED_PROGRAMS+=("Google Chrome")
+  fi
+fi
+
+if [[ ${#FAILED_PROGRAMS[@]} -gt 0 ]]; then
+  echo ""
+  echo "=================================================="
+  echo "         Desktop Programs Summary                 "
+  echo "=================================================="
+  echo "The following program(s) could not be installed:"
+  for prog in "${FAILED_PROGRAMS[@]}"; do
+    echo "  ✗ $prog"
+  done
+  exit 1
 fi
 
 echo "Desktop programs check completed successfully!"

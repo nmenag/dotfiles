@@ -59,9 +59,7 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
 ├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
 ├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
 ├── docs/                      # Architecture & system design documentation
-│   ├── README.md              # Documentation index & quick reference
-│   ├── architecture.md        # Comprehensive system architecture & subsystem specs
-│   └── ci-cd-and-quality.md   # Quality gates & GitHub Actions CI
+│   └── architecture.md        # Comprehensive system architecture & subsystem specs
 ├── install.sh                 # Master workstation setup entrypoint
 ├── mena/                      # Rust CLI source code (Clap + Dialoguer)
 │   ├── Cargo.toml             # Rust package configuration
