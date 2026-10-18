@@ -63,7 +63,11 @@ fi
 
 # 2. Update package lists & install core system build tools
 log_info "Updating package lists..."
-sudo apt-get update -y
+if ! sudo apt-get update -y; then
+  log_warn "Package list update finished with warnings or errors; continuing."
+fi
+
+FAILED_BOOTSTRAP_ITEMS=()
 
 install_pkg() {
   local pkg="$1"
@@ -71,7 +75,10 @@ install_pkg() {
     echo "  Package already installed: $pkg"
   else
     echo "  Installing package: $pkg..."
-    sudo apt-get install -y "$pkg"
+    if ! sudo apt-get install -y "$pkg"; then
+      log_error "Failed to install package: $pkg"
+      FAILED_BOOTSTRAP_ITEMS+=("Package: $pkg")
+    fi
   fi
 }
 
@@ -104,12 +111,31 @@ if apt-cache show libncurses-dev &>/dev/null; then
   install_pkg libncurses-dev
 elif apt-cache show libncurses5-dev &>/dev/null; then
   install_pkg libncurses5-dev
+else
+  log_error "libncurses development package not found in APT cache"
+  FAILED_BOOTSTRAP_ITEMS+=("Package: libncurses-dev")
 fi
 
 # 3. Core Foundation: Git & Docker are core (yes or yes are installed)
 log_info "Configuring core essentials: Git and Docker..."
-bash "$ROOT_DIR/scripts/gitconfig.sh"
-bash "$ROOT_DIR/scripts/docker.sh"
+if ! bash "$ROOT_DIR/scripts/gitconfig.sh"; then
+  log_error "Core Git configuration failed"
+  FAILED_BOOTSTRAP_ITEMS+=("Git Configuration (scripts/gitconfig.sh)")
+fi
+
+if ! bash "$ROOT_DIR/scripts/docker.sh"; then
+  log_error "Core Docker configuration failed"
+  FAILED_BOOTSTRAP_ITEMS+=("Docker Configuration (scripts/docker.sh)")
+fi
+
+if [[ ${#FAILED_BOOTSTRAP_ITEMS[@]} -gt 0 ]]; then
+  echo ""
+  log_warn "Bootstrap completed with errors in ${#FAILED_BOOTSTRAP_ITEMS[@]} component(s):"
+  for failed in "${FAILED_BOOTSTRAP_ITEMS[@]}"; do
+    echo -e "  ${YELLOW}!${NC} $failed"
+  done
+  echo ""
+fi
 
 # 4. Build and link mena Rust CLI
 if [[ -d "$HOME/.cargo/bin" ]]; then

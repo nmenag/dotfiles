@@ -20,43 +20,49 @@ fi
 
 echo "Configuring Git..."
 
+set_git_config() {
+  local key="$1"
+  local val="$2"
+  git config --global --replace-all "$key" "$val"
+}
+
 # Set user identity if provided
 if [[ -n "${USERNAME:-}" ]]; then
-  git config --global user.name "$USERNAME"
+  set_git_config user.name "$USERNAME"
   echo "Set git user.name to: $USERNAME"
 fi
 
 if [[ -n "${EMAIL:-}" ]]; then
-  git config --global user.email "$EMAIL"
+  set_git_config user.email "$EMAIL"
   echo "Set git user.email to: $EMAIL"
 fi
 
 # Core Git Settings
-git config --global init.defaultBranch main
-git config --global core.editor "nano -w"
+set_git_config init.defaultBranch main
+set_git_config core.editor "nano -w"
 
 # Color Configuration
-git config --global color.ui auto
-git config --global color.status auto
-git config --global color.branch auto
-git config --global color.diff auto
-git config --global color.interactive auto
+set_git_config color.ui auto
+set_git_config color.status auto
+set_git_config color.branch auto
+set_git_config color.diff auto
+set_git_config color.interactive auto
 
-git config --global color.branch.current "yellow reverse"
-git config --global color.branch.local "yellow"
-git config --global color.branch.remote "green"
+set_git_config color.branch.current "yellow reverse"
+set_git_config color.branch.local "yellow"
+set_git_config color.branch.remote "green"
 
-git config --global color.diff.meta "yellow bold"
-git config --global color.diff.frag "magenta bold"
-git config --global color.diff.old "red bold"
-git config --global color.diff.new "green bold"
+set_git_config color.diff.meta "yellow bold"
+set_git_config color.diff.frag "magenta bold"
+set_git_config color.diff.old "red bold"
+set_git_config color.diff.new "green bold"
 
-git config --global color.status.added "yellow"
-git config --global color.status.changed "green"
-git config --global color.status.untracked "cyan"
+set_git_config color.status.added "yellow"
+set_git_config color.status.changed "green"
+set_git_config color.status.untracked "cyan"
 
 # Aliases
-git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+set_git_config alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
 # SSH Key Configuration (Idempotent)
 SSH_KEY="$HOME/.ssh/id_ed25519"
