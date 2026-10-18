@@ -86,6 +86,58 @@ pub fn all_tools() -> Vec<Tool> {
             version_flag: Some("--version"),
         },
 
+        // --- Desktop Programs & API Clients ---
+        Tool {
+            id: "bleachbit",
+            name: "BleachBit",
+            category: Category::Programs,
+            description: "System space cleaner, cache cleaner, and privacy manager",
+            dependencies: &[],
+            install_method: InstallMethod::AptPackage("bleachbit"),
+            detection: DetectionMethod::Command("bleachbit"),
+            version_flag: Some("--version"),
+        },
+        Tool {
+            id: "flameshot",
+            name: "Flameshot",
+            category: Category::Programs,
+            description: "Powerful and customizable open-source screenshot and annotation tool",
+            dependencies: &[],
+            install_method: InstallMethod::AptPackage("flameshot"),
+            detection: DetectionMethod::Command("flameshot"),
+            version_flag: Some("--version"),
+        },
+        Tool {
+            id: "vlc",
+            name: "VLC Media Player",
+            category: Category::Programs,
+            description: "Cross-platform open-source multimedia player and framework",
+            dependencies: &[],
+            install_method: InstallMethod::AptPackage("vlc"),
+            detection: DetectionMethod::Command("vlc"),
+            version_flag: Some("--version"),
+        },
+        Tool {
+            id: "postman",
+            name: "Postman",
+            category: Category::Programs,
+            description: "Complete API development, testing, and collaboration platform via Snap",
+            dependencies: &["snapd"],
+            install_method: InstallMethod::Script("scripts/postman.sh"),
+            detection: DetectionMethod::Command("postman"),
+            version_flag: None,
+        },
+        Tool {
+            id: "bruno",
+            name: "Bruno API Client",
+            category: Category::Programs,
+            description: "Fast, git-friendly, open-source API exploration & testing client (usebruno)",
+            dependencies: &["curl"],
+            install_method: InstallMethod::Script("scripts/bruno.sh"),
+            detection: DetectionMethod::Command("bruno"),
+            version_flag: None,
+        },
+
         // --- Language Runtimes & Version Managers ---
         Tool {
             id: "asdf",

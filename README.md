@@ -67,6 +67,7 @@ Automated workstation provisioning, development environment setup, unified shell
     ├── android-studio.sh      # Java OpenJDK & Android Studio
     ├── asdf.sh                # ASDF runtime manager & plugins
     ├── brave.sh               # Official Brave Browser signed APT repository & installer
+    ├── bruno.sh               # Official Bruno API Client signed APT repository & installer
     ├── cursor.sh              # Official Cursor AI Editor signed APT repository & installer
     ├── docker.sh              # Docker Engine, CLI, Buildx, and Compose v2
     ├── ghostty.sh             # Fast native terminal emulator via Snap
@@ -77,6 +78,7 @@ Automated workstation provisioning, development environment setup, unified shell
     ├── ohmyzsh.sh             # Installs Zsh and Oh My Zsh (unattended)
     ├── orca.sh                # Next-gen Orca IDE agentic development environment
     ├── pgadmin.sh             # Official pgAdmin 4 Desktop APT repository & installer
+    ├── postman.sh             # Postman API Client platform via Snap
     ├── programs.sh            # Desktop essentials (Chrome, Flameshot, VLC, BleachBit)
     ├── shell.sh               # Configures Bash & Oh My Zsh dotfiles, plugins, and themes
     ├── verify.sh              # Automated repository linting & integrity verification
@@ -119,9 +121,9 @@ Bootstraps core system build tools, installs and configures **Git** and **Docker
 Once bootstrapped, all workstation tools, browsers, runtimes, editors, and AI assistants are selected and managed via `mena`:
 
 ```bash
-mena install            # Launch full interactive wizard across all 7 categories
+mena install            # Launch interactive wizard across tool categories
 mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
-mena install cli        # Wizard scoped to core CLI tools & Docker
+mena install programs   # Wizard scoped to desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno)
 mena install runtimes   # Wizard scoped to ASDF and Mise version managers
 mena install dev        # Wizard scoped to editors (VS Code, Cursor, Zed), terminals & IDEs
 mena install ai         # Wizard scoped to AI terminal assistants (Claude, OpenCode, Codex, Kilo, Agy, Pi)
@@ -140,10 +142,10 @@ mena install --dry-run  # Simulate installation plan without modifying the works
 
 | Command | Description |
 | :--- | :--- |
-| `mena install` | Full interactive wizard asking across all tool categories with multi-select and preference prompts |
-| `mena install <category>` | Interactive wizard scoped to a single category (e.g. `browser`, `cli`, `ai`, `runtimes`, `dev`, `skills`, `shell`) |
+| `mena install` | Interactive wizard across optional tool categories with multi-select and preference prompts (core tools are auto-installed) |
+| `mena install <category>` | Interactive wizard scoped to a single category (e.g. `browser`, `programs`, `runtimes`, `dev`, `ai`, `skills`, `shell`) |
 | `mena install -d, --dry-run` | Preview actions, dependency resolution, and planned commands without modifying the system |
-| `mena list` | View the complete tool catalog (28 tools) with real-time detection of installed versions |
+| `mena list` | View the complete tool catalog (34 tools) with real-time detection of installed versions |
 | `mena list -c <category>` | View catalog tools filtered by category (supports `--json` output) |
 | `mena doctor` | Comprehensive diagnostic check of OS, package managers, shell configurations, and AI adapters |
 | `mena update` | Updates AI assistant adapters, shell themes/plugins, and refreshes package manager caches |
@@ -335,6 +337,7 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`android-studio.sh`](./scripts/android-studio.sh) | Installs Java OpenJDK and Android Studio via Snap | `./scripts/android-studio.sh` |
 | [`asdf.sh`](./scripts/asdf.sh) | Installs ASDF v0.15.0 and runtime plugins (Node, Ruby, Python, Elixir, Erlang) | `./scripts/asdf.sh` |
 | [`brave.sh`](./scripts/brave.sh) | Installs Brave Browser via official signed APT repository | `./scripts/brave.sh` |
+| [`bruno.sh`](./scripts/bruno.sh) | Installs Bruno open-source API client via official signed APT repository | `./scripts/bruno.sh` |
 | [`cursor.sh`](./scripts/cursor.sh) | Installs Cursor AI Editor via official signed APT repository | `./scripts/cursor.sh` |
 | [`docker.sh`](./scripts/docker.sh) | Installs Docker CE, CLI, Containerd, Buildx, and Compose v2 plugin | `./scripts/docker.sh` |
 | [`ghostty.sh`](./scripts/ghostty.sh) | Installs Ghostty native terminal emulator via Snap (--classic) | `./scripts/ghostty.sh` |
@@ -345,6 +348,7 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`ohmyzsh.sh`](./scripts/ohmyzsh.sh) | Installs Zsh and Oh My Zsh (unattended) | `./scripts/ohmyzsh.sh` |
 | [`orca.sh`](./scripts/orca.sh) | Installs Orca IDE next-gen agentic development environment via official deb | `./scripts/orca.sh` |
 | [`pgadmin.sh`](./scripts/pgadmin.sh) | Installs pgAdmin 4 Desktop via official PostgreSQL APT repository | `./scripts/pgadmin.sh` |
+| [`postman.sh`](./scripts/postman.sh) | Installs Postman API development platform via Snap | `./scripts/postman.sh` |
 | [`programs.sh`](./scripts/programs.sh) | Installs Google Chrome, Flameshot, VLC, and BleachBit | `./scripts/programs.sh` |
 | [`shell.sh`](./scripts/shell.sh) | Sets up Bash & Oh My Zsh loaders, OMZ plugins, and custom themes | `./scripts/shell.sh` |
 | [`verify.sh`](./scripts/verify.sh) | Complete linting, security, and integrity verification suite | `./scripts/verify.sh` |

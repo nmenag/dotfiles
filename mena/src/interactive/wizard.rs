@@ -31,7 +31,7 @@ pub fn run_wizard(
     let categories_to_query: Vec<Category> = if let Some(cat) = filter_category {
         vec![cat]
     } else {
-        Category::all().to_vec()
+        Category::wizard_categories().to_vec()
     };
 
     let mut current_selected_ids: Vec<String> = Vec::new();

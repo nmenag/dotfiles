@@ -36,6 +36,34 @@ fn test_catalog_completeness() {
     assert_eq!(find_tool("git").unwrap().category, Category::CliTools);
     assert!(find_tool("docker").is_some(), "Docker must be in catalog");
     assert_eq!(find_tool("docker").unwrap().category, Category::CliTools);
+
+    // Desktop programs & API clients
+    assert!(find_tool("bleachbit").is_some(), "BleachBit must be in catalog");
+    assert_eq!(find_tool("bleachbit").unwrap().category, Category::Programs);
+    assert!(find_tool("flameshot").is_some(), "Flameshot must be in catalog");
+    assert_eq!(find_tool("flameshot").unwrap().category, Category::Programs);
+    assert!(find_tool("vlc").is_some(), "VLC must be in catalog");
+    assert_eq!(find_tool("vlc").unwrap().category, Category::Programs);
+    assert!(find_tool("postman").is_some(), "Postman must be in catalog");
+    assert_eq!(find_tool("postman").unwrap().category, Category::Programs);
+    assert!(find_tool("bruno").is_some(), "Bruno must be in catalog");
+    assert_eq!(find_tool("bruno").unwrap().category, Category::Programs);
+}
+
+#[test]
+fn test_wizard_categories_excludes_core_cli() {
+    let wizard_cats = Category::wizard_categories();
+    assert!(
+        !wizard_cats.contains(&Category::CliTools),
+        "Wizard categories must not contain CliTools (core tools are mandatory/auto-installed)"
+    );
+    assert!(
+        wizard_cats.contains(&Category::Programs),
+        "Wizard categories must contain Programs"
+    );
+    assert!(Category::CliTools.is_core());
+    assert!(!Category::Programs.is_core());
+    assert!(!Category::Browsers.is_core());
 }
 
 #[test]

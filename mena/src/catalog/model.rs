@@ -4,6 +4,7 @@ use std::fmt;
 pub enum Category {
     Browsers,
     CliTools,
+    Programs,
     Runtimes,
     DevUtilities,
     AiAssistants,
@@ -16,6 +17,7 @@ impl Category {
         &[
             Category::Browsers,
             Category::CliTools,
+            Category::Programs,
             Category::Runtimes,
             Category::DevUtilities,
             Category::AiAssistants,
@@ -24,10 +26,30 @@ impl Category {
         ]
     }
 
+    /// Categories presented as interactive choices in the workstation wizard.
+    /// CLI & Core System Tools are excluded because they are mandatory core tools
+    /// that are installed automatically during workstation bootstrap.
+    pub fn wizard_categories() -> &'static [Category] {
+        &[
+            Category::Browsers,
+            Category::Programs,
+            Category::Runtimes,
+            Category::DevUtilities,
+            Category::AiAssistants,
+            Category::SkillManagement,
+            Category::ShellEnvironment,
+        ]
+    }
+
+    pub fn is_core(&self) -> bool {
+        matches!(self, Category::CliTools)
+    }
+
     pub fn as_str(&self) -> &'static str {
         match self {
             Category::Browsers => "browsers",
             Category::CliTools => "cli",
+            Category::Programs => "programs",
             Category::Runtimes => "runtimes",
             Category::DevUtilities => "dev-utilities",
             Category::AiAssistants => "ai-assistants",
@@ -39,7 +61,8 @@ impl Category {
     pub fn display_name(&self) -> &'static str {
         match self {
             Category::Browsers => "Web Browsers",
-            Category::CliTools => "CLI & Core System Tools",
+            Category::CliTools => "CLI & Core System Tools (Core)",
+            Category::Programs => "Desktop Programs & API Clients",
             Category::Runtimes => "Language Runtimes & Version Managers",
             Category::DevUtilities => "Developer Utilities, IDEs & Terminals",
             Category::AiAssistants => "AI Coding Assistants & Adapters",
@@ -51,7 +74,8 @@ impl Category {
     pub fn description(&self) -> &'static str {
         match self {
             Category::Browsers => "Web browsers (Brave, Chrome) for daily and development use",
-            Category::CliTools => "Core development tools (Git, Docker CE, Build Essentials, cURL, Wget)",
+            Category::CliTools => "Core development tools (Git, Docker CE, Build Essentials, cURL, Wget) installed automatically",
+            Category::Programs => "Desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno)",
             Category::Runtimes => "ASDF & Mise runtime version managers and language plugins (Node, Python, Ruby, etc.)",
             Category::DevUtilities => "Code editors, terminal emulators, workspace managers and database tools",
             Category::AiAssistants => "Terminal AI assistants (Claude, OpenCode, Codex, Kilo, Agy, Pi) with unified instructions",
@@ -65,6 +89,7 @@ impl Category {
         match normalized.as_str() {
             "browser" | "browsers" | "web" => Some(Category::Browsers),
             "cli" | "clitools" | "core" | "system" => Some(Category::CliTools),
+            "program" | "programs" | "app" | "apps" | "desktop" => Some(Category::Programs),
             "runtime" | "runtimes" | "asdf" | "languages" => Some(Category::Runtimes),
             "dev" | "dev-utilities" | "utils" | "utilities" | "ide" | "ides" => Some(Category::DevUtilities),
             "ai" | "ai-assistants" | "assistants" | "agents" => Some(Category::AiAssistants),
