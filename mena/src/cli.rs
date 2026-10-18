@@ -18,7 +18,7 @@ pub struct Cli {
 pub enum Commands {
     /// Launch the interactive installation wizard (all categories or filtered by category)
     Install {
-        /// Optional category to filter (e.g., 'browser', 'cli', 'ai', 'dev', 'runtimes', 'shell')
+        /// Optional category to filter (e.g., 'browser', 'programs', 'runtimes', 'dev', 'ai', 'skills', 'shell')
         #[arg(value_name = "CATEGORY")]
         category: Option<String>,
 
@@ -33,7 +33,7 @@ pub enum Commands {
 
     /// List all cataloged workstation tools, categories, and installation status
     List {
-        /// Filter tools by category (e.g., 'browser', 'ai', 'dev', 'shell')
+        /// Filter tools by category (e.g., 'browser', 'programs', 'runtimes', 'dev', 'ai', 'skills', 'shell')
         #[arg(long, short = 'c')]
         category: Option<String>,
 

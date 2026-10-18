@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
 echo "Setting up Java and Android Studio..."
 
 # Setup Java via ASDF if ASDF is available
@@ -40,19 +43,6 @@ if command -v snap &>/dev/null; then
   fi
 else
   echo "Warning: snap command not found. Please install snapd to install Android Studio."
-fi
-
-# Configure Android SDK environment variables in ~/.zshrc idempotently
-if [[ -f "$HOME/.zshrc" ]]; then
-  if ! grep -q "ANDROID_HOME" "$HOME/.zshrc"; then
-    cat <<'EOT' >> "$HOME/.zshrc"
-
-# Android SDK Environment Variables
-export ANDROID_HOME="$HOME/Android/Sdk"
-export PATH="$PATH:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
-EOT
-    echo "Added Android SDK paths to ~/.zshrc"
-  fi
 fi
 
 echo "Android Studio setup completed successfully!"
