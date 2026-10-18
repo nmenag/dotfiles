@@ -13,6 +13,7 @@ When reading, updating, or authoring code in this repository, all AI agents must
 3. **Unattended Execution**: Scripts must run non-interactively without prompting for user confirmation or hanging unattended runners (use `-y` for `apt-get`, `--unattended` for installers, avoid commands like `newgrp`).
 4. **Modern APT & Security Practices**: Never use deprecated `apt-key`. Store GPG keys under `/etc/apt/keyrings/` and reference them explicitly via `[signed-by=...]`.
 5. **Distribution Agility**: Support Ubuntu derivatives (e.g., Pop!_OS, Linux Mint) by determining codenames using `CODENAME="${UBUNTU_CODENAME:-$(lsb_release -cs)}"`.
+6. **User-Managed Commits (No Automated Commits)**: AI agents must never execute `git commit` or create git commits automatically. Always apply, compile, test, and empirically verify code and configuration changes directly in the workspace, leaving Git staging, commits, and commit messages entirely for the user to review and author.
 
 ---
 

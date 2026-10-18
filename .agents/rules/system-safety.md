@@ -20,3 +20,7 @@ These rules protect user workstation state, personal configurations, and system 
 
 4. **Preserve User Customizations**:
    - Avoid destructive overwriting of existing shell dotfiles (`~/.zshrc`, `~/.bashrc`, `~/.gitconfig`). Always append conditionally or use dedicated modular include files (e.g., `~/.zshrc.d/`).
+
+5. **No Automated Git Commits (User-Managed Commits)**:
+   - Never execute `git commit` or create automated commits unless the user explicitly requests to commit in that turn.
+   - Always implement, compile, test, and empirically verify code and configuration changes directly in the workspace, leaving all Git staging, commits, and commit messages for the user to review and manage.

@@ -16,6 +16,9 @@ These guidelines provide the common source of truth for coding assistants and ag
 4. **Distribution Agnostic (Debian / Ubuntu / Pop!_OS)**:
    - When configuring APT repositories, always use modern keyrings (`/etc/apt/keyrings/`) with explicit `[signed-by=...]` directives.
    - Resolve Ubuntu codenames dynamically using `CODENAME="${UBUNTU_CODENAME:-$(lsb_release -cs)}"`.
+5. **User-Controlled Version Control (No Automated Commits)**:
+   - AI agents must never execute `git commit` or create automated commits.
+   - Always implement, compile, test, and empirically verify code and configuration changes directly in the workspace, leaving Git staging, commits, and commit messages entirely for the user to review and author.
 
 ---
 
