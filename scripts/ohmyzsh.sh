@@ -1,9 +1,21 @@
 #!/bin/bash
+set -euo pipefail
 
-echo "Installing ohmyzsh"
+echo "Installing Zsh and Oh My Zsh..."
 
-sudo apt install zsh -y
+sudo apt-get update -y
+sudo apt-get install -y zsh curl git
 
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+if [[ -d "$HOME/.oh-my-zsh" ]]; then
+  echo "Oh My Zsh is already installed at $HOME/.oh-my-zsh."
+else
+  echo "Downloading and installing Oh My Zsh (unattended)..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  echo "Oh My Zsh installed successfully!"
+fi
 
-echo "If it can't works, reboot the machine."
+CURRENT_SHELL="$(basename "$SHELL")"
+if [[ "$CURRENT_SHELL" != "zsh" ]]; then
+  echo "Current shell is $CURRENT_SHELL."
+  echo "To make Zsh your default shell, run: chsh -s $(which zsh)"
+fi

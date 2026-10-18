@@ -1,65 +1,89 @@
-
 #!/bin/bash
+set -euo pipefail
 
-echo "Configuration Git"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-ssh-keygen -t ed25519 -C $(echo "$EMAIL")
+# Source .env if variables are missing
+if [[ -z "${EMAIL:-}" || -z "${USERNAME:-}" ]]; then
+  if [[ -f "$ROOT_DIR/.env" ]]; then
+    echo "Loading environment variables from $ROOT_DIR/.env..."
+    # shellcheck disable=SC1091
+    source "$ROOT_DIR/.env"
+  fi
+fi
 
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_ed25519
-sudo apt-get install xclip
-xclip -selection clipboard < ~/.ssh/id_ed25519.pub
+if [[ -z "${EMAIL:-}" || -z "${USERNAME:-}" ]]; then
+  echo "WARNING: EMAIL and USERNAME should be set in .env or exported in your shell."
+  echo "Current EMAIL='${EMAIL:-}', USERNAME='${USERNAME:-}'"
+fi
 
-$(git config --global user.name "$USERNAME")
-$(git config --global user.email "$EMAIL")
+echo "Configuring Git..."
 
-cat <<EOT >> ~/.gitconfig
+# Set user identity if provided
+if [[ -n "${USERNAME:-}" ]]; then
+  git config --global user.name "$USERNAME"
+  echo "Set git user.name to: $USERNAME"
+fi
 
-[color]
-        status = auto
-        branch = auto
-        diff = auto
-        interactive = auto
-        ui = auto
+if [[ -n "${EMAIL:-}" ]]; then
+  git config --global user.email "$EMAIL"
+  echo "Set git user.email to: $EMAIL"
+fi
 
-[core]
-        editor = nano -w
+# Core Git Settings
+git config --global init.defaultBranch main
+git config --global core.editor "nano -w"
 
-[color "branch"]
-        current = yellow reverse
-        local = yellow
-        remote = green
+# Color Configuration
+git config --global color.ui auto
+git config --global color.status auto
+git config --global color.branch auto
+git config --global color.diff auto
+git config --global color.interactive auto
 
-[color "diff"]
-        meta = yellow bold
-        frag = magenta bold
-        old = red bold
-        new = green bold
+git config --global color.branch.current "yellow reverse"
+git config --global color.branch.local "yellow"
+git config --global color.branch.remote "green"
 
-[color "status"]
-	added = yellow
-	changed = green
-	untracked = cyan
+git config --global color.diff.meta "yellow bold"
+git config --global color.diff.frag "magenta bold"
+git config --global color.diff.old "red bold"
+git config --global color.diff.new "green bold"
 
-[alias]
-        lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-EOT
+git config --global color.status.added "yellow"
+git config --global color.status.changed "green"
+git config --global color.status.untracked "cyan"
 
-echo "finished Git config"
+# Aliases
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
+# SSH Key Configuration (Idempotent)
+SSH_KEY="$HOME/.ssh/id_ed25519"
+if [[ -f "$SSH_KEY" ]]; then
+  echo "SSH key already exists at $SSH_KEY. Skipping generation."
+else
+  echo "Generating new ED25519 SSH key..."
+  mkdir -p "$HOME/.ssh"
+  chmod 700 "$HOME/.ssh"
+  ssh-keygen -t ed25519 -C "${EMAIL:-git-user}" -f "$SSH_KEY" -N ""
+  echo "Generated SSH key at $SSH_KEY"
+fi
 
-## ADD SSH KEY
-# https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account?tool=webui
+# Add key to ssh-agent
+eval "$(ssh-agent -s)" > /dev/null
+ssh-add "$SSH_KEY" 2>/dev/null || true
 
-## NOTE:
+# Copy public key to clipboard if clipboard tool is available
+if command -v wl-copy &>/dev/null; then
+  wl-copy < "${SSH_KEY}.pub"
+  echo "Public key copied to clipboard using wl-copy."
+elif command -v xclip &>/dev/null; then
+  xclip -selection clipboard < "${SSH_KEY}.pub"
+  echo "Public key copied to clipboard using xclip."
+else
+  echo "Public key (${SSH_KEY}.pub):"
+  cat "${SSH_KEY}.pub"
+fi
 
-# Create Personal Access Token on GitHub
-# From your GitHub account:
-#       - go to Settings => Developer Settings => Personal Access Token => Generate New Token (Give your password) => Fillup the form => click Generate token => Copy the generated Token, it will be something like ghp_sFhFsSHhTzMDreGRLjmks4Tzuzgthdvfsrta
-# git config --global credential.helper cache
-# restart the terminal
-
-# clone the projects  via SSH instead HTTPS
-# example git@github.com:nmenag/dotfiles.git
-#
-
+echo "Git configuration completed successfully!"

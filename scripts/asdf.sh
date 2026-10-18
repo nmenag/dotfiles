@@ -1,84 +1,84 @@
 #!/bin/bash
+set -euo pipefail
 
-echo "Installing ASDF"
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.15.0
+ASDF_DIR="$HOME/.asdf"
+ASDF_VERSION="v0.15.0"
 
-echo -e "\n. $HOME/.asdf/asdf.sh" >> ~/.zshrc
+echo "Checking ASDF installation..."
 
-source ~/.zshrc
+if [[ ! -d "$ASDF_DIR" ]]; then
+  echo "Installing ASDF ($ASDF_VERSION)..."
+  git clone https://github.com/asdf-vm/asdf.git "$ASDF_DIR" --branch "$ASDF_VERSION"
+else
+  echo "ASDF is already cloned at $ASDF_DIR."
+fi
 
-echo "ASDF installed!!"
-echo $(asdf --version)
+# Load asdf into current shell session
+if [[ -f "$ASDF_DIR/asdf.sh" ]]; then
+  # shellcheck disable=SC1091
+  . "$ASDF_DIR/asdf.sh"
+else
+  echo "Error: $ASDF_DIR/asdf.sh not found!"
+  exit 1
+fi
 
-echo "Install ruby"
+# Ensure asdf is sourced in ~/.zshrc idempotently
+if [[ -f "$HOME/.zshrc" ]]; then
+  if ! grep -q "\.asdf/asdf\.sh" "$HOME/.zshrc"; then
+    echo -e "\n# ASDF version manager\n. \"$HOME/.asdf/asdf.sh\"" >> "$HOME/.zshrc"
+    echo "Added ASDF to ~/.zshrc"
+  fi
+  if ! grep -q "shell_history enabled" "$HOME/.zshrc"; then
+    echo 'export ERL_AFLAGS="-kernel shell_history enabled"' >> "$HOME/.zshrc"
+  fi
+fi
 
-asdf plugin add ruby https://github.com/asdf-vm/asdf-ruby.git
-asdf install ruby latest
-asdf global ruby latest
+# Helper function to add asdf plugins safely
+add_plugin() {
+  local name="$1"
+  local url="${2:-}"
+  if asdf plugin list 2>/dev/null | grep -q "^${name}$"; then
+    echo "ASDF plugin '$name' already added."
+  else
+    echo "Adding ASDF plugin '$name'..."
+    if [[ -n "$url" ]]; then
+      asdf plugin add "$name" "$url"
+    else
+      asdf plugin add "$name"
+    fi
+  fi
+}
 
-echo "Install Erlang"
+echo "Current ASDF version: $(asdf --version)"
 
-asdf plugin add erlang https://github.com/asdf-vm/asdf-erlang.git
-asdf install erlang latest
-asdf global erlang latest
+# Ruby
+echo "Configuring Ruby..."
+add_plugin "ruby" "https://github.com/asdf-vm/asdf-ruby.git"
+asdf install ruby latest || echo "Ruby install skipped or already up-to-date"
+asdf global ruby latest || true
 
-cat <<EOT >> ~/.zshrc
-export ERL_AFLAGS="-kernel shell_history enabled"
-EOT
+# Erlang
+echo "Configuring Erlang..."
+add_plugin "erlang" "https://github.com/asdf-vm/asdf-erlang.git"
+asdf install erlang latest || echo "Erlang install skipped or already up-to-date"
+asdf global erlang latest || true
 
-echo "Install Elixir"
+# Elixir
+echo "Configuring Elixir..."
+add_plugin "elixir" "https://github.com/asdf-vm/asdf-elixir.git"
+asdf install elixir latest || echo "Elixir install skipped or already up-to-date"
+asdf global elixir latest || true
 
-asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
-asdf install elixir latest
-asdf global elixir latest
+# Node.js
+echo "Configuring Node.js..."
+add_plugin "nodejs" "https://github.com/asdf-vm/asdf-nodejs.git"
+asdf install nodejs latest || echo "Node.js install skipped or already up-to-date"
+asdf global nodejs latest || true
 
-echo "Install Nodejs"
+# Python
+echo "Configuring Python..."
+add_plugin "python"
+asdf install python latest || echo "Python install skipped or already up-to-date"
+asdf global python latest || true
 
-asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-asdf install nodejs latest
-asdf global nodejs latest
-
-echo "Install python"
-
-asdf plugin-add python
-asdf install python latest
-asdf global python latest
-
-asdf install python 3.8.0
-asdf global gcloud 3.8.0
-
-# echo 'Install gcloud'
-
-# asdf plugin add gcloud
-# asdf install gcloud latest
-# asdf global gcloud latest
-
-# step configuring
-
-# gcloud auth login
-# Set the project with: gcloud config set project <<Cluster name>>
-# Add the clusters: gcloud container clusters get-credentials  staging --region us-central1 --project <<Cluster name>>
-# gcloud container clusters get-credentials  production --region us-central1 --project <<Cluster name>>
-# install gke-loud-auth-plugin https://cloud.google.com/sdk/docs/install-sdk
-
-# echo "Install kubectl"
-# asdf plugin add kubectl
-# asdf install kubectl latest
-# asdf global kubectl latest
-
-# echo "Install kubectx"
-# asdf plugin add kubectx
-# asdf install kubectx latest
-# asdf global kubectx latest
-
-# echo "Install k9s"
-# asdf plugin add k9s
-# asdf install k9s latest
-# asdf global k9s latest
-
-# echo 'Install helm'
-# asdf plugin-add helm
-# asdf install helm latest
-# asdf global helm latest
-
-source ~/.zshrc
+echo "ASDF installation and plugin setup completed successfully!"

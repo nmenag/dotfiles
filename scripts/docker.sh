@@ -1,44 +1,55 @@
 #!/bin/bash
+set -euo pipefail
 
-echo "Updating System!!"
-sudo apt-get update -y && sudo apt-get upgrade -y
+echo "Setting up Docker..."
 
-echo "Removing old docker version"
-sudo apt-get remove docker docker-engine docker.io containerd runc -y
+# Remove conflicting older packages
+echo "Removing legacy docker packages if present..."
+sudo apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
 
-echo "Installing Docker"
-
+echo "Installing prerequisites..."
 sudo apt-get update -y
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
 
-sudo apt-get install \
-  apt-transport-https \
-  ca-certificates \
-  curl \
-  gnupg \
-  lsb-release
+# Ensure keyrings directory exists
+sudo install -m 0755 -d /etc/apt/keyrings
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+# Add Docker's official GPG key
+echo "Adding Docker official GPG key..."
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
 
+# Determine Ubuntu codename (handles Pop!_OS and Ubuntu derivatives)
+CODENAME="${UBUNTU_CODENAME:-$(lsb_release -cs)}"
+ARCH="$(dpkg --print-architecture)"
+
+echo "Adding Docker repository for ${CODENAME} (${ARCH})..."
 echo \
-  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  "deb [arch=${ARCH} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  ${CODENAME} stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
+echo "Installing Docker Engine, CLI, Containerd, Buildx, and Compose plugin..."
 sudo apt-get update -y
-sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-echo "Installing Docker-compose"
+# Setup docker group
+echo "Configuring docker group and permissions..."
+if ! getent group docker > /dev/null; then
+  sudo groupadd docker
+fi
 
-sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo usermod -aG docker "$USER"
 
-sudo chmod +x /usr/local/bin/docker-compose
+# Provide legacy docker-compose CLI compatibility wrapper if desired
+if ! command -v docker-compose &>/dev/null; then
+  echo "Creating docker-compose compatibility shim for 'docker compose'..."
+  sudo tee /usr/local/bin/docker-compose > /dev/null << 'EOF'
+#!/bin/sh
+exec docker compose "$@"
+EOF
+  sudo chmod +x /usr/local/bin/docker-compose
+fi
 
-echo "Create the docker group if it does not exist"
-sudo groupadd docker
-
-echo "Add your user to the docker group"
-
-sudo usermod -aG docker $USER
-
-newgrp docker
-
-echo "Reboot if still got error"
+echo "Docker installation and configuration completed!"
+echo "NOTE: To run docker commands without sudo in the current terminal, run: newgrp docker"
+echo "Or log out and log back in for group membership to take full effect."

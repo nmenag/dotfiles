@@ -1,42 +1,138 @@
 #!/bin/bash
+set -euo pipefail
 
-# ./copy.sh
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo "Updating System!!!"
-sudo apt update && sudo apt full-upgrade -y
-echo "Updated System!!!"
+# Color definitions
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
-function install {
-  which $1 &> /dev/null
+log_info() {
+  echo -e "${BLUE}[INFO]${NC} $1"
+}
 
-  if [ $? -ne 0 ]; then
-    echo "Installing: ${1}..."
-    sudo apt install -y $1
+log_success() {
+  echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+log_warn() {
+  echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+show_help() {
+  cat << EOF
+Usage: ./install.sh [OPTION]
+
+Provision development workstation packages and configurations.
+
+Options:
+  --all           Run full installation (Core packages, Oh-My-Zsh, Desktop apps, ASDF, VS Code, Git, Docker, Android Studio)
+  --core          Install only core build tools and essential system libraries
+  --help, -h      Show this help message
+
+Without options, defaults to running the standard installation suite.
+EOF
+}
+
+MODE="standard"
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+  show_help
+  exit 0
+elif [[ "${1:-}" == "--core" ]]; then
+  MODE="core"
+elif [[ "${1:-}" == "--all" ]]; then
+  MODE="all"
+fi
+
+log_info "Starting dotfiles setup from: $ROOT_DIR"
+
+# Check and source environment variables
+if [[ -f "$ROOT_DIR/.env" ]]; then
+  log_info "Found .env file, loading environment variables..."
+  # shellcheck disable=SC1091
+  source "$ROOT_DIR/.env"
+else
+  log_warn "No .env file found. You can copy .env.sample to .env to configure EMAIL and USERNAME."
+fi
+
+log_info "Updating package lists..."
+sudo apt-get update -y
+
+install_pkg() {
+  local pkg="$1"
+  if dpkg -s "$pkg" &>/dev/null; then
+    echo "  Package already installed: $pkg"
   else
-    echo "Already installed: ${1}"
+    echo "  Installing package: $pkg..."
+    sudo apt-get install -y "$pkg"
   fi
 }
 
-install make
-install build-essential
-install libssl-dev
-install zlib1g-dev
-install libbz2-dev
-install libreadline-dev
-install libsqlite3-dev
-install libyaml-dev # is required asdf install ruby
-install libncurses5-dev
-install libpq-dev # is required install for pg ge
-install wget
-install curl
-install llvm
-install snapd
-install cheese # program for video calling
-sudo apt upgrade -y
-sudo apt autoremove -y
+log_info "Installing core build tools and dependencies..."
+CORE_PACKAGES=(
+  make
+  build-essential
+  libssl-dev
+  zlib1g-dev
+  libbz2-dev
+  libreadline-dev
+  libsqlite3-dev
+  libyaml-dev
+  wget
+  curl
+  git
+  llvm
+  snapd
+  cheese
+)
 
-./scripts/ohmyzsh.sh
-./scripts/programs.sh
-./scripts/asdf.sh
-./scripts/vscode.sh
-./scripts/postgres.sh
+for pkg in "${CORE_PACKAGES[@]}"; do
+  install_pkg "$pkg"
+done
+
+# Handle ncurses development package (libncurses-dev on modern Ubuntu/Pop!_OS, libncurses5-dev on legacy)
+if apt-cache show libncurses-dev &>/dev/null; then
+  install_pkg libncurses-dev
+elif apt-cache show libncurses5-dev &>/dev/null; then
+  install_pkg libncurses5-dev
+fi
+
+log_info "Cleaning up unused packages..."
+sudo apt-get autoremove -y
+
+if [[ "$MODE" == "core" ]]; then
+  log_success "Core system packages installed successfully!"
+  exit 0
+fi
+
+# Modular component execution
+run_script() {
+  local script_name="$1"
+  local script_path="$ROOT_DIR/scripts/$script_name"
+
+  if [[ -f "$script_path" ]]; then
+    log_info "Running $script_name..."
+    bash "$script_path"
+    log_success "Finished $script_name"
+  else
+    log_warn "Script not found: $script_path"
+  fi
+}
+
+log_info "Running workstation setup modules..."
+run_script "ohmyzsh.sh"
+run_script "programs.sh"
+run_script "asdf.sh"
+run_script "vscode.sh"
+run_script "gitconfig.sh"
+
+if [[ "$MODE" == "all" ]]; then
+  log_info "Running extended modules..."
+  run_script "docker.sh"
+  run_script "android-studio.sh"
+fi
+
+log_success "Dotfiles workstation installation completed!"
+log_info "Tip: Run './scripts/verify.sh' to validate all scripts and tools."
