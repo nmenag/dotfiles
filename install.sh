@@ -28,8 +28,15 @@ Usage: ./install.sh [OPTION]
 Provision development workstation packages and configurations.
 
 Options:
-  --all           Run full installation (Core packages, Oh-My-Zsh, Desktop apps, ASDF, VS Code, Git, Docker, Android Studio)
+  --all           Run full installation (Core packages, Shell, Desktop apps, ASDF, VS Code, Zed, Ghostty, Herdr, pgAdmin, MongoDB Compass, Git, AI tools, Docker, Android Studio)
   --core          Install only core build tools and essential system libraries
+  --shell         Configure only Bash and Oh My Zsh dotfiles and plugins
+  --ai            Configure only AI CLI adapters (Claude, OpenCode, Codex, Kilo, Agy, Pi)
+  --zed           Install only Zed editor
+  --ghostty       Install only Ghostty terminal
+  --herdr         Install only Herdr workspace manager
+  --pgadmin       Install only pgAdmin 4 Desktop
+  --mongocompass  Install only MongoDB Compass
   --help, -h      Show this help message
 
 Without options, defaults to running the standard installation suite.
@@ -42,6 +49,20 @@ if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
   exit 0
 elif [[ "${1:-}" == "--core" ]]; then
   MODE="core"
+elif [[ "${1:-}" == "--shell" ]]; then
+  MODE="shell"
+elif [[ "${1:-}" == "--ai" ]]; then
+  MODE="ai"
+elif [[ "${1:-}" == "--zed" ]]; then
+  MODE="zed"
+elif [[ "${1:-}" == "--ghostty" ]]; then
+  MODE="ghostty"
+elif [[ "${1:-}" == "--herdr" ]]; then
+  MODE="herdr"
+elif [[ "${1:-}" == "--pgadmin" ]]; then
+  MODE="pgadmin"
+elif [[ "${1:-}" == "--mongocompass" ]]; then
+  MODE="mongocompass"
 elif [[ "${1:-}" == "--all" ]]; then
   MODE="all"
 fi
@@ -55,6 +76,51 @@ if [[ -f "$ROOT_DIR/.env" ]]; then
   source "$ROOT_DIR/.env"
 else
   log_warn "No .env file found. You can copy .env.sample to .env to configure EMAIL and USERNAME."
+fi
+
+# Modular component execution
+run_script() {
+  local script_name="$1"
+  local script_path="$ROOT_DIR/scripts/$script_name"
+
+  if [[ -f "$script_path" ]]; then
+    log_info "Running $script_name..."
+    bash "$script_path"
+    log_success "Finished $script_name"
+  else
+    log_warn "Script not found: $script_path"
+  fi
+}
+
+# Selective execution for user-space configs
+if [[ "$MODE" == "shell" ]]; then
+  run_script "shell.sh"
+  log_success "Shell dotfiles installation completed!"
+  exit 0
+elif [[ "$MODE" == "ai" ]]; then
+  run_script "ai-tools.sh"
+  log_success "AI tools synchronization completed!"
+  exit 0
+elif [[ "$MODE" == "zed" ]]; then
+  run_script "zed.sh"
+  log_success "Zed installation completed!"
+  exit 0
+elif [[ "$MODE" == "ghostty" ]]; then
+  run_script "ghostty.sh"
+  log_success "Ghostty installation completed!"
+  exit 0
+elif [[ "$MODE" == "herdr" ]]; then
+  run_script "herdr.sh"
+  log_success "Herdr installation completed!"
+  exit 0
+elif [[ "$MODE" == "pgadmin" ]]; then
+  run_script "pgadmin.sh"
+  log_success "pgAdmin 4 Desktop installation completed!"
+  exit 0
+elif [[ "$MODE" == "mongocompass" ]]; then
+  run_script "mongocompass.sh"
+  log_success "MongoDB Compass installation completed!"
+  exit 0
 fi
 
 log_info "Updating package lists..."
@@ -107,26 +173,18 @@ if [[ "$MODE" == "core" ]]; then
   exit 0
 fi
 
-# Modular component execution
-run_script() {
-  local script_name="$1"
-  local script_path="$ROOT_DIR/scripts/$script_name"
-
-  if [[ -f "$script_path" ]]; then
-    log_info "Running $script_name..."
-    bash "$script_path"
-    log_success "Finished $script_name"
-  else
-    log_warn "Script not found: $script_path"
-  fi
-}
-
 log_info "Running workstation setup modules..."
-run_script "ohmyzsh.sh"
+run_script "shell.sh"
 run_script "programs.sh"
 run_script "asdf.sh"
 run_script "vscode.sh"
+run_script "zed.sh"
+run_script "ghostty.sh"
+run_script "herdr.sh"
+run_script "pgadmin.sh"
+run_script "mongocompass.sh"
 run_script "gitconfig.sh"
+run_script "ai-tools.sh"
 
 if [[ "$MODE" == "all" ]]; then
   log_info "Running extended modules..."

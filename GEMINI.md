@@ -1,0 +1,1 @@
+/home/nmenag/personal-projects/dotfiles/AGENTS.md

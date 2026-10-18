@@ -12,13 +12,18 @@ NC='\033[0m'
 
 ERRORS=0
 
-echo -e "${BLUE}=== Dotfiles Repository Verification ===${NC}\n"
+echo -e "${BLUE}=== Dotfiles Repository Verification Suite ===${NC}\n"
 
-# 1. Check Shell Script Syntax
-echo -e "${BLUE}[1/4] Checking Bash script syntax (bash -n)...${NC}"
-SCRIPTS=("$ROOT_DIR/install.sh" "$ROOT_DIR"/scripts/*.sh)
+# 1. Check Shell Script Syntax across entire repo
+echo -e "${BLUE}[1/6] Checking Bash script syntax (bash -n)...${NC}"
+ALL_SCRIPTS=(
+  "$ROOT_DIR/install.sh"
+  "$ROOT_DIR"/scripts/*.sh
+  "$ROOT_DIR"/shell/*.sh
+  "$ROOT_DIR"/ai/adapters/*.sh
+)
 
-for script in "${SCRIPTS[@]}"; do
+for script in "${ALL_SCRIPTS[@]}"; do
   if [[ -f "$script" ]]; then
     rel_path="${script#"$ROOT_DIR/"}"
     if bash -n "$script" 2>&1; then
@@ -30,9 +35,9 @@ for script in "${SCRIPTS[@]}"; do
   fi
 done
 
-# 2. Check Executable Bits
-echo -e "\n${BLUE}[2/4] Checking executable permissions...${NC}"
-for script in "${SCRIPTS[@]}"; do
+# 2. Check Executable Permissions
+echo -e "\n${BLUE}[2/6] Checking executable permissions...${NC}"
+for script in "${ALL_SCRIPTS[@]}"; do
   if [[ -f "$script" ]]; then
     rel_path="${script#"$ROOT_DIR/"}"
     if [[ -x "$script" ]]; then
@@ -44,8 +49,8 @@ for script in "${SCRIPTS[@]}"; do
   fi
 done
 
-# 3. Check Configuration & Sample
-echo -e "\n${BLUE}[3/4] Checking environment configurations...${NC}"
+# 3. Environment & Git Secret Security Checks
+echo -e "\n${BLUE}[3/6] Checking environment and secret hygiene...${NC}"
 if [[ -f "$ROOT_DIR/.env.sample" ]]; then
   echo -e "  ${GREEN}✓${NC} .env.sample exists"
 else
@@ -53,14 +58,43 @@ else
   ERRORS=$((ERRORS + 1))
 fi
 
-if [[ -f "$ROOT_DIR/.env" ]]; then
-  echo -e "  ${GREEN}✓${NC} .env exists (local configuration active)"
+if git -C "$ROOT_DIR" check-ignore -q "$ROOT_DIR/.env" 2>/dev/null; then
+  echo -e "  ${GREEN}✓${NC} .env is properly ignored by Git"
 else
-  echo -e "  ${YELLOW}!${NC} .env does not exist (copy from .env.sample if configuring custom Git identity)"
+  echo -e "  ${RED}✗${NC} SECURITY RISK: .env is NOT ignored by .gitignore"
+  ERRORS=$((ERRORS + 1))
 fi
 
-# 4. Check Agents & Skills Configuration
-echo -e "\n${BLUE}[4/4] Checking AI agent configurations (.agents and AGENTS.md)...${NC}"
+# Ensure no tracked credentials or keys in git index
+TRACKED_SECRETS="$(git -C "$ROOT_DIR" ls-files | grep -E '(\.key|\.pem|\.token|\.secret|credentials\.json|auth\.json)$' || true)"
+if [[ -z "$TRACKED_SECRETS" ]]; then
+  echo -e "  ${GREEN}✓${NC} No secrets or keys tracked in Git index"
+else
+  echo -e "  ${RED}✗${NC} SECURITY RISK: Detected tracked secrets:\n$TRACKED_SECRETS"
+  ERRORS=$((ERRORS + 1))
+fi
+
+# 4. Check Shell Dotfiles Components
+echo -e "\n${BLUE}[4/6] Checking Shell dotfiles components...${NC}"
+EXPECTED_SHELL_FILES=(
+  "shell/env.sh"
+  "shell/aliases.sh"
+  "shell/functions.sh"
+  "shell/bashrc.sh"
+  "shell/zshrc.sh"
+  "shell/zsh/custom/themes/devex.zsh-theme"
+)
+for sf in "${EXPECTED_SHELL_FILES[@]}"; do
+  if [[ -f "$ROOT_DIR/$sf" ]]; then
+    echo -e "  ${GREEN}✓${NC} Shell component present: $sf"
+  else
+    echo -e "  ${RED}✗${NC} Missing shell component: $sf"
+    ERRORS=$((ERRORS + 1))
+  fi
+done
+
+# 5. Check Unified AI Agent Architecture & Skills
+echo -e "\n${BLUE}[5/6] Checking AI Agent instructions and skills...${NC}"
 if [[ -f "$ROOT_DIR/AGENTS.md" ]]; then
   echo -e "  ${GREEN}✓${NC} Root AGENTS.md exists"
 else
@@ -68,16 +102,57 @@ else
   ERRORS=$((ERRORS + 1))
 fi
 
-SKILL_FILES=("$ROOT_DIR"/.agents/skills/*/SKILL.md)
+if [[ -f "$ROOT_DIR/ai/common-instructions.md" ]]; then
+  echo -e "  ${GREEN}✓${NC} ai/common-instructions.md exists"
+else
+  echo -e "  ${RED}✗${NC} ai/common-instructions.md missing"
+  ERRORS=$((ERRORS + 1))
+fi
+
+# Check root links
+if [[ -L "$ROOT_DIR/CLAUDE.md" || -f "$ROOT_DIR/CLAUDE.md" ]]; then
+  echo -e "  ${GREEN}✓${NC} Root CLAUDE.md entrypoint exists"
+else
+  echo -e "  ${YELLOW}!${NC} Root CLAUDE.md missing (run ai/adapters/claude.sh to link)"
+fi
+
+if [[ -L "$ROOT_DIR/GEMINI.md" || -f "$ROOT_DIR/GEMINI.md" ]]; then
+  echo -e "  ${GREEN}✓${NC} Root GEMINI.md entrypoint exists"
+else
+  echo -e "  ${YELLOW}!${NC} Root GEMINI.md missing (run ai/adapters/agy.sh to link)"
+fi
+
+# Validate skills frontmatter
+SKILL_FILES=("$ROOT_DIR"/ai/skills/*/SKILL.md "$ROOT_DIR"/.agents/skills/*/SKILL.md)
 for skill_file in "${SKILL_FILES[@]}"; do
   if [[ -f "$skill_file" ]]; then
-    skill_name="$(basename "$(dirname "$skill_file")")"
+    rel_skill="${skill_file#"$ROOT_DIR/"}"
     if grep -q "^name:" "$skill_file" && grep -q "^description:" "$skill_file"; then
-      echo -e "  ${GREEN}✓${NC} Skill valid: $skill_name"
+      echo -e "  ${GREEN}✓${NC} Skill valid: $rel_skill"
     else
-      echo -e "  ${RED}✗${NC} Skill invalid frontmatter: $skill_name"
+      echo -e "  ${RED}✗${NC} Skill invalid frontmatter: $rel_skill"
       ERRORS=$((ERRORS + 1))
     fi
+  fi
+done
+
+# 6. Check AI Adapters Presence
+echo -e "\n${BLUE}[6/6] Checking AI adapters for 6 CLI tools...${NC}"
+EXPECTED_ADAPTERS=(
+  "ai/adapters/claude.sh"
+  "ai/adapters/opencode.sh"
+  "ai/adapters/codex.sh"
+  "ai/adapters/kilo.sh"
+  "ai/adapters/agy.sh"
+  "ai/adapters/pi.sh"
+  "ai/adapters/sync-all.sh"
+)
+for adapter in "${EXPECTED_ADAPTERS[@]}"; do
+  if [[ -f "$ROOT_DIR/$adapter" && -x "$ROOT_DIR/$adapter" ]]; then
+    echo -e "  ${GREEN}✓${NC} Adapter ready: $adapter"
+  else
+    echo -e "  ${RED}✗${NC} Adapter missing or not executable: $adapter"
+    ERRORS=$((ERRORS + 1))
   fi
 done
 

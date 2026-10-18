@@ -53,28 +53,44 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
 ```text
 .
 ├── AGENTS.md                  # Root workspace rules for AI agents
+├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
+├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
 ├── install.sh                 # Master workstation setup entrypoint
 ├── LICENSE                    # MIT license
 ├── README.md                  # Human-readable documentation
 ├── .env.sample                # Sample environment configuration
-├── .gitignore                 # Excludes .env, IDE configs, etc.
-├── .agents/                   # Workspace AI agent customizations
+├── .gitignore                 # Excludes .env, secrets, IDE configs, etc.
+├── ai/                        # Unified AI agent architecture
+│   ├── common-instructions.md # Universal guidelines for all 6 AI CLIs
+│   ├── rules/                 # Shared rules (Context7, Bash standards, Safety)
+│   ├── skills/                # Reusable Agent Skills (SKILL.md format)
+│   └── adapters/              # CLI adapters (claude, opencode, codex, kilo, agy, pi)
+├── shell/                     # Centralized shell dotfiles
+│   ├── env.sh                 # Environment variables and PATH deduplication
+│   ├── aliases.sh             # Shared Git, Docker, and navigation shortcuts
+│   ├── functions.sh           # DevEx productivity functions (ai-status, mkcd, etc.)
+│   ├── bashrc.sh              # Bash integration entrypoint
+│   ├── zshrc.sh               # Zsh integration entrypoint
+│   └── zsh/custom/themes/     # Custom prompt themes (devex.zsh-theme)
+├── .agents/                   # Workspace AI agent customizations (Antigravity bridge)
 │   ├── rules/                 # Modular agent rules
-│   │   ├── bash-standards.md
-│   │   └── system-safety.md
 │   └── skills/                # On-demand agent runbooks & workflows
-│       ├── add-setup-script/
-│       ├── validate-dotfiles/
-│       └── ubuntu-workstation-troubleshooting/
 └── scripts/                   # Modular installation scripts
+    ├── ai-tools.sh
     ├── android-studio.sh
     ├── asdf.sh
     ├── docker.sh
+    ├── ghostty.sh
     ├── gitconfig.sh
+    ├── herdr.sh
+    ├── mongocompass.sh
     ├── ohmyzsh.sh
+    ├── pgadmin.sh
     ├── programs.sh
+    ├── shell.sh
     ├── verify.sh
-    └── vscode.sh
+    ├── vscode.sh
+    └── zed.sh
 ```
 
 ---
@@ -88,7 +104,7 @@ Before finishing any task that touches shell scripts, verify the workspace:
 ./scripts/verify.sh
 
 # 2. Test bash syntax across all scripts
-for f in install.sh scripts/*.sh; do bash -n "$f"; done
+for f in install.sh scripts/*.sh shell/*.sh ai/adapters/*.sh; do bash -n "$f"; done
 ```
 
 For detailed runbooks on creating new setup scripts or troubleshooting Ubuntu system packages, reference the specialized skills in `.agents/skills/`.
