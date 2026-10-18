@@ -7,7 +7,7 @@ Automated workstation provisioning, development environment setup, unified shell
 ## Features
 
 - **Interactive Workstation CLI (`mena`)**:
-  - Written in **pure Rust** (`Clap` + `Dialoguer`), zero Node.js/TypeScript dependencies.
+  - Written in **pure Rust** (`Clap` + `Dialoguer`)
   - Multi-select interactive installation across 7 tool categories with OS, package manager, and installed version pre-detection.
   - Two-phase architecture (Planning vs. Execution): pre-installation summary, review/modification loop, and explicit confirmation.
   - Guaranteed safe cancellation (aborts with zero mutations).
@@ -39,6 +39,14 @@ Automated workstation provisioning, development environment setup, unified shell
 ├── AGENTS.md                  # Canonical workspace guidelines for AI coding agents
 ├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
 ├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
+├── docs/                      # Architecture & system design documentation
+│   ├── README.md              # Architecture index & component map
+│   ├── architecture.md        # High-level architecture & lifecycles
+│   ├── mena-cli.md            # Workstation orchestrator deep dive
+│   ├── shell-and-dotfiles.md  # Unified Bash & Oh My Zsh dotfiles architecture
+│   ├── ai-agent-system.md     # 6-in-1 AI Coding Assistant architecture
+│   ├── security-and-packaging.md # Modern APT keyrings & security model
+│   └── ci-cd-and-quality.md   # Quality gates & GitHub Actions CI
 ├── install.sh                 # Master workstation setup and provisioning entrypoint
 ├── mena/                      # Rust CLI source code (Clap + Dialoguer)
 │   ├── Cargo.toml             # Rust dependencies (clap, dialoguer, indicatif, console, serde)
@@ -85,6 +93,19 @@ Automated workstation provisioning, development environment setup, unified shell
     ├── vscode.sh              # VS Code installation & 25+ curated extensions
     └── zed.sh                 # Fast modern code editor (Zed)
 ```
+
+---
+
+## Architecture Documentation
+
+Detailed architectural blueprints, subsystem deep dives, and security models are documented under [`docs/`](./docs):
+
+- **[System Architecture Overview](./docs/architecture.md)**: End-to-end architectural blueprint, design principles, system layers, and component topology.
+- **[Workstation Orchestrator: `mena`](./docs/mena-cli.md)**: Deep dive into the pure Rust CLI (`Clap` + `Dialoguer`), two-phase planning engine, and safety invariants.
+- **[Unified Shell & Dotfiles](./docs/shell-and-dotfiles.md)**: Centralized Bash & Oh My Zsh dotfiles architecture, PATH deduplication, and custom DevEx prompt theme.
+- **[Unified Multi-Agent AI System](./docs/ai-agent-system.md)**: 6-in-1 AI Coding Assistant integration (Claude, OpenCode, Codex, Kilo, Agy, Pi) with shared skills and rules.
+- **[Security & Packaging Model](./docs/security-and-packaging.md)**: Modern APT keyrings (`/etc/apt/keyrings/`), secret hygiene, and distribution agility.
+- **[CI/CD & Quality Gates](./docs/ci-cd-and-quality.md)**: GitHub Actions test matrix, Commitlint enforcement, PR checks, and verification suites.
 
 ---
 
@@ -136,7 +157,7 @@ mena install --dry-run  # Simulate installation plan without modifying the works
 
 ## Interactive Workstation CLI: `mena`
 
-`mena` is an interactive workstation installation and synchronization tool authored in **Rust** using `Clap` and `Dialoguer` (no TypeScript or Node.js runtime required). It provides a guided terminal experience to configure and manage developer workstations safely and idempotently.
+`mena` is an interactive workstation installation and synchronization tool authored in **Rust** using `Clap` and `Dialoguer`. It provides a guided terminal experience to configure and manage developer workstations safely and idempotently.
 
 ### Core Commands
 

@@ -18,8 +18,9 @@ ensure_dir "$CLAUDE_DIR/skills"
 echo "Configuring Claude Code global instructions..."
 safe_symlink "$AI_DIR/common-instructions.md" "$CLAUDE_DIR/CLAUDE.md"
 
-# 2. Workspace root CLAUDE.md
-safe_symlink "$ROOT_DIR/AGENTS.md" "$ROOT_DIR/CLAUDE.md"
+# 2. Workspace root CLAUDE.md relative link (DRY)
+echo "Configuring workspace root CLAUDE.md..."
+ln -sfn "AGENTS.md" "$ROOT_DIR/CLAUDE.md"
 
 # 3. Rules
 echo "Configuring Claude Code global rules..."

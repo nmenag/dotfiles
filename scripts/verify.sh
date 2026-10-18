@@ -123,6 +123,13 @@ else
   ERRORS=$((ERRORS + 1))
 fi
 
+if [[ -f "$ROOT_DIR/docs/README.md" && -f "$ROOT_DIR/docs/architecture.md" ]]; then
+  echo -e "  ${GREEN}✓${NC} Architecture documentation present in docs/"
+else
+  echo -e "  ${RED}✗${NC} Architecture documentation missing in docs/"
+  ERRORS=$((ERRORS + 1))
+fi
+
 # Check root links
 if [[ -L "$ROOT_DIR/CLAUDE.md" || -f "$ROOT_DIR/CLAUDE.md" ]]; then
   echo -e "  ${GREEN}✓${NC} Root CLAUDE.md entrypoint exists"
@@ -145,6 +152,31 @@ for skill_file in "${SKILL_FILES[@]}"; do
       echo -e "  ${GREEN}✓${NC} Skill valid: $rel_skill"
     else
       echo -e "  ${RED}✗${NC} Skill invalid frontmatter: $rel_skill"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+done
+
+# Check DRY principle: .agents/rules and .agents/skills must be symlinks to ai/
+for rule_file in "$ROOT_DIR"/.agents/rules/*.md; do
+  if [[ -f "$rule_file" ]]; then
+    rel_rule="${rule_file#"$ROOT_DIR/"}"
+    if [[ -L "$rule_file" ]]; then
+      echo -e "  ${GREEN}✓${NC} DRY rule symlink: $rel_rule"
+    else
+      echo -e "  ${RED}✗${NC} DRY VIOLATION: $rel_rule is a duplicate physical file (must be a symlink to ai/rules/)"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+done
+
+for skill_dir in "$ROOT_DIR"/.agents/skills/*; do
+  if [[ -d "$skill_dir" ]]; then
+    rel_skill="${skill_dir#"$ROOT_DIR/"}"
+    if [[ -L "$skill_dir" ]]; then
+      echo -e "  ${GREEN}✓${NC} DRY skill symlink: $rel_skill"
+    else
+      echo -e "  ${RED}✗${NC} DRY VIOLATION: $rel_skill is a duplicate directory (must be a symlink to ai/skills/)"
       ERRORS=$((ERRORS + 1))
     fi
   fi
