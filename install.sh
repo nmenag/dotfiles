@@ -39,6 +39,8 @@ Options:
   --mongocompass  Install only MongoDB Compass
   --brave         Install only Brave Browser
   --orca          Install only Orca IDE
+  --cursor        Install only Cursor AI Editor
+  --mise          Install only Mise Version Manager
   --dotctl        Build and link the interactive dotctl Rust CLI
   --help, -h      Show this help message
 
@@ -70,6 +72,10 @@ elif [[ "${1:-}" == "--brave" ]]; then
   MODE="brave"
 elif [[ "${1:-}" == "--orca" ]]; then
   MODE="orca"
+elif [[ "${1:-}" == "--cursor" ]]; then
+  MODE="cursor"
+elif [[ "${1:-}" == "--mise" ]]; then
+  MODE="mise"
 elif [[ "${1:-}" == "--dotctl" ]]; then
   MODE="dotctl"
 elif [[ "${1:-}" == "--all" ]]; then
@@ -159,6 +165,14 @@ elif [[ "$MODE" == "orca" ]]; then
   run_script "orca.sh"
   log_success "Orca IDE installation completed!"
   exit 0
+elif [[ "$MODE" == "cursor" ]]; then
+  run_script "cursor.sh"
+  log_success "Cursor AI Editor installation completed!"
+  exit 0
+elif [[ "$MODE" == "mise" ]]; then
+  run_script "mise.sh"
+  log_success "Mise installation completed!"
+  exit 0
 fi
 
 log_info "Updating package lists..."
@@ -215,7 +229,9 @@ log_info "Running workstation setup modules..."
 run_script "shell.sh"
 run_script "programs.sh"
 run_script "asdf.sh"
+run_script "mise.sh"
 run_script "vscode.sh"
+run_script "cursor.sh"
 run_script "zed.sh"
 run_script "ghostty.sh"
 run_script "herdr.sh"

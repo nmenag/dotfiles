@@ -23,16 +23,6 @@ pub fn all_tools() -> Vec<Tool> {
             detection: DetectionMethod::Command("google-chrome"),
             version_flag: Some("--version"),
         },
-        Tool {
-            id: "firefox",
-            name: "Mozilla Firefox",
-            category: Category::Browsers,
-            description: "Fast, open-source web browser via standard packaging",
-            dependencies: &[],
-            install_method: InstallMethod::AptPackage("firefox"),
-            detection: DetectionMethod::Command("firefox"),
-            version_flag: Some("--version"),
-        },
 
         // --- CLI Essentials ---
         Tool {
@@ -97,6 +87,16 @@ pub fn all_tools() -> Vec<Tool> {
             detection: DetectionMethod::Command("asdf"),
             version_flag: Some("--version"),
         },
+        Tool {
+            id: "mise",
+            name: "Mise Version Manager",
+            category: Category::Runtimes,
+            description: "Fast polyglot runtime manager, env vars manager, and task runner (jdx/mise)",
+            dependencies: &["curl", "git"],
+            install_method: InstallMethod::Script("scripts/mise.sh"),
+            detection: DetectionMethod::Command("mise"),
+            version_flag: Some("--version"),
+        },
 
         // --- Developer Utilities, IDEs & Terminals ---
         Tool {
@@ -108,6 +108,16 @@ pub fn all_tools() -> Vec<Tool> {
             install_method: InstallMethod::Script("scripts/vscode.sh"),
             detection: DetectionMethod::Command("code"),
             version_flag: Some("--version"),
+        },
+        Tool {
+            id: "cursor",
+            name: "Cursor AI Editor",
+            category: Category::DevUtilities,
+            description: "AI-first code editor built for pair programming with generative models",
+            dependencies: &["curl"],
+            install_method: InstallMethod::Script("scripts/cursor.sh"),
+            detection: DetectionMethod::Command("cursor"),
+            version_flag: None,
         },
         Tool {
             id: "zed",

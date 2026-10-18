@@ -84,10 +84,12 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     ├── android-studio.sh
     ├── asdf.sh
     ├── brave.sh
+    ├── cursor.sh
     ├── docker.sh
     ├── ghostty.sh
     ├── gitconfig.sh
     ├── herdr.sh
+    ├── mise.sh
     ├── mongocompass.sh
     ├── ohmyzsh.sh
     ├── orca.sh

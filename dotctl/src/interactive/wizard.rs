@@ -152,7 +152,7 @@ fn ask_preferences(selected_ids: &[String], theme: &ColorfulTheme) -> Result<Wiz
     // Check multiple browsers
     let selected_browsers: Vec<&str> = selected_ids
         .iter()
-        .filter(|id| *id == "brave" || *id == "chrome" || *id == "firefox")
+        .filter(|id| *id == "brave" || *id == "chrome")
         .map(|s| s.as_str())
         .collect();
 
@@ -162,7 +162,6 @@ fn ask_preferences(selected_ids: &[String], theme: &ColorfulTheme) -> Result<Wiz
             .map(|id| match *id {
                 "brave" => "Brave Browser",
                 "chrome" => "Google Chrome",
-                "firefox" => "Mozilla Firefox",
                 _ => *id,
             })
             .collect();

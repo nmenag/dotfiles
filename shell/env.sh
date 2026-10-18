@@ -33,6 +33,11 @@ if [[ -d "$HOME/.asdf" ]]; then
   fi
 fi
 
+# Mise Version Manager shims
+if [[ -d "$HOME/.local/share/mise/shims" ]]; then
+  path_prepend "$HOME/.local/share/mise/shims"
+fi
+
 # Erlang & Elixir history
 export ERL_AFLAGS="-kernel shell_history enabled"
 

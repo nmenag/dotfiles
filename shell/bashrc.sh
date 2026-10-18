@@ -20,3 +20,9 @@ if [[ -f "$DOTFILES_SHELL_DIR/functions.sh" ]]; then
   # shellcheck disable=SC1091
   source "$DOTFILES_SHELL_DIR/functions.sh"
 fi
+
+# 4. Version managers & runtime hooks
+if command -v mise &>/dev/null; then
+  eval "$(mise activate bash)"
+fi
+

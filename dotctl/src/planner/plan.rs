@@ -112,6 +112,8 @@ impl InstallPlan {
                         || script_path.contains("pgadmin")
                         || script_path.contains("mongocompass")
                         || script_path.contains("orca")
+                        || script_path.contains("mise")
+                        || script_path.contains("cursor")
                     {
                         requires_sudo = true;
                     }

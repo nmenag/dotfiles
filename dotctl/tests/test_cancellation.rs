@@ -62,7 +62,7 @@ fn test_only_approved_actions_are_executed() {
     // Unselected tools must NOT be present
     let action_ids: Vec<&str> = plan.actions.iter().map(|a| a.tool_id.as_str()).collect();
     assert!(!action_ids.contains(&"chrome"));
-    assert!(!action_ids.contains(&"firefox"));
+    assert!(!action_ids.contains(&"cursor"));
     assert!(!action_ids.contains(&"vscode"));
     assert!(!action_ids.contains(&"docker"));
 }

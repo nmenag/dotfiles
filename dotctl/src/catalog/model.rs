@@ -50,9 +50,9 @@ impl Category {
 
     pub fn description(&self) -> &'static str {
         match self {
-            Category::Browsers => "Web browsers (Brave, Chrome, Firefox) for daily and development use",
+            Category::Browsers => "Web browsers (Brave, Chrome) for daily and development use",
             Category::CliTools => "Essential build tools, git, curl, and packaging prerequisites",
-            Category::Runtimes => "ASDF runtime version manager and language plugins (Node, Python, Ruby, etc.)",
+            Category::Runtimes => "ASDF & Mise runtime version managers and language plugins (Node, Python, Ruby, etc.)",
             Category::DevUtilities => "Code editors, terminal emulators, workspace managers and database tools",
             Category::AiAssistants => "Terminal AI assistants (Claude, OpenCode, Codex, Kilo, Agy, Pi) with unified instructions",
             Category::SkillManagement => "Official 'skills' CLI for discovering and managing Agent Skills",

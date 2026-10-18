@@ -18,6 +18,7 @@ pub struct SystemInfo {
     pub has_snap: bool,
     pub has_cargo: bool,
     pub has_asdf: bool,
+    pub has_mise: bool,
     pub has_npm: bool,
     pub has_npx: bool,
 }
@@ -65,6 +66,7 @@ impl SystemInfo {
             has_snap: command_path("snap").is_some(),
             has_cargo: command_path("cargo").is_some(),
             has_asdf: command_path("asdf").is_some() || Path::new(&env::var("HOME").unwrap_or_default()).join(".asdf/asdf.sh").exists(),
+            has_mise: command_path("mise").is_some() || Path::new(&env::var("HOME").unwrap_or_default()).join(".local/bin/mise").exists(),
             has_npm: command_path("npm").is_some(),
             has_npx: command_path("npx").is_some(),
         }

@@ -29,6 +29,7 @@ pub fn handle_doctor(system: &SystemInfo) -> Result<()> {
     print_pkg_manager("Snap Package Manager (snap)", system.has_snap);
     print_pkg_manager("Rust Cargo Toolchain (cargo)", system.has_cargo);
     print_pkg_manager("ASDF Runtime Manager (asdf)", system.has_asdf);
+    print_pkg_manager("Mise Version Manager (mise)", system.has_mise);
     print_pkg_manager("Node Package Manager (npm)", system.has_npm);
     print_pkg_manager("Node Executable Runner (npx)", system.has_npx);
 

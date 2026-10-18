@@ -19,7 +19,8 @@ fn test_catalog_completeness() {
     // Ensure specific core tools exist
     assert!(find_tool("brave").is_some(), "Brave must be in catalog");
     assert!(find_tool("chrome").is_some(), "Chrome must be in catalog");
-    assert!(find_tool("firefox").is_some(), "Firefox must be in catalog");
+    assert!(find_tool("cursor").is_some(), "Cursor must be in catalog");
+    assert!(find_tool("firefox").is_none(), "Firefox should not be in catalog");
     assert!(find_tool("claude").is_some(), "Claude must be in catalog");
     assert!(find_tool("opencode").is_some(), "OpenCode must be in catalog");
     assert!(find_tool("codex").is_some(), "Codex must be in catalog");
@@ -30,6 +31,7 @@ fn test_catalog_completeness() {
     assert!(find_tool("orca").is_some(), "Orca must be in catalog");
     assert!(find_tool("pgadmin").is_some(), "pgAdmin must be in catalog");
     assert!(find_tool("mongocompass").is_some(), "MongoCompass must be in catalog");
+    assert!(find_tool("mise").is_some(), "Mise must be in catalog");
 }
 
 #[test]
