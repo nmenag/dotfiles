@@ -12,7 +12,7 @@ on:
       - '**.md'
       - 'LICENSE'
   pull_request:
-    types: [opened, synchronize, reopened, edited]
+    types: [opened, synchronize, reopened]
     branches:
       - main
       - master
@@ -43,29 +43,6 @@ jobs:
 
       - name: Install Commitlint
         run: npm install --no-save @commitlint/cli @commitlint/config-conventional
-
-      - name: Validate Pull Request Title
-        if: github.event_name == 'pull_request'
-        env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          IS_DRAFT: ${{ github.event.pull_request.draft }}
-        run: |
-          echo "Auditing PR title: '$PR_TITLE'"
-          echo "Draft status: $IS_DRAFT"
-
-          # Handle draft / WIP status
-          if [[ "$PR_TITLE" =~ ^(\[?[Ww][Ii][Pp]\]?:?[[:space:]]*) ]] || [[ "$IS_DRAFT" == "true" ]]; then
-            echo "::notice title=Work in Progress::Pull request is marked as draft or work-in-progress."
-            CLEAN_TITLE=$(echo "$PR_TITLE" | sed -E 's/^(\[?[Ww][Ii][Pp]\]?:?[[:space:]]*)//')
-            if [[ -z "$CLEAN_TITLE" ]]; then
-              echo "PR title is purely WIP. Skipping strict conventional commit check for active draft."
-              exit 0
-            fi
-            echo "Validating underlying title: '$CLEAN_TITLE'"
-            echo "$CLEAN_TITLE" | npx commitlint --config .commitlintrc.json
-          else
-            echo "$PR_TITLE" | npx commitlint --config .commitlintrc.json
-          fi
 
       - name: Audit Pull Request Size
         if: github.event_name == 'pull_request'

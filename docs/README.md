@@ -11,7 +11,7 @@ In accordance with the **KISS Principle (Keep It Simple)**, the architectural sp
 | Document | Description |
 | :--- | :--- |
 | **[System Architecture & Subsystems](file:///home/nmenag/personal-projects/dotfiles/docs/architecture.md)** | End-to-end architectural blueprint, 5-layer topology, `mena` Rust orchestrator, centralized shell dotfiles, security & packaging models, and the 6-in-1 multi-agent AI system. |
-| **[CI/CD & Quality Gates](file:///home/nmenag/personal-projects/dotfiles/docs/ci-cd-and-quality.md)** | Unified GitHub Actions CI pipeline (`ci.yml`), Conventional Commits / Commitlint specifications, native in-runner PR title and size audits, and the 7-step local verification suite (`verify.sh`). |
+| **[CI/CD & Quality Gates](file:///home/nmenag/personal-projects/dotfiles/docs/ci-cd-and-quality.md)** | Unified GitHub Actions CI pipeline (`ci.yml`), Conventional Commits / Commitlint specifications, native in-runner PR size audit, and the 7-step local verification suite (`verify.sh`). |
 
 ---
 

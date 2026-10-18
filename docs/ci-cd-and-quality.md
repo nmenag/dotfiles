@@ -19,7 +19,6 @@ graph TD
 
     subgraph Tier2["Tier 2: Unified CI Pipeline (.github/workflows/ci.yml)"]
         subgraph Job1["Job: lint-commits-and-pr"]
-            PRTitle["Native Commitlint PR Title Check"]
             PRSize["Native Git Diff PR Size Audit"]
             CommitlintCI["Commitlint Commit History Check"]
         end
@@ -96,7 +95,6 @@ sequenceDiagram
 
     par Parallel Job: lint-commits-and-pr
         GitHub->>Node: Setup Node.js 22 & install @commitlint/config-conventional
-        GitHub->>Node: Validate PR Title against Conventional Commits (WIP-aware)
         GitHub->>Git: Compute PR diff statistics excluding lockfiles
         Git->>GitHub: Audit PR size (emit warning if >1500 lines)
         GitHub->>Node: Validate commit history against .commitlintrc.json
@@ -116,11 +114,7 @@ sequenceDiagram
 
 All pull request quality validations are executed natively within the runner using Node and Bash utilities, requiring only standard read permissions (`contents: read`, `pull-requests: read`) and eliminating external commit status API permission errors:
 
-1. **Native Commitlint PR Title Check**:
-   - Evaluates the pull request title directly against [`.commitlintrc.json`](file:///home/nmenag/personal-projects/dotfiles/.commitlintrc.json).
-   - Intelligently handles draft PRs and `WIP:` / `[WIP]` prefixes without failing prematurely.
-   - Blocks merging if the title fails the Conventional Commits specification.
-2. **Native PR Size Audit**:
+1. **Native PR Size Audit**:
    - Calculates changed lines using `git diff --numstat "origin/$GITHUB_BASE_REF"...HEAD` while ignoring generated files (`Cargo.lock`, `package-lock.json`).
    - Categorizes pull request magnitude:
      - `size/XS`: 0–19 lines

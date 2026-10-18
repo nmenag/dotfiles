@@ -98,7 +98,7 @@ Automated workstation provisioning, development environment setup, unified shell
 Detailed architectural blueprints, subsystem specifications, and security models are documented under [`docs/`](./docs):
 
 - **[System Architecture & Subsystems](./docs/architecture.md)**: End-to-end architectural blueprint, engineering principles (including KISS and Idempotency), 5-layer topology, `mena` Rust orchestrator, centralized shell dotfiles, modern APT keyrings, and the 6-in-1 multi-agent AI system.
-- **[CI/CD & Quality Gates](./docs/ci-cd-and-quality.md)**: Unified GitHub Actions CI pipeline (`ci.yml`), Conventional Commits / Commitlint specifications, native in-runner PR title and size audits, and the 7-step local verification suite (`verify.sh`).
+- **[CI/CD & Quality Gates](./docs/ci-cd-and-quality.md)**: Unified GitHub Actions CI pipeline (`ci.yml`), Conventional Commits / Commitlint specifications, native in-runner PR size audit, and the 7-step local verification suite (`verify.sh`).
 
 ---
 
@@ -336,10 +336,9 @@ All commit messages must adhere to the [Conventional Commits](https://www.conven
   - `chore(cli): rename dotctl to mena`
   - `ci: add commitlint github action`
 
-### Pull Request Checks (Title & Size)
+### Pull Request Checks (Size)
 
-Pull requests are automatically audited natively in [`.github/workflows/ci.yml`](./.github/workflows/ci.yml):
-- **Native Commitlint PR Title Check**: Validates that PR titles conform to Conventional Commits via Commitlint CLI with WIP/draft tolerance (eliminating external status API errors).
+Pull request size is automatically audited natively in [`.github/workflows/ci.yml`](./.github/workflows/ci.yml):
 - **Native PR Size Audit**: Categorizes pull request changes using `git diff --numstat` (ignoring lockfiles):
   - `size/XS`: 0–19 lines
   - `size/S`: 20–99 lines
