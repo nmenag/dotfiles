@@ -319,6 +319,17 @@ The repository includes an automated CI pipeline ([`.github/workflows/ci.yml`](.
 - **`mena` CLI Test Suite**: Runs all unit and integration tests (`cargo test`).
 - **Release Verification & Smoke Tests**: Compiles the release binary and executes non-mutating smoke tests (`mena --help`, `mena list`, `mena doctor`, `mena install --dry-run`).
 
+### Git Hooks (Pre-Commit & Commitlint)
+
+Local development integrity is reinforced via automated Git hooks provisioned by [`scripts/gitconfig.sh`](./scripts/gitconfig.sh):
+- **Pre-Commit Hook (`.git/hooks/pre-commit`)**:
+  - Blocks staging or committing secrets/credentials (`.env`, `.key`, `.pem`, etc.).
+  - Runs syntax checking (`bash -n`) on all staged shell scripts.
+  - Executes the fast repository integrity suite ([`scripts/verify.sh`](./scripts/verify.sh)).
+  - Automatically runs `cargo test` when Rust changes in `mena/` are staged.
+- **Commit-Msg Hook (`.git/hooks/commit-msg`)**:
+  - Enforces [Conventional Commits](https://www.conventionalcommits.org/) format using Commitlint with zero-dependency Bash regex fallback.
+
 ### Commit Message Standards (Commitlint)
 
 All commit messages must adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification defined in [`.commitlintrc.json`](./.commitlintrc.json):

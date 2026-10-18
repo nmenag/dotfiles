@@ -92,9 +92,59 @@ else
   cat "${SSH_KEY}.pub"
 fi
 
-# Setup Commitlint commit-msg hook if inside dotfiles git repo
+# Setup Git pre-commit and commit-msg hooks if inside dotfiles git repo
 HOOKS_DIR="$ROOT_DIR/.git/hooks"
 if [[ -d "$HOOKS_DIR" ]]; then
+  echo "Installing Git pre-commit hook..."
+  cat <<'EOF' > "$HOOKS_DIR/pre-commit"
+#!/bin/bash
+set -euo pipefail
+
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+
+echo "Running pre-commit checks..."
+
+# 1. Prevent staging and committing sensitive files or secrets
+STAGED_SECRETS="$(git diff --cached --name-only | grep -E '(\.key|\.pem|\.token|\.secret|credentials\.json|auth\.json|\.env)$' || true)"
+if [[ -n "$STAGED_SECRETS" ]]; then
+  echo -e "\033[0;31m[pre-commit error]\033[0m Attempting to commit sensitive file(s):"
+  echo "$STAGED_SECRETS"
+  echo "Please unstage these files before committing."
+  exit 1
+fi
+
+# 2. Syntax check staged shell scripts
+STAGED_SCRIPTS="$(git diff --cached --name-only --diff-filter=d | grep -E '\.sh$' || true)"
+if [[ -n "$STAGED_SCRIPTS" ]]; then
+  for script in $STAGED_SCRIPTS; do
+    if [[ -f "$ROOT_DIR/$script" ]]; then
+      if ! bash -n "$ROOT_DIR/$script"; then
+        echo -e "\033[0;31m[pre-commit error]\033[0m Syntax error in staged script: $script"
+        exit 1
+      fi
+    fi
+  done
+fi
+
+# 3. Repository verification suite
+if [[ -x "$ROOT_DIR/scripts/verify.sh" ]]; then
+  "$ROOT_DIR/scripts/verify.sh"
+elif [[ -f "$ROOT_DIR/scripts/verify.sh" ]]; then
+  bash "$ROOT_DIR/scripts/verify.sh"
+fi
+
+# 4. Run mena Rust tests if mena files are staged
+STAGED_RUST="$(git diff --cached --name-only --diff-filter=d | grep -E '^mena/.*\.(rs|toml)$' || true)"
+if [[ -n "$STAGED_RUST" ]] && command -v cargo &>/dev/null; then
+  echo "Staged changes detected in mena. Running cargo test..."
+  cargo test --manifest-path "$ROOT_DIR/mena/Cargo.toml" --quiet
+fi
+
+echo -e "\033[0;32m[pre-commit]\033[0m All pre-commit checks passed successfully!"
+EOF
+  chmod +x "$HOOKS_DIR/pre-commit"
+  echo "Git pre-commit hook active at $HOOKS_DIR/pre-commit"
+
   echo "Installing Commitlint commit-msg hook..."
   cat <<'EOF' > "$HOOKS_DIR/commit-msg"
 #!/bin/bash

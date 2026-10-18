@@ -88,6 +88,20 @@ else
   ERRORS=$((ERRORS + 1))
 fi
 
+# Check Git hooks if .git directory exists
+if [[ -d "$ROOT_DIR/.git/hooks" ]]; then
+  if [[ -x "$ROOT_DIR/.git/hooks/pre-commit" ]]; then
+    echo -e "  ${GREEN}✓${NC} Git pre-commit hook installed and executable"
+  else
+    echo -e "  ${YELLOW}!${NC} Git pre-commit hook missing (run scripts/gitconfig.sh to install)"
+  fi
+  if [[ -x "$ROOT_DIR/.git/hooks/commit-msg" ]]; then
+    echo -e "  ${GREEN}✓${NC} Git commit-msg hook installed and executable"
+  else
+    echo -e "  ${YELLOW}!${NC} Git commit-msg hook missing (run scripts/gitconfig.sh to install)"
+  fi
+fi
+
 # 4. Check Shell Dotfiles Components
 echo -e "\n${BLUE}[4/7] Checking Shell dotfiles components...${NC}"
 EXPECTED_SHELL_FILES=(
