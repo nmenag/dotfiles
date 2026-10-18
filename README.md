@@ -61,7 +61,9 @@ Automated workstation provisioning, development environment setup, unified shell
     ├── ghostty.sh             # Fast native terminal emulator via Snap
     ├── gitconfig.sh           # Git identity, aliases, and SSH ED25519 generation
     ├── herdr.sh               # Terminal workspace manager for AI coding agents
+    ├── mongocompass.sh        # Official MongoDB Compass GUI installer
     ├── ohmyzsh.sh             # Installs Zsh and Oh My Zsh (unattended)
+    ├── pgadmin.sh             # Official pgAdmin 4 Desktop APT repository & installer
     ├── programs.sh            # Desktop essentials (Chrome, Flameshot, VLC, BleachBit)
     ├── shell.sh               # Configures Bash & Oh My Zsh dotfiles, plugins, and themes
     ├── verify.sh              # Automated repository linting & integrity verification
@@ -104,11 +106,13 @@ Installs core system dependencies, shell configurations (Bash & Oh My Zsh), desk
 ```bash
 ./install.sh --shell    # Configures only Bash, Oh My Zsh, plugins and themes
 ./install.sh --ai       # Synchronizes only AI tools adapters (Claude, OpenCode, Codex, Kilo, Agy, Pi)
-./install.sh --zed      # Installs only Zed editor
-./install.sh --ghostty  # Installs only Ghostty terminal
-./install.sh --herdr    # Installs only Herdr workspace manager
-./install.sh --core     # Installs only core system build dependencies and headers
-./install.sh --all      # Full installation including Docker and Android Studio
+./install.sh --zed          # Installs only Zed editor
+./install.sh --ghostty      # Installs only Ghostty terminal
+./install.sh --herdr        # Installs only Herdr workspace manager
+./install.sh --pgadmin      # Installs only pgAdmin 4 Desktop
+./install.sh --mongocompass # Installs only MongoDB Compass
+./install.sh --core         # Installs only core system build dependencies and headers
+./install.sh --all          # Full installation including Docker and Android Studio
 ```
 
 ---
@@ -186,7 +190,9 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`ghostty.sh`](./scripts/ghostty.sh) | Installs Ghostty native terminal emulator via Snap (--classic) | `./scripts/ghostty.sh` |
 | [`gitconfig.sh`](./scripts/gitconfig.sh) | Configures Git identity, aliases (`git lg`), and ED25519 SSH key | `./scripts/gitconfig.sh` |
 | [`herdr.sh`](./scripts/herdr.sh) | Installs Herdr workspace manager and sets up Zsh completion | `./scripts/herdr.sh` |
+| [`mongocompass.sh`](./scripts/mongocompass.sh) | Installs MongoDB Compass GUI via official Debian package | `./scripts/mongocompass.sh` |
 | [`ohmyzsh.sh`](./scripts/ohmyzsh.sh) | Installs Zsh and Oh My Zsh (unattended) | `./scripts/ohmyzsh.sh` |
+| [`pgadmin.sh`](./scripts/pgadmin.sh) | Installs pgAdmin 4 Desktop via official PostgreSQL APT repository | `./scripts/pgadmin.sh` |
 | [`programs.sh`](./scripts/programs.sh) | Installs Google Chrome, Flameshot, VLC, and BleachBit | `./scripts/programs.sh` |
 | [`shell.sh`](./scripts/shell.sh) | Sets up Bash & Oh My Zsh loaders, OMZ plugins, and custom themes | `./scripts/shell.sh` |
 | [`verify.sh`](./scripts/verify.sh) | Complete linting, security, and integrity verification suite | `./scripts/verify.sh` |

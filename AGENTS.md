@@ -83,7 +83,9 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     ├── ghostty.sh
     ├── gitconfig.sh
     ├── herdr.sh
+    ├── mongocompass.sh
     ├── ohmyzsh.sh
+    ├── pgadmin.sh
     ├── programs.sh
     ├── shell.sh
     ├── verify.sh
