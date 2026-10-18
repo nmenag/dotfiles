@@ -86,4 +86,47 @@ else
   cat "${SSH_KEY}.pub"
 fi
 
+# Setup Commitlint commit-msg hook if inside dotfiles git repo
+HOOKS_DIR="$ROOT_DIR/.git/hooks"
+if [[ -d "$HOOKS_DIR" ]]; then
+  echo "Installing Commitlint commit-msg hook..."
+  cat <<'EOF' > "$HOOKS_DIR/commit-msg"
+#!/bin/bash
+set -euo pipefail
+
+COMMIT_MSG_FILE="$1"
+FIRST_LINE="$(head -n 1 "$COMMIT_MSG_FILE")"
+
+if [[ "$FIRST_LINE" =~ ^Merge.* || "$FIRST_LINE" =~ ^fixup\!.* || "$FIRST_LINE" =~ ^squash\!.* ]]; then
+  exit 0
+fi
+
+if npx --version >/dev/null 2>&1; then
+  npx --yes @commitlint/cli --edit "$COMMIT_MSG_FILE"
+elif commitlint --version >/dev/null 2>&1; then
+  commitlint --edit "$COMMIT_MSG_FILE"
+else
+  PATTERN="^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-zA-Z0-9_.-]+\))?: .+"
+  if ! echo "$FIRST_LINE" | grep -qE "$PATTERN"; then
+    echo -e "\033[0;31m[commitlint error]\033[0m Invalid commit message format:"
+    echo "  \"$FIRST_LINE\""
+    echo ""
+    echo "Commit messages must follow Conventional Commits specification:"
+    echo "  <type>(<optional scope>): <subject>"
+    echo ""
+    echo "Allowed types:"
+    echo "  feat, fix, chore, docs, style, refactor, perf, test, build, ci, revert"
+    echo ""
+    echo "Examples:"
+    echo "  feat: add commitlint support"
+    echo "  chore(cli): rename dotctl to mena"
+    echo "  docs: update CI documentation"
+    exit 1
+  fi
+fi
+EOF
+  chmod +x "$HOOKS_DIR/commit-msg"
+  echo "Commitlint commit-msg hook active at $HOOKS_DIR/commit-msg"
+fi
+
 echo "Git configuration completed successfully!"

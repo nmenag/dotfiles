@@ -290,6 +290,39 @@ Validate the syntax of all Bash scripts, executable permissions, Git secret hygi
 ./scripts/verify.sh
 ```
 
+### Continuous Integration (GitHub Actions)
+
+The repository includes an automated CI pipeline ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)) executed on pushes and pull requests across supported Ubuntu LTS releases (`ubuntu-24.04` and `ubuntu-22.04`):
+- **Commitlint**: Automatically verifies that commit messages follow the Conventional Commits specification.
+- **Script Validation**: Tests syntax across all shell scripts using `bash -n`.
+- **Integrity & Security**: Runs `./scripts/verify.sh` to enforce permissions, secret hygiene, dotfiles links, and skills frontmatter.
+- **`mena` CLI Test Suite**: Runs all unit and integration tests (`cargo test`).
+- **Release Verification & Smoke Tests**: Compiles the release binary and executes non-mutating smoke tests (`mena --help`, `mena list`, `mena doctor`, `mena install --dry-run`).
+
+### Commit Message Standards (Commitlint)
+
+All commit messages must adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification defined in [`.commitlintrc.json`](./.commitlintrc.json):
+- **Local Hook**: Automatically configured via [`scripts/gitconfig.sh`](./scripts/gitconfig.sh) in `.git/hooks/commit-msg` with zero-dependency regex fallback.
+- **CI Pipeline**: Evaluated via `wagoid/commitlint-github-action@v6` on pull requests and branch pushes.
+- **Format**: `<type>(<optional scope>): <subject>`
+- **Allowed Types**: `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `revert`.
+- **Examples**:
+  - `feat: add cursor AI editor`
+  - `chore(cli): rename dotctl to mena`
+  - `ci: add commitlint github action`
+
+### Pull Request Checks (Title & Size)
+
+Pull requests are automatically audited and labeled via [`.github/workflows/pr-checks.yml`](./.github/workflows/pr-checks.yml):
+- **Semantic PR Title Check**: Validates that PR titles conform to Conventional Commits using `amannn/action-semantic-pull-request@v6` (with `wip: true` draft support).
+- **PR Size Labeler & Audit**: Categorizes pull request changes using `pascalgn/size-label-action@v0.5.7` (ignoring lockfiles):
+  - `size/XS`: 0–19 lines
+  - `size/S`: 20–99 lines
+  - `size/M`: 100–299 lines
+  - `size/L`: 300–799 lines
+  - `size/XL`: 800–1499 lines
+  - `size/XXL`: 1500+ lines (triggers review advisory warning)
+
 ---
 
 ## Modular Scripts Reference

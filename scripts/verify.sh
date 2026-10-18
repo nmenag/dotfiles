@@ -58,6 +58,20 @@ else
   ERRORS=$((ERRORS + 1))
 fi
 
+if [[ -f "$ROOT_DIR/.commitlintrc.json" ]]; then
+  echo -e "  ${GREEN}✓${NC} .commitlintrc.json exists"
+else
+  echo -e "  ${RED}✗${NC} .commitlintrc.json is missing"
+  ERRORS=$((ERRORS + 1))
+fi
+
+if [[ -f "$ROOT_DIR/.github/workflows/ci.yml" && -f "$ROOT_DIR/.github/workflows/pr-checks.yml" ]]; then
+  echo -e "  ${GREEN}✓${NC} GitHub Actions workflows configured (ci.yml, pr-checks.yml)"
+else
+  echo -e "  ${RED}✗${NC} Missing GitHub Actions workflow files"
+  ERRORS=$((ERRORS + 1))
+fi
+
 if git -C "$ROOT_DIR" check-ignore -q "$ROOT_DIR/.env" 2>/dev/null; then
   echo -e "  ${GREEN}✓${NC} .env is properly ignored by Git"
 else
