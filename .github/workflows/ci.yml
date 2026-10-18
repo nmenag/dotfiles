@@ -186,3 +186,6 @@ jobs:
 
           # Verify non-interactive simulation of workstation setup
           ./mena/target/release/mena install --dry-run --yes
+
+          # Verify core foundation installation simulation
+          ./mena/target/release/mena core --dry-run

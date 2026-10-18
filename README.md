@@ -126,9 +126,17 @@ nano .env   # Set EMAIL and USERNAME
 ### 4. Run Installation
 
 #### Bootstrap Workstation
-Bootstraps core system build tools, installs and configures **Git** and **Docker Engine** (core foundations that are always installed), compiles and links the `mena` CLI to `~/.local/bin/mena` (and `~/.local/bin/dotctl`), and launches the interactive `mena` installation wizard:
+Bootstraps core system build tools, installs and configures **Git** and **Docker Engine** (core foundations that are always installed automatically), compiles and links the `mena` CLI to `~/.local/bin/mena` (and `~/.local/bin/dotctl`), and launches the interactive `mena` installation wizard:
 ```bash
 ./install.sh
+```
+
+#### Re-Execute or Repair Core Foundations
+If core tools need to be reinstalled, repaired, or updated without running the interactive wizard:
+```bash
+mena core               # Run via mena Rust CLI
+./install.sh --core     # Run via bootstrap script and exit
+./scripts/core.sh       # Direct script execution
 ```
 
 #### Tool Management via `mena`
@@ -136,6 +144,7 @@ Once bootstrapped, all workstation tools, browsers, runtimes, editors, and AI as
 
 ```bash
 mena install            # Launch interactive wizard across tool categories
+mena core               # Re-execute core workstation essentials (Git, Docker, Build Tools)
 mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
 mena install programs   # Wizard scoped to desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno)
 mena install runtimes   # Wizard scoped to ASDF and Mise version managers

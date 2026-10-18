@@ -3,7 +3,7 @@ use clap::Parser;
 use colored::Colorize;
 
 use mena::cli::{Cli, Commands};
-use mena::commands::{handle_doctor, handle_install, handle_list, handle_update};
+use mena::commands::{handle_core, handle_doctor, handle_install, handle_list, handle_update};
 use mena::system::detector::SystemInfo;
 
 fn main() -> Result<()> {
@@ -11,8 +11,15 @@ fn main() -> Result<()> {
     let system = SystemInfo::detect();
 
     let result = match cli.command {
-        Some(Commands::Install { category, dry_run, yes }) => {
-            handle_install(category, dry_run, yes, &system)
+        Some(Commands::Install { category, core, dry_run, yes }) => {
+            if core {
+                handle_core(dry_run)
+            } else {
+                handle_install(category, dry_run, yes, &system)
+            }
+        }
+        Some(Commands::Core { dry_run }) => {
+            handle_core(dry_run)
         }
         Some(Commands::List { category, json }) => {
             handle_list(category, json)

@@ -19,10 +19,13 @@ In accordance with the **KISS Principle (Keep It Simple)**, the architectural sp
 
 ```bash
 # 1. Master Workstation Bootstrap (Idempotent)
-./install.sh
+./install.sh                  # Bootstrap core and launch interactive mena wizard
+./install.sh --core           # Install or repair core foundations and exit
+./scripts/core.sh             # Direct core script execution (Build tools, Git, Docker)
 
 # 2. Interactive Workstation Orchestrator (Rust CLI)
 mena install                  # Interactive category-by-category wizard
+mena core                     # Re-execute or repair core tools (Git, Docker, Build Tools)
 mena list                     # Inspect 34 developer tools across 7 categories
 mena doctor                   # Environment diagnostic engine
 mena install --dry-run --yes  # Non-mutating simulation

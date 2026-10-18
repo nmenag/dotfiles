@@ -155,6 +155,12 @@ sequenceDiagram
     Mena->>Developer: Displays final report (Successes, Skips, Warnings)
 ```
 
+### 3.1 Dedicated Core Recovery & Re-Execution
+While `./install.sh` automatically provisions core foundations during initial bootstrap, developers can re-execute or repair core foundations at any time without entering the interactive selection wizard:
+- **`mena core`** (or `mena install --core`): Pure Rust CLI command that verifies, repairs, and provisions all core system foundations.
+- **`./install.sh --core`**: Executes `scripts/core.sh` directly and exits immediately without compiling or launching the wizard.
+- **`./scripts/core.sh`**: Standalone idempotent script to install build essentials, compilation headers, cURL, Wget, Snapd, Git (`scripts/gitconfig.sh`), and Docker CE (`scripts/docker.sh`).
+
 ---
 
 ## 4. Subsystem 1: Workstation Orchestrator (`mena` CLI)
