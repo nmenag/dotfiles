@@ -123,7 +123,7 @@ else
   ERRORS=$((ERRORS + 1))
 fi
 
-if [[ -f "$ROOT_DIR/docs/README.md" && -f "$ROOT_DIR/docs/architecture.md" ]]; then
+if [[ -f "$ROOT_DIR/docs/architecture.md" ]]; then
   echo -e "  ${GREEN}✓${NC} Architecture documentation present in docs/"
 else
   echo -e "  ${RED}✗${NC} Architecture documentation missing in docs/"

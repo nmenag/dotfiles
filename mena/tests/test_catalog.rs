@@ -88,3 +88,29 @@ fn test_find_tool_case_insensitivity() {
     assert!(find_tool("Brave").is_some());
     assert!(find_tool("nonexistent_tool_xyz").is_none());
 }
+
+#[test]
+fn test_install_core_cli_parsing() {
+    use clap::Parser;
+    use mena::cli::{Cli, Commands};
+
+    let parsed = Cli::try_parse_from(["mena", "install", "core"]).expect("Should parse 'mena install core'");
+    match parsed.command {
+        Some(Commands::Install { category, core, dry_run, yes }) => {
+            assert_eq!(category.as_deref(), Some("core"));
+            assert!(!core);
+            assert!(!dry_run);
+            assert!(!yes);
+        }
+        _ => panic!("Expected Commands::Install with category 'core'"),
+    }
+
+    let parsed_dry = Cli::try_parse_from(["mena", "install", "core", "--dry-run"]).expect("Should parse 'mena install core --dry-run'");
+    match parsed_dry.command {
+        Some(Commands::Install { category, dry_run, .. }) => {
+            assert_eq!(category.as_deref(), Some("core"));
+            assert!(dry_run);
+        }
+        _ => panic!("Expected Commands::Install with dry_run true"),
+    }
+}

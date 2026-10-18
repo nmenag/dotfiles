@@ -41,9 +41,7 @@ Automated workstation provisioning, development environment setup, unified shell
 ├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
 ├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
 ├── docs/                      # Architecture & system design documentation
-│   ├── README.md              # Documentation index & quick reference
-│   ├── architecture.md        # Comprehensive system architecture & subsystem specs
-│   └── ci-cd-and-quality.md   # Quality gates & GitHub Actions CI
+│   └── architecture.md        # Comprehensive system architecture & subsystem specs
 ├── install.sh                 # Master workstation setup and provisioning entrypoint
 ├── mena/                      # Rust CLI source code (Clap + Dialoguer)
 │   ├── Cargo.toml             # Rust dependencies (clap, dialoguer, indicatif, console, serde)
@@ -98,7 +96,6 @@ Automated workstation provisioning, development environment setup, unified shell
 Detailed architectural blueprints, subsystem specifications, and security models are documented under [`docs/`](./docs):
 
 - **[System Architecture & Subsystems](./docs/architecture.md)**: End-to-end architectural blueprint, engineering principles (including KISS and Idempotency), 5-layer topology, `mena` Rust orchestrator, centralized shell dotfiles, modern APT keyrings, and the 6-in-1 multi-agent AI system.
-- **[CI/CD & Quality Gates](./docs/ci-cd-and-quality.md)**: Unified GitHub Actions CI pipeline (`ci.yml`), Conventional Commits / Commitlint specifications, native in-runner PR size audit, and the 7-step local verification suite (`verify.sh`).
 
 ---
 
@@ -134,7 +131,7 @@ Bootstraps core system build tools, installs and configures **Git** and **Docker
 #### Re-Execute or Repair Core Foundations
 If core tools need to be reinstalled, repaired, or updated without running the interactive wizard:
 ```bash
-mena core               # Run via mena Rust CLI
+mena install core       # Run via mena Rust CLI
 ./install.sh --core     # Run via bootstrap script and exit
 ./scripts/core.sh       # Direct script execution
 ```
@@ -144,7 +141,7 @@ Once bootstrapped, all workstation tools, browsers, runtimes, editors, and AI as
 
 ```bash
 mena install            # Launch interactive wizard across tool categories
-mena core               # Re-execute core workstation essentials (Git, Docker, Build Tools)
+mena install core       # Re-execute core workstation essentials (Git, Docker, Build Tools)
 mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
 mena install programs   # Wizard scoped to desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno)
 mena install runtimes   # Wizard scoped to ASDF and Mise version managers
@@ -166,7 +163,7 @@ mena install --dry-run  # Simulate installation plan without modifying the works
 | Command | Description |
 | :--- | :--- |
 | `mena install` | Interactive wizard across optional tool categories with multi-select and preference prompts (core tools are auto-installed) |
-| `mena install <category>` | Interactive wizard scoped to a single category (e.g. `browser`, `programs`, `runtimes`, `dev`, `ai`, `skills`, `shell`) |
+| `mena install <category>` | Wizard scoped to a category or core foundations (e.g. `core`, `browser`, `programs`, `runtimes`, `dev`, `ai`, `skills`, `shell`) |
 | `mena install -d, --dry-run` | Preview actions, dependency resolution, and planned commands without modifying the system |
 | `mena list` | View the complete tool catalog (34 tools) with real-time detection of installed versions |
 | `mena list -c <category>` | View catalog tools filtered by category (supports `--json` output) |

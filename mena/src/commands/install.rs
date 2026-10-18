@@ -15,7 +15,11 @@ pub fn handle_install(
     non_interactive_yes: bool,
     system: &SystemInfo,
 ) -> Result<()> {
-    if category_arg.as_deref() == Some("core") {
+    if category_arg
+        .as_deref()
+        .map(|s| s.eq_ignore_ascii_case("core"))
+        .unwrap_or(false)
+    {
         return super::core::handle_core(dry_run);
     }
 

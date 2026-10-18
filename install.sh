@@ -30,7 +30,7 @@ Bootstraps core workstation requirements (Git & Docker) and launches mena.
 All development tools, runtimes, browsers, editors, and shell dotfiles are managed via mena.
 
 Arguments:
-  [CATEGORY]     Optional category to install (e.g. browser, cli, runtimes, dev, ai, shell)
+  [CATEGORY]     Optional category to install (e.g. core, browser, cli, runtimes, dev, ai, shell)
 
 Options:
   -d, --dry-run  Preview actions without modifying the system
@@ -41,6 +41,12 @@ EOF
 
 if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
   show_help
+  exit 0
+fi
+
+if [[ "${1:-}" == "--core" ]]; then
+  log_info "Executing core workstation foundations setup directly..."
+  bash "$ROOT_DIR/scripts/core.sh" "${@:2}"
   exit 0
 fi
 
