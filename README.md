@@ -57,12 +57,14 @@ Automated workstation provisioning, development environment setup, unified shell
     ├── ai-tools.sh            # Synchronizes all 6 AI CLI adapters
     ├── android-studio.sh      # Java OpenJDK & Android Studio
     ├── asdf.sh                # ASDF runtime manager & plugins
+    ├── brave.sh               # Official Brave Browser signed APT repository & installer
     ├── docker.sh              # Docker Engine, CLI, Buildx, and Compose v2
     ├── ghostty.sh             # Fast native terminal emulator via Snap
     ├── gitconfig.sh           # Git identity, aliases, and SSH ED25519 generation
     ├── herdr.sh               # Terminal workspace manager for AI coding agents
     ├── mongocompass.sh        # Official MongoDB Compass GUI installer
     ├── ohmyzsh.sh             # Installs Zsh and Oh My Zsh (unattended)
+    ├── orca.sh                # Next-gen Orca IDE agentic development environment
     ├── pgadmin.sh             # Official pgAdmin 4 Desktop APT repository & installer
     ├── programs.sh            # Desktop essentials (Chrome, Flameshot, VLC, BleachBit)
     ├── shell.sh               # Configures Bash & Oh My Zsh dotfiles, plugins, and themes
@@ -111,6 +113,8 @@ Installs core system dependencies, shell configurations (Bash & Oh My Zsh), desk
 ./install.sh --herdr        # Installs only Herdr workspace manager
 ./install.sh --pgadmin      # Installs only pgAdmin 4 Desktop
 ./install.sh --mongocompass # Installs only MongoDB Compass
+./install.sh --brave        # Installs only Brave Browser
+./install.sh --orca         # Installs only Orca IDE
 ./install.sh --core         # Installs only core system build dependencies and headers
 ./install.sh --all          # Full installation including Docker and Android Studio
 ```
@@ -186,12 +190,14 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`ai-tools.sh`](./scripts/ai-tools.sh) | Synchronizes common instructions & skills across all 6 AI CLIs | `./scripts/ai-tools.sh` |
 | [`android-studio.sh`](./scripts/android-studio.sh) | Installs Java OpenJDK and Android Studio via Snap | `./scripts/android-studio.sh` |
 | [`asdf.sh`](./scripts/asdf.sh) | Installs ASDF v0.15.0 and runtime plugins (Node, Ruby, Python, Elixir, Erlang) | `./scripts/asdf.sh` |
+| [`brave.sh`](./scripts/brave.sh) | Installs Brave Browser via official signed APT repository | `./scripts/brave.sh` |
 | [`docker.sh`](./scripts/docker.sh) | Installs Docker CE, CLI, Containerd, Buildx, and Compose v2 plugin | `./scripts/docker.sh` |
 | [`ghostty.sh`](./scripts/ghostty.sh) | Installs Ghostty native terminal emulator via Snap (--classic) | `./scripts/ghostty.sh` |
 | [`gitconfig.sh`](./scripts/gitconfig.sh) | Configures Git identity, aliases (`git lg`), and ED25519 SSH key | `./scripts/gitconfig.sh` |
 | [`herdr.sh`](./scripts/herdr.sh) | Installs Herdr workspace manager and sets up Zsh completion | `./scripts/herdr.sh` |
 | [`mongocompass.sh`](./scripts/mongocompass.sh) | Installs MongoDB Compass GUI via official Debian package | `./scripts/mongocompass.sh` |
 | [`ohmyzsh.sh`](./scripts/ohmyzsh.sh) | Installs Zsh and Oh My Zsh (unattended) | `./scripts/ohmyzsh.sh` |
+| [`orca.sh`](./scripts/orca.sh) | Installs Orca IDE next-gen agentic development environment via official deb | `./scripts/orca.sh` |
 | [`pgadmin.sh`](./scripts/pgadmin.sh) | Installs pgAdmin 4 Desktop via official PostgreSQL APT repository | `./scripts/pgadmin.sh` |
 | [`programs.sh`](./scripts/programs.sh) | Installs Google Chrome, Flameshot, VLC, and BleachBit | `./scripts/programs.sh` |
 | [`shell.sh`](./scripts/shell.sh) | Sets up Bash & Oh My Zsh loaders, OMZ plugins, and custom themes | `./scripts/shell.sh` |

@@ -47,3 +47,11 @@ alias dpsa='docker ps -a'
 
 # Fast access to dotfiles
 alias dotfiles='cd "${DOTFILES_DIR:-$HOME/personal-projects/dotfiles}"'
+
+# Desktop / Development tools shortcuts
+if command -v orca-ide &>/dev/null; then
+  alias orca='orca-ide'
+fi
+if command -v brave-browser &>/dev/null; then
+  alias brave='brave-browser'
+fi

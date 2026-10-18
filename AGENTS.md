@@ -79,12 +79,14 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     ├── ai-tools.sh
     ├── android-studio.sh
     ├── asdf.sh
+    ├── brave.sh
     ├── docker.sh
     ├── ghostty.sh
     ├── gitconfig.sh
     ├── herdr.sh
     ├── mongocompass.sh
     ├── ohmyzsh.sh
+    ├── orca.sh
     ├── pgadmin.sh
     ├── programs.sh
     ├── shell.sh

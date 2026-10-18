@@ -28,7 +28,7 @@ Usage: ./install.sh [OPTION]
 Provision development workstation packages and configurations.
 
 Options:
-  --all           Run full installation (Core packages, Shell, Desktop apps, ASDF, VS Code, Zed, Ghostty, Herdr, pgAdmin, MongoDB Compass, Git, AI tools, Docker, Android Studio)
+  --all           Run full installation (Core packages, Shell, Desktop apps, ASDF, VS Code, Zed, Ghostty, Herdr, pgAdmin, MongoDB Compass, Brave, Orca, Git, AI tools, Docker, Android Studio)
   --core          Install only core build tools and essential system libraries
   --shell         Configure only Bash and Oh My Zsh dotfiles and plugins
   --ai            Configure only AI CLI adapters (Claude, OpenCode, Codex, Kilo, Agy, Pi)
@@ -37,6 +37,8 @@ Options:
   --herdr         Install only Herdr workspace manager
   --pgadmin       Install only pgAdmin 4 Desktop
   --mongocompass  Install only MongoDB Compass
+  --brave         Install only Brave Browser
+  --orca          Install only Orca IDE
   --help, -h      Show this help message
 
 Without options, defaults to running the standard installation suite.
@@ -63,6 +65,10 @@ elif [[ "${1:-}" == "--pgadmin" ]]; then
   MODE="pgadmin"
 elif [[ "${1:-}" == "--mongocompass" ]]; then
   MODE="mongocompass"
+elif [[ "${1:-}" == "--brave" ]]; then
+  MODE="brave"
+elif [[ "${1:-}" == "--orca" ]]; then
+  MODE="orca"
 elif [[ "${1:-}" == "--all" ]]; then
   MODE="all"
 fi
@@ -120,6 +126,14 @@ elif [[ "$MODE" == "pgadmin" ]]; then
 elif [[ "$MODE" == "mongocompass" ]]; then
   run_script "mongocompass.sh"
   log_success "MongoDB Compass installation completed!"
+  exit 0
+elif [[ "$MODE" == "brave" ]]; then
+  run_script "brave.sh"
+  log_success "Brave Browser installation completed!"
+  exit 0
+elif [[ "$MODE" == "orca" ]]; then
+  run_script "orca.sh"
+  log_success "Orca IDE installation completed!"
   exit 0
 fi
 
@@ -183,6 +197,8 @@ run_script "ghostty.sh"
 run_script "herdr.sh"
 run_script "pgadmin.sh"
 run_script "mongocompass.sh"
+run_script "brave.sh"
+run_script "orca.sh"
 run_script "gitconfig.sh"
 run_script "ai-tools.sh"
 
