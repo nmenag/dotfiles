@@ -21,7 +21,7 @@ pub fn run_wizard(
 ) -> Result<Option<InstallPlan>> {
     let theme = ColorfulTheme::default();
 
-    println!("\n{}", "=== dotctl Interactive Workstation Setup ===".bold().cyan());
+    println!("\n{}", "=== mena Interactive Workstation Setup ===".bold().cyan());
     println!("Operating System: {} ({}) | User: {}", system.os_name.bold(), system.codename, system.current_user);
     if let Some(cat) = filter_category {
         println!("Category Filter: {}", cat.display_name().bold().yellow());
@@ -64,8 +64,12 @@ pub fn run_wizard(
                 let item_text = format!("{:<24} [{}] - {}", tool.name.bold(), status_str, tool.description);
                 items.push(item_text);
 
-                // Default selection: pre-select if uninstalled or if it's core/shell/ai
-                let preselect = !status.is_installed() || tool.id == "shell-dotfiles" || tool.id == "ai-sync";
+                // Default selection: pre-select if uninstalled or if it's core (git, docker) or shell/ai
+                let preselect = !status.is_installed()
+                    || tool.id == "git"
+                    || tool.id == "docker"
+                    || tool.id == "shell-dotfiles"
+                    || tool.id == "ai-sync";
                 defaults.push(preselect);
             }
 

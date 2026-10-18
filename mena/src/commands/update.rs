@@ -9,7 +9,7 @@ use crate::system::package::home_path_exists;
 pub fn handle_update() -> Result<()> {
     let root = find_dotfiles_root();
 
-    println!("\n{}", "=== dotctl Update Manager ===".bold().cyan());
+    println!("\n{}", "=== mena Update Manager ===".bold().cyan());
 
     // 1. Synchronize AI adapters
     println!("\n{}:", "1. Synchronizing AI Coding Agent Adapters".bold());

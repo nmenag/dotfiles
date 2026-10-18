@@ -6,12 +6,12 @@ Automated workstation provisioning, development environment setup, unified shell
 
 ## Features
 
-- **Interactive Workstation CLI (`dotctl`)**:
+- **Interactive Workstation CLI (`mena`)**:
   - Written in **pure Rust** (`Clap` + `Dialoguer`), zero Node.js/TypeScript dependencies.
   - Multi-select interactive installation across 7 tool categories with OS, package manager, and installed version pre-detection.
   - Two-phase architecture (Planning vs. Execution): pre-installation summary, review/modification loop, and explicit confirmation.
   - Guaranteed safe cancellation (aborts with zero mutations).
-  - Subcommands for diagnostics (`dotctl doctor`), catalog browsing (`dotctl list`), and updates (`dotctl update`).
+  - Subcommands for diagnostics (`mena doctor`), catalog browsing (`mena list`), and updates (`mena update`).
 - **Idempotent & Safe**: Every script checks existing dependencies, avoids duplicate shell exports, handles errors safely (`set -euo pipefail`), and creates automatic timestamped backups before updating user configurations (`~/.dotfiles_backup/`).
 - **Unified Shell Layer (Bash & Oh My Zsh)**:
   - Centralized shell configuration under `shell/` for aliases, environment variables, PATH deduplication, and helper functions.
@@ -40,7 +40,7 @@ Automated workstation provisioning, development environment setup, unified shell
 ├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
 ├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
 ├── install.sh                 # Master workstation setup and provisioning entrypoint
-├── dotctl/                    # Rust CLI source code (Clap + Dialoguer)
+├── mena/                      # Rust CLI source code (Clap + Dialoguer)
 │   ├── Cargo.toml             # Rust dependencies (clap, dialoguer, indicatif, console, serde)
 │   ├── src/                   # CLI, catalog, planner, wizard, and executor modules
 │   └── tests/                 # Integration tests (cancellation, planner, catalog)
@@ -109,48 +109,45 @@ nano .env   # Set EMAIL and USERNAME
 
 ### 4. Run Installation
 
-#### Standard Setup (Recommended)
-Installs core system dependencies, shell configurations (Bash & Oh My Zsh), desktop tools, ASDF runtimes, VS Code extensions, Git configuration, and synchronizes all 6 AI CLI adapters:
+#### Bootstrap Workstation
+Bootstraps core system build tools, installs and configures **Git** and **Docker Engine** (core foundations that are always installed), compiles and links the `mena` CLI to `~/.local/bin/mena` (and `~/.local/bin/dotctl`), and launches the interactive `mena` installation wizard:
 ```bash
 ./install.sh
 ```
 
-#### Selective Setup Options
+#### Tool Management via `mena`
+Once bootstrapped, all workstation tools, browsers, runtimes, editors, and AI assistants are selected and managed via `mena`:
+
 ```bash
-./install.sh --shell    # Configures only Bash, Oh My Zsh, plugins and themes
-./install.sh --ai       # Synchronizes only AI tools adapters (Claude, OpenCode, Codex, Kilo, Agy, Pi)
-./install.sh --zed          # Installs only Zed editor
-./install.sh --ghostty      # Installs only Ghostty terminal
-./install.sh --herdr        # Installs only Herdr workspace manager
-./install.sh --pgadmin      # Installs only pgAdmin 4 Desktop
-./install.sh --mongocompass # Installs only MongoDB Compass
-./install.sh --brave        # Installs only Brave Browser
-./install.sh --orca         # Installs only Orca IDE
-./install.sh --cursor       # Installs only Cursor AI Editor
-./install.sh --mise         # Installs only Mise Version Manager
-./install.sh --dotctl       # Builds and links the interactive dotctl Rust CLI
-./install.sh --core         # Installs only core system build dependencies and headers
-./install.sh --all          # Full installation including Docker and Android Studio
+mena install            # Launch full interactive wizard across all 7 categories
+mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
+mena install cli        # Wizard scoped to core CLI tools & Docker
+mena install runtimes   # Wizard scoped to ASDF and Mise version managers
+mena install dev        # Wizard scoped to editors (VS Code, Cursor, Zed), terminals & IDEs
+mena install ai         # Wizard scoped to AI terminal assistants (Claude, OpenCode, Codex, Kilo, Agy, Pi)
+mena install skills     # Wizard scoped to Agent Skills CLI
+mena install shell      # Wizard scoped to unified Bash & Oh My Zsh dotfiles
+mena install --dry-run  # Simulate installation plan without modifying the workstation
 ```
 
 ---
 
-## Interactive Workstation CLI: `dotctl`
+## Interactive Workstation CLI: `mena`
 
-`dotctl` is an interactive workstation installation and synchronization tool authored in **Rust** using `Clap` and `Dialoguer` (no TypeScript or Node.js runtime required). It provides a guided terminal experience to configure and manage developer workstations safely and idempotently.
+`mena` is an interactive workstation installation and synchronization tool authored in **Rust** using `Clap` and `Dialoguer` (no TypeScript or Node.js runtime required). It provides a guided terminal experience to configure and manage developer workstations safely and idempotently.
 
 ### Core Commands
 
 | Command | Description |
 | :--- | :--- |
-| `dotctl install` | Full interactive wizard asking across all tool categories with multi-select and preference prompts |
-| `dotctl install <category>` | Interactive wizard scoped to a single category (e.g. `browser`, `cli`, `ai`, `runtimes`, `dev`, `skills`, `shell`) |
-| `dotctl install -d, --dry-run` | Preview actions, dependency resolution, and planned commands without modifying the system |
-| `dotctl list` | View the complete tool catalog (28 tools) with real-time detection of installed versions |
-| `dotctl list -c <category>` | View catalog tools filtered by category (supports `--json` output) |
-| `dotctl doctor` | Comprehensive diagnostic check of OS, package managers, shell configurations, and AI adapters |
-| `dotctl update` | Updates AI assistant adapters, shell themes/plugins, and refreshes package manager caches |
-| `dotctl --help` | Display help, subcommands, and flags |
+| `mena install` | Full interactive wizard asking across all tool categories with multi-select and preference prompts |
+| `mena install <category>` | Interactive wizard scoped to a single category (e.g. `browser`, `cli`, `ai`, `runtimes`, `dev`, `skills`, `shell`) |
+| `mena install -d, --dry-run` | Preview actions, dependency resolution, and planned commands without modifying the system |
+| `mena list` | View the complete tool catalog (28 tools) with real-time detection of installed versions |
+| `mena list -c <category>` | View catalog tools filtered by category (supports `--json` output) |
+| `mena doctor` | Comprehensive diagnostic check of OS, package managers, shell configurations, and AI adapters |
+| `mena update` | Updates AI assistant adapters, shell themes/plugins, and refreshes package manager caches |
+| `mena --help` | Display help, subcommands, and flags |
 
 ### Interactive Installation Flow
 
@@ -186,13 +183,13 @@ Installs core system dependencies, shell configurations (Bash & Oh My Zsh), desk
 ### Safety & Idempotency Guarantees
 
 1. **Two-Phase Architecture**: Complete decoupling between the **Planning Phase** (`InstallPlan::build`) and the **Execution Phase** (`execute_plan`). All dependencies and warnings are calculated upfront before any script or command is run.
-2. **Cancellation Invariant**: If the user chooses `Cancel` during the review loop or declines final confirmation, `dotctl` immediately terminates without touching files or running package managers.
+2. **Cancellation Invariant**: If the user chooses `Cancel` during the review loop or declines final confirmation, `mena` immediately terminates without touching files or running package managers.
 3. **Only Confirmed Actions**: Only tools explicitly approved by the user (or required as dependencies) are queued for execution; unselected tools are never touched.
-4. **Idempotency**: Running `dotctl install` when tools are already present runs non-destructive synchronization checks rather than redundant re-installations.
+4. **Idempotency**: Running `mena install` when tools are already present runs non-destructive synchronization checks rather than redundant re-installations.
 
-### How to Add a New Tool to `dotctl`
+### How to Add a New Tool to `mena`
 
-To add a new tool, open [`dotctl/src/catalog/registry.rs`](./dotctl/src/catalog/registry.rs) and register it with `builder.add`:
+To add a new tool, open [`mena/src/catalog/registry.rs`](./mena/src/catalog/registry.rs) and register it with `builder.add`:
 
 ```rust
 builder.add(Tool {
@@ -215,17 +212,15 @@ Supported `InstallMethod`s:
 
 After modifying the registry, recompile with:
 ```bash
-cargo build --release --manifest-path dotctl/Cargo.toml
-# or
-./install.sh --dotctl
+cargo build --release --manifest-path mena/Cargo.toml && ln -sfn "$PWD/mena/target/release/mena" ~/.local/bin/mena
 ```
 
 ### Running Automated CLI Tests
 
-The `dotctl` test suite verifies cancellation safety, plan summary matching, and catalog integrity:
+The `mena` test suite verifies cancellation safety, plan summary matching, and catalog integrity:
 
 ```bash
-cargo test --manifest-path dotctl/Cargo.toml
+cargo test --manifest-path mena/Cargo.toml
 ```
 
 Test coverage includes:

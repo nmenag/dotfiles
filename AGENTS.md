@@ -57,7 +57,7 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
 ├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
 ├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
 ├── install.sh                 # Master workstation setup entrypoint
-├── dotctl/                    # Rust CLI source code (Clap + Dialoguer)
+├── mena/                      # Rust CLI source code (Clap + Dialoguer)
 │   ├── Cargo.toml             # Rust package configuration
 │   ├── src/                   # CLI, catalog, planner, wizard, executor
 │   └── tests/                 # Integration tests (cancellation, planner, catalog)
@@ -115,8 +115,8 @@ Before finishing any task that touches shell scripts, verify the workspace:
 # 2. Test bash syntax across all scripts
 for f in install.sh scripts/*.sh shell/*.sh ai/adapters/*.sh; do bash -n "$f"; done
 
-# 3. Run dotctl Rust CLI test suite
-cargo test --manifest-path dotctl/Cargo.toml
+# 3. Run mena Rust CLI test suite
+cargo test --manifest-path mena/Cargo.toml
 ```
 
 For detailed runbooks on creating new setup scripts or troubleshooting Ubuntu system packages, reference the specialized skills in `.agents/skills/`.

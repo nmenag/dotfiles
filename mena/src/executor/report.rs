@@ -58,13 +58,13 @@ impl ExecutionReport {
         if self.errors.is_empty() {
             println!("{} All selected components are ready! Run '{}' to audit your environment.",
                 "SUCCESS:".green().bold(),
-                "dotctl doctor".cyan().bold()
+                "mena doctor".cyan().bold()
             );
         } else {
             println!("{} {} action(s) encountered errors. Check logs and run '{}' for diagnostics.",
                 "WARNING:".yellow().bold(),
                 self.errors.len(),
-                "dotctl doctor".cyan()
+                "mena doctor".cyan()
             );
         }
     }

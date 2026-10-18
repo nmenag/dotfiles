@@ -1,5 +1,5 @@
-use dotctl::catalog::model::Category;
-use dotctl::catalog::registry::{all_tools, find_tool, tools_by_category};
+use mena::catalog::model::Category;
+use mena::catalog::registry::{all_tools, find_tool, tools_by_category};
 
 #[test]
 fn test_catalog_completeness() {
@@ -32,6 +32,10 @@ fn test_catalog_completeness() {
     assert!(find_tool("pgadmin").is_some(), "pgAdmin must be in catalog");
     assert!(find_tool("mongocompass").is_some(), "MongoCompass must be in catalog");
     assert!(find_tool("mise").is_some(), "Mise must be in catalog");
+    assert!(find_tool("git").is_some(), "Git must be in catalog");
+    assert_eq!(find_tool("git").unwrap().category, Category::CliTools);
+    assert!(find_tool("docker").is_some(), "Docker must be in catalog");
+    assert_eq!(find_tool("docker").unwrap().category, Category::CliTools);
 }
 
 #[test]

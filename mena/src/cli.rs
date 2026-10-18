@@ -2,11 +2,11 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser, Debug)]
 #[command(
-    name = "dotctl",
+    name = "mena",
     author = "Nicolas Mena <nmena.garzon@gmail.com>",
     version,
     about = "DevEx CLI workstation & dotfiles management assistant for Linux",
-    long_about = "dotctl provides an interactive, safe, and idempotent workstation installer, \
+    long_about = "mena provides an interactive, safe, and idempotent workstation installer, \
 diagnostics, and synchronization engine for developers on Debian/Ubuntu and derivatives."
 )]
 pub struct Cli {

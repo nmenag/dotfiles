@@ -22,5 +22,5 @@ auth.json
 
 # Rust build artifacts
 target/
-dotctl/target/
+mena/target/
 

@@ -50,7 +50,7 @@ pub fn handle_list(category_filter: Option<String>, json_output: bool) -> Result
         return Ok(());
     }
 
-    println!("\n{}", "=== dotctl Tool Catalog ===".bold().cyan());
+    println!("\n{}", "=== mena Tool Catalog ===".bold().cyan());
     println!("Total tools cataloged: {}\n", tools.len().to_string().bold());
 
     let categories = Category::all();
@@ -83,6 +83,6 @@ pub fn handle_list(category_filter: Option<String>, json_output: bool) -> Result
         println!();
     }
 
-    println!("Tip: Run '{}' to launch the interactive installation wizard.", "dotctl install".cyan().bold());
+    println!("Tip: Run '{}' to launch the interactive installation wizard.", "mena install".cyan().bold());
     Ok(())
 }

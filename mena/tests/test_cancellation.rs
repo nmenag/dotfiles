@@ -1,6 +1,6 @@
-use dotctl::executor::runner::execute_plan;
-use dotctl::planner::plan::InstallPlan;
-use dotctl::system::detector::SystemInfo;
+use mena::executor::runner::execute_plan;
+use mena::planner::plan::InstallPlan;
+use mena::system::detector::SystemInfo;
 
 #[test]
 fn test_dry_run_executes_no_mutations() {

@@ -12,7 +12,7 @@ use crate::system::package::{command_path, home_path_exists};
 pub fn handle_doctor(system: &SystemInfo) -> Result<()> {
     let root = find_dotfiles_root();
 
-    println!("\n{}", "=== dotctl Workstation Diagnostic (Doctor) ===".bold().cyan());
+    println!("\n{}", "=== mena Workstation Diagnostic (Doctor) ===".bold().cyan());
 
     // 1. Operating System & Hardware
     println!("\n{}:", "1. Operating System & Platform".bold());
@@ -40,7 +40,7 @@ pub fn handle_doctor(system: &SystemInfo) -> Result<()> {
     if home_path_exists(".oh-my-zsh") {
         println!("   {} Oh My Zsh is installed at ~/.oh-my-zsh", "✓".green().bold());
     } else {
-        println!("   {} Oh My Zsh is not found at ~/.oh-my-zsh (Run 'dotctl install shell')", "○".yellow().bold());
+        println!("   {} Oh My Zsh is not found at ~/.oh-my-zsh (Run 'mena install shell')", "○".yellow().bold());
     }
 
     // 4. AI Coding Assistants

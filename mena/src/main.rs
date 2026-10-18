@@ -2,9 +2,9 @@ use anyhow::Result;
 use clap::Parser;
 use colored::Colorize;
 
-use dotctl::cli::{Cli, Commands};
-use dotctl::commands::{handle_doctor, handle_install, handle_list, handle_update};
-use dotctl::system::detector::SystemInfo;
+use mena::cli::{Cli, Commands};
+use mena::commands::{handle_doctor, handle_install, handle_list, handle_update};
+use mena::system::detector::SystemInfo;
 
 fn main() -> Result<()> {
     let cli = Cli::parse();

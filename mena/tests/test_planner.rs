@@ -1,5 +1,5 @@
-use dotctl::planner::plan::InstallPlan;
-use dotctl::system::detector::SystemInfo;
+use mena::planner::plan::InstallPlan;
+use mena::system::detector::SystemInfo;
 
 #[test]
 fn test_summary_matches_plan() {

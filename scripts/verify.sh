@@ -156,25 +156,25 @@ for adapter in "${EXPECTED_ADAPTERS[@]}"; do
   fi
 done
 
-# 7. Check dotctl Rust CLI
-echo -e "\n${BLUE}[7/7] Checking dotctl Rust CLI...${NC}"
+# 7. Check mena Rust CLI
+echo -e "\n${BLUE}[7/7] Checking mena Rust CLI...${NC}"
 if [[ -d "$HOME/.cargo/bin" ]]; then
   export PATH="$HOME/.cargo/bin:$PATH"
 fi
-if [[ -f "$ROOT_DIR/dotctl/Cargo.toml" ]]; then
-  echo -e "  ${GREEN}✓${NC} dotctl/Cargo.toml exists"
+if [[ -f "$ROOT_DIR/mena/Cargo.toml" ]]; then
+  echo -e "  ${GREEN}✓${NC} mena/Cargo.toml exists"
   if command -v cargo &>/dev/null; then
-    if cargo check --manifest-path "$ROOT_DIR/dotctl/Cargo.toml" --quiet 2>/dev/null; then
-      echo -e "  ${GREEN}✓${NC} dotctl Rust codebase compiles cleanly"
+    if cargo check --manifest-path "$ROOT_DIR/mena/Cargo.toml" --quiet 2>/dev/null; then
+      echo -e "  ${GREEN}✓${NC} mena Rust codebase compiles cleanly"
     else
-      echo -e "  ${RED}✗${NC} dotctl failed cargo check"
+      echo -e "  ${RED}✗${NC} mena failed cargo check"
       ERRORS=$((ERRORS + 1))
     fi
   else
     echo -e "  ${YELLOW}!${NC} Cargo not in PATH; skipping cargo check"
   fi
 else
-  echo -e "  ${RED}✗${NC} dotctl/Cargo.toml missing"
+  echo -e "  ${RED}✗${NC} mena/Cargo.toml missing"
   ERRORS=$((ERRORS + 1))
 fi
 
