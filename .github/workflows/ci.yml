@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - 'chore/**'
+      - 'feature/**'
+      - 'fix/**'
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  commitlint:
+    name: Lint Commit Messages (Conventional Commits)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate commits with Commitlint
+        uses: wagoid/commitlint-github-action@v6
+        with:
+          configFile: .commitlintrc.json
+
+  verify-and-test:
+    name: Workstation Verification & Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-22.04]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          manifest-path: mena/Cargo.toml
+
+      - name: Verify Bash script syntax (bash -n)
+        run: |
+          echo "Checking syntax across all shell scripts..."
+          for f in install.sh scripts/*.sh shell/*.sh ai/adapters/*.sh; do
+            if [[ -f "$f" ]]; then
+              bash -n "$f"
+            fi
+          done
+          echo "All shell scripts passed syntax check (bash -n)."
+
+      - name: Run repository verification suite (verify.sh)
+        run: ./scripts/verify.sh
+
+      - name: Run mena Rust unit & integration tests
+        run: cargo test --manifest-path mena/Cargo.toml --all-targets --verbose
+
+      - name: Build mena release binary
+        run: cargo build --release --manifest-path mena/Cargo.toml
+
+      - name: Smoke test mena CLI commands
+        run: |
+          # Verify help and version
+          ./mena/target/release/mena --help
+          ./mena/target/release/mena --version
+
+          # Verify catalog listing and filtering
+          ./mena/target/release/mena list
+          ./mena/target/release/mena list -c cli
+          ./mena/target/release/mena list -c cli --json
+
+          # Verify environment diagnostic engine
+          ./mena/target/release/mena doctor
+
+          # Verify non-interactive simulation of workstation setup
+          ./mena/target/release/mena install --dry-run --yes

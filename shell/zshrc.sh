@@ -26,3 +26,9 @@ fi
 if [[ -f "$DOTFILES_SHELL_DIR/functions.sh" ]]; then
   source "$DOTFILES_SHELL_DIR/functions.sh"
 fi
+
+# 4. Version managers & runtime hooks
+if command -v mise &>/dev/null; then
+  eval "$(mise activate zsh)"
+fi
+

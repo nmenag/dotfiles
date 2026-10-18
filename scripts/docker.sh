@@ -1,7 +1,22 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
 echo "Setting up Docker..."
+
+# Check if Docker is already installed and operational
+if command -v docker &>/dev/null && docker compose version &>/dev/null; then
+  echo "Docker is already installed: $(docker --version)"
+  if ! id -nG "$USER" 2>/dev/null | grep -qw "docker"; then
+    if ! getent group docker > /dev/null; then
+      sudo groupadd docker
+    fi
+    sudo usermod -aG docker "$USER"
+  fi
+  exit 0
+fi
 
 # Remove conflicting older packages
 echo "Removing legacy docker packages if present..."

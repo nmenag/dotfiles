@@ -60,7 +60,7 @@ Check required development headers:
 dpkg -l | grep -E 'libssl-dev|libreadline-dev|libyaml-dev|zlib1g-dev'
 ```
 **Resolution**:
-Install prerequisites via `./install.sh --core` or directly:
+Install prerequisites via `./install.sh` or directly:
 ```bash
 sudo apt-get install -y build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libyaml-dev
 ```

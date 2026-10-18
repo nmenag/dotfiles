@@ -19,3 +19,8 @@ auth.json
 # Local backups and temporary data
 .dotfiles_backup/
 *.bak
+
+# Rust build artifacts
+target/
+mena/target/
+

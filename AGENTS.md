@@ -13,6 +13,7 @@ When reading, updating, or authoring code in this repository, all AI agents must
 3. **Unattended Execution**: Scripts must run non-interactively without prompting for user confirmation or hanging unattended runners (use `-y` for `apt-get`, `--unattended` for installers, avoid commands like `newgrp`).
 4. **Modern APT & Security Practices**: Never use deprecated `apt-key`. Store GPG keys under `/etc/apt/keyrings/` and reference them explicitly via `[signed-by=...]`.
 5. **Distribution Agility**: Support Ubuntu derivatives (e.g., Pop!_OS, Linux Mint) by determining codenames using `CODENAME="${UBUNTU_CODENAME:-$(lsb_release -cs)}"`.
+6. **User-Managed Commits (No Automated Commits)**: AI agents must never execute `git commit` or create git commits automatically. Always apply, compile, test, and empirically verify code and configuration changes directly in the workspace, leaving Git staging, commits, and commit messages entirely for the user to review and author.
 
 ---
 
@@ -56,6 +57,10 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
 ├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
 ├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
 ├── install.sh                 # Master workstation setup entrypoint
+├── mena/                      # Rust CLI source code (Clap + Dialoguer)
+│   ├── Cargo.toml             # Rust package configuration
+│   ├── src/                   # CLI, catalog, planner, wizard, executor
+│   └── tests/                 # Integration tests (cancellation, planner, catalog)
 ├── LICENSE                    # MIT license
 ├── README.md                  # Human-readable documentation
 ├── .env.sample                # Sample environment configuration
@@ -79,12 +84,16 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     ├── ai-tools.sh
     ├── android-studio.sh
     ├── asdf.sh
+    ├── brave.sh
+    ├── cursor.sh
     ├── docker.sh
     ├── ghostty.sh
     ├── gitconfig.sh
     ├── herdr.sh
+    ├── mise.sh
     ├── mongocompass.sh
     ├── ohmyzsh.sh
+    ├── orca.sh
     ├── pgadmin.sh
     ├── programs.sh
     ├── shell.sh
@@ -105,6 +114,9 @@ Before finishing any task that touches shell scripts, verify the workspace:
 
 # 2. Test bash syntax across all scripts
 for f in install.sh scripts/*.sh shell/*.sh ai/adapters/*.sh; do bash -n "$f"; done
+
+# 3. Run mena Rust CLI test suite
+cargo test --manifest-path mena/Cargo.toml
 ```
 
 For detailed runbooks on creating new setup scripts or troubleshooting Ubuntu system packages, reference the specialized skills in `.agents/skills/`.

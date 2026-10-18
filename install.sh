@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR" && pwd)"
 
 # Color definitions
 GREEN='\033[0;32m'
@@ -23,106 +24,38 @@ log_warn() {
 
 show_help() {
   cat << EOF
-Usage: ./install.sh [OPTION]
+Usage: ./install.sh [OPTIONS] [CATEGORY]
 
-Provision development workstation packages and configurations.
+Bootstraps core workstation requirements (Git & Docker) and launches mena.
+All development tools, runtimes, browsers, editors, and shell dotfiles are managed via mena.
+
+Arguments:
+  [CATEGORY]     Optional category to install (e.g. browser, cli, runtimes, dev, ai, shell)
 
 Options:
-  --all           Run full installation (Core packages, Shell, Desktop apps, ASDF, VS Code, Zed, Ghostty, Herdr, pgAdmin, MongoDB Compass, Git, AI tools, Docker, Android Studio)
-  --core          Install only core build tools and essential system libraries
-  --shell         Configure only Bash and Oh My Zsh dotfiles and plugins
-  --ai            Configure only AI CLI adapters (Claude, OpenCode, Codex, Kilo, Agy, Pi)
-  --zed           Install only Zed editor
-  --ghostty       Install only Ghostty terminal
-  --herdr         Install only Herdr workspace manager
-  --pgadmin       Install only pgAdmin 4 Desktop
-  --mongocompass  Install only MongoDB Compass
-  --help, -h      Show this help message
-
-Without options, defaults to running the standard installation suite.
+  -d, --dry-run  Preview actions without modifying the system
+  -y, --yes      Approve installation non-interactively
+  --help, -h     Show this help message
 EOF
 }
 
-MODE="standard"
 if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
   show_help
   exit 0
-elif [[ "${1:-}" == "--core" ]]; then
-  MODE="core"
-elif [[ "${1:-}" == "--shell" ]]; then
-  MODE="shell"
-elif [[ "${1:-}" == "--ai" ]]; then
-  MODE="ai"
-elif [[ "${1:-}" == "--zed" ]]; then
-  MODE="zed"
-elif [[ "${1:-}" == "--ghostty" ]]; then
-  MODE="ghostty"
-elif [[ "${1:-}" == "--herdr" ]]; then
-  MODE="herdr"
-elif [[ "${1:-}" == "--pgadmin" ]]; then
-  MODE="pgadmin"
-elif [[ "${1:-}" == "--mongocompass" ]]; then
-  MODE="mongocompass"
-elif [[ "${1:-}" == "--all" ]]; then
-  MODE="all"
 fi
 
-log_info "Starting dotfiles setup from: $ROOT_DIR"
+log_info "Bootstrapping workstation environment from: $ROOT_DIR"
 
-# Check and source environment variables
+# 1. Load environment variables
 if [[ -f "$ROOT_DIR/.env" ]]; then
-  log_info "Found .env file, loading environment variables..."
+  log_info "Loading environment variables from .env..."
   # shellcheck disable=SC1091
   source "$ROOT_DIR/.env"
 else
-  log_warn "No .env file found. You can copy .env.sample to .env to configure EMAIL and USERNAME."
+  log_warn "No .env found. Copy .env.sample to .env to configure EMAIL and USERNAME."
 fi
 
-# Modular component execution
-run_script() {
-  local script_name="$1"
-  local script_path="$ROOT_DIR/scripts/$script_name"
-
-  if [[ -f "$script_path" ]]; then
-    log_info "Running $script_name..."
-    bash "$script_path"
-    log_success "Finished $script_name"
-  else
-    log_warn "Script not found: $script_path"
-  fi
-}
-
-# Selective execution for user-space configs
-if [[ "$MODE" == "shell" ]]; then
-  run_script "shell.sh"
-  log_success "Shell dotfiles installation completed!"
-  exit 0
-elif [[ "$MODE" == "ai" ]]; then
-  run_script "ai-tools.sh"
-  log_success "AI tools synchronization completed!"
-  exit 0
-elif [[ "$MODE" == "zed" ]]; then
-  run_script "zed.sh"
-  log_success "Zed installation completed!"
-  exit 0
-elif [[ "$MODE" == "ghostty" ]]; then
-  run_script "ghostty.sh"
-  log_success "Ghostty installation completed!"
-  exit 0
-elif [[ "$MODE" == "herdr" ]]; then
-  run_script "herdr.sh"
-  log_success "Herdr installation completed!"
-  exit 0
-elif [[ "$MODE" == "pgadmin" ]]; then
-  run_script "pgadmin.sh"
-  log_success "pgAdmin 4 Desktop installation completed!"
-  exit 0
-elif [[ "$MODE" == "mongocompass" ]]; then
-  run_script "mongocompass.sh"
-  log_success "MongoDB Compass installation completed!"
-  exit 0
-fi
-
+# 2. Update package lists & install core system build tools
 log_info "Updating package lists..."
 sudo apt-get update -y
 
@@ -151,46 +84,57 @@ CORE_PACKAGES=(
   git
   llvm
   snapd
-  cheese
+  ca-certificates
+  gnupg
+  lsb-release
 )
 
 for pkg in "${CORE_PACKAGES[@]}"; do
   install_pkg "$pkg"
 done
 
-# Handle ncurses development package (libncurses-dev on modern Ubuntu/Pop!_OS, libncurses5-dev on legacy)
+# Handle ncurses development package
 if apt-cache show libncurses-dev &>/dev/null; then
   install_pkg libncurses-dev
 elif apt-cache show libncurses5-dev &>/dev/null; then
   install_pkg libncurses5-dev
 fi
 
-log_info "Cleaning up unused packages..."
-sudo apt-get autoremove -y
+# 3. Core Foundation: Git & Docker are core (yes or yes are installed)
+log_info "Configuring core essentials: Git and Docker..."
+bash "$ROOT_DIR/scripts/gitconfig.sh"
+bash "$ROOT_DIR/scripts/docker.sh"
 
-if [[ "$MODE" == "core" ]]; then
-  log_success "Core system packages installed successfully!"
-  exit 0
+# 4. Build and link mena Rust CLI
+if [[ -d "$HOME/.cargo/bin" ]]; then
+  export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
-log_info "Running workstation setup modules..."
-run_script "shell.sh"
-run_script "programs.sh"
-run_script "asdf.sh"
-run_script "vscode.sh"
-run_script "zed.sh"
-run_script "ghostty.sh"
-run_script "herdr.sh"
-run_script "pgadmin.sh"
-run_script "mongocompass.sh"
-run_script "gitconfig.sh"
-run_script "ai-tools.sh"
-
-if [[ "$MODE" == "all" ]]; then
-  log_info "Running extended modules..."
-  run_script "docker.sh"
-  run_script "android-studio.sh"
+if ! command -v cargo &>/dev/null; then
+  if [[ -x "$HOME/.cargo/bin/cargo" ]]; then
+    export PATH="$HOME/.cargo/bin:$PATH"
+  fi
 fi
 
-log_success "Dotfiles workstation installation completed!"
-log_info "Tip: Run './scripts/verify.sh' to validate all scripts and tools."
+if command -v cargo &>/dev/null; then
+  log_info "Compiling mena CLI (Rust + Clap + Dialoguer)..."
+  cargo build --release --manifest-path "$ROOT_DIR/mena/Cargo.toml" --quiet
+  mkdir -p "$HOME/.local/bin"
+  ln -sfn "$ROOT_DIR/mena/target/release/mena" "$HOME/.local/bin/mena"
+  ln -sfn "$ROOT_DIR/mena/target/release/mena" "$HOME/.local/bin/dotctl"
+  log_success "mena CLI installed and linked to ~/.local/bin/mena (aliased to dotctl)"
+else
+  log_warn "Cargo not found in PATH. Install Rust toolchain to build mena."
+fi
+
+# 5. Hand off workstation installation to mena
+export PATH="$HOME/.local/bin:$PATH"
+if command -v mena &>/dev/null; then
+  log_success "Core environment ready. Launching mena workstation manager..."
+  exec mena install "$@"
+elif [[ -x "$ROOT_DIR/mena/target/release/mena" ]]; then
+  log_success "Core environment ready. Launching mena workstation manager..."
+  exec "$ROOT_DIR/mena/target/release/mena" install "$@"
+else
+  log_warn "mena binary not available. Run 'cargo build --release --manifest-path mena/Cargo.toml' to build it."
+fi

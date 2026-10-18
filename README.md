@@ -6,6 +6,12 @@ Automated workstation provisioning, development environment setup, unified shell
 
 ## Features
 
+- **Interactive Workstation CLI (`mena`)**:
+  - Written in **pure Rust** (`Clap` + `Dialoguer`), zero Node.js/TypeScript dependencies.
+  - Multi-select interactive installation across 7 tool categories with OS, package manager, and installed version pre-detection.
+  - Two-phase architecture (Planning vs. Execution): pre-installation summary, review/modification loop, and explicit confirmation.
+  - Guaranteed safe cancellation (aborts with zero mutations).
+  - Subcommands for diagnostics (`mena doctor`), catalog browsing (`mena list`), and updates (`mena update`).
 - **Idempotent & Safe**: Every script checks existing dependencies, avoids duplicate shell exports, handles errors safely (`set -euo pipefail`), and creates automatic timestamped backups before updating user configurations (`~/.dotfiles_backup/`).
 - **Unified Shell Layer (Bash & Oh My Zsh)**:
   - Centralized shell configuration under `shell/` for aliases, environment variables, PATH deduplication, and helper functions.
@@ -22,7 +28,7 @@ Automated workstation provisioning, development environment setup, unified shell
     6. **Pi Coding Agent** (`~/.pi/agent`)
 - **Modern APT Keyrings & Security**: Uses `/etc/apt/keyrings/` instead of deprecated `apt-key`. Strictly enforces `.gitignore` rules against tokens, keys, and credentials.
 - **Distribution Agnostic**: Automatically resolves Ubuntu release codenames across standard Ubuntu and derivatives like Pop!_OS and Linux Mint.
-- **Developer Tools & Desktop Suites**: Automated setup for ASDF (Node.js, Ruby, Python, Elixir, Erlang), Docker Engine, VS Code (+ curated extensions), Git (+ SSH ED25519), and Android Studio.
+- **Developer Tools & Desktop Suites**: Automated setup for ASDF and Mise (Node.js, Ruby, Python, Elixir, Erlang, Rust), Docker Engine, VS Code, Cursor (+ curated extensions), Zed, Ghostty, Git (+ SSH ED25519), and Android Studio.
 
 ---
 
@@ -34,7 +40,10 @@ Automated workstation provisioning, development environment setup, unified shell
 ├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
 ├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
 ├── install.sh                 # Master workstation setup and provisioning entrypoint
-├── LICENSE                    # MIT license
+├── mena/                      # Rust CLI source code (Clap + Dialoguer)
+│   ├── Cargo.toml             # Rust dependencies (clap, dialoguer, indicatif, console, serde)
+│   ├── src/                   # CLI, catalog, planner, wizard, and executor modules
+│   └── tests/                 # Integration tests (cancellation, planner, catalog)
 ├── README.md                  # DevEx documentation & usage manual
 ├── .env.sample                # Sample environment configuration (Git identity)
 ├── .gitignore                 # Hardened ignore list (secrets, keys, backups, IDE)
@@ -57,13 +66,19 @@ Automated workstation provisioning, development environment setup, unified shell
     ├── ai-tools.sh            # Synchronizes all 6 AI CLI adapters
     ├── android-studio.sh      # Java OpenJDK & Android Studio
     ├── asdf.sh                # ASDF runtime manager & plugins
+    ├── brave.sh               # Official Brave Browser signed APT repository & installer
+    ├── bruno.sh               # Official Bruno API Client signed APT repository & installer
+    ├── cursor.sh              # Official Cursor AI Editor signed APT repository & installer
     ├── docker.sh              # Docker Engine, CLI, Buildx, and Compose v2
     ├── ghostty.sh             # Fast native terminal emulator via Snap
     ├── gitconfig.sh           # Git identity, aliases, and SSH ED25519 generation
     ├── herdr.sh               # Terminal workspace manager for AI coding agents
+    ├── mise.sh                # Official Mise-en-place polyglot version manager & environment engine
     ├── mongocompass.sh        # Official MongoDB Compass GUI installer
     ├── ohmyzsh.sh             # Installs Zsh and Oh My Zsh (unattended)
+    ├── orca.sh                # Next-gen Orca IDE agentic development environment
     ├── pgadmin.sh             # Official pgAdmin 4 Desktop APT repository & installer
+    ├── postman.sh             # Postman API Client platform via Snap
     ├── programs.sh            # Desktop essentials (Chrome, Flameshot, VLC, BleachBit)
     ├── shell.sh               # Configures Bash & Oh My Zsh dotfiles, plugins, and themes
     ├── verify.sh              # Automated repository linting & integrity verification
@@ -96,24 +111,126 @@ nano .env   # Set EMAIL and USERNAME
 
 ### 4. Run Installation
 
-#### Standard Setup (Recommended)
-Installs core system dependencies, shell configurations (Bash & Oh My Zsh), desktop tools, ASDF runtimes, VS Code extensions, Git configuration, and synchronizes all 6 AI CLI adapters:
+#### Bootstrap Workstation
+Bootstraps core system build tools, installs and configures **Git** and **Docker Engine** (core foundations that are always installed), compiles and links the `mena` CLI to `~/.local/bin/mena` (and `~/.local/bin/dotctl`), and launches the interactive `mena` installation wizard:
 ```bash
 ./install.sh
 ```
 
-#### Selective Setup Options
+#### Tool Management via `mena`
+Once bootstrapped, all workstation tools, browsers, runtimes, editors, and AI assistants are selected and managed via `mena`:
+
 ```bash
-./install.sh --shell    # Configures only Bash, Oh My Zsh, plugins and themes
-./install.sh --ai       # Synchronizes only AI tools adapters (Claude, OpenCode, Codex, Kilo, Agy, Pi)
-./install.sh --zed          # Installs only Zed editor
-./install.sh --ghostty      # Installs only Ghostty terminal
-./install.sh --herdr        # Installs only Herdr workspace manager
-./install.sh --pgadmin      # Installs only pgAdmin 4 Desktop
-./install.sh --mongocompass # Installs only MongoDB Compass
-./install.sh --core         # Installs only core system build dependencies and headers
-./install.sh --all          # Full installation including Docker and Android Studio
+mena install            # Launch interactive wizard across tool categories
+mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
+mena install programs   # Wizard scoped to desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno)
+mena install runtimes   # Wizard scoped to ASDF and Mise version managers
+mena install dev        # Wizard scoped to editors (VS Code, Cursor, Zed), terminals & IDEs
+mena install ai         # Wizard scoped to AI terminal assistants (Claude, OpenCode, Codex, Kilo, Agy, Pi)
+mena install skills     # Wizard scoped to Agent Skills CLI
+mena install shell      # Wizard scoped to unified Bash & Oh My Zsh dotfiles
+mena install --dry-run  # Simulate installation plan without modifying the workstation
 ```
+
+---
+
+## Interactive Workstation CLI: `mena`
+
+`mena` is an interactive workstation installation and synchronization tool authored in **Rust** using `Clap` and `Dialoguer` (no TypeScript or Node.js runtime required). It provides a guided terminal experience to configure and manage developer workstations safely and idempotently.
+
+### Core Commands
+
+| Command | Description |
+| :--- | :--- |
+| `mena install` | Interactive wizard across optional tool categories with multi-select and preference prompts (core tools are auto-installed) |
+| `mena install <category>` | Interactive wizard scoped to a single category (e.g. `browser`, `programs`, `runtimes`, `dev`, `ai`, `skills`, `shell`) |
+| `mena install -d, --dry-run` | Preview actions, dependency resolution, and planned commands without modifying the system |
+| `mena list` | View the complete tool catalog (34 tools) with real-time detection of installed versions |
+| `mena list -c <category>` | View catalog tools filtered by category (supports `--json` output) |
+| `mena doctor` | Comprehensive diagnostic check of OS, package managers, shell configurations, and AI adapters |
+| `mena update` | Updates AI assistant adapters, shell themes/plugins, and refreshes package manager caches |
+| `mena --help` | Display help, subcommands, and flags |
+
+### Interactive Installation Flow
+
+```text
+[1. Detect System & Tools]
+         │
+         ▼
+[2. Multi-Select Wizard per Category]
+         │
+         ▼
+[3. Gather Preferences (Git name/email, browser, etc.)]
+         │
+         ▼
+[4. Build Dependency Plan & Categorize Actions]
+         │
+         ▼
+[5. Display Pre-Installation Summary]
+         │
+         ▼
+[6. Review Loop] ──(Modify)──► [Re-enter Selection]
+         │
+   (Cancel) ──► Abort immediately (Guaranteed 0 actions, 0 mutations)
+         │
+   (Proceed)
+         │
+         ▼
+[7. Execute Approved Actions with Progress Bar]
+         │
+         ▼
+[8. Render Final Execution Report (Successes, Skips, Errors)]
+```
+
+### Safety & Idempotency Guarantees
+
+1. **Two-Phase Architecture**: Complete decoupling between the **Planning Phase** (`InstallPlan::build`) and the **Execution Phase** (`execute_plan`). All dependencies and warnings are calculated upfront before any script or command is run.
+2. **Cancellation Invariant**: If the user chooses `Cancel` during the review loop or declines final confirmation, `mena` immediately terminates without touching files or running package managers.
+3. **Only Confirmed Actions**: Only tools explicitly approved by the user (or required as dependencies) are queued for execution; unselected tools are never touched.
+4. **Idempotency**: Running `mena install` when tools are already present runs non-destructive synchronization checks rather than redundant re-installations.
+
+### How to Add a New Tool to `mena`
+
+To add a new tool, open [`mena/src/catalog/registry.rs`](./mena/src/catalog/registry.rs) and register it with `builder.add`:
+
+```rust
+builder.add(Tool {
+    id: "my-tool".to_string(),
+    name: "My Developer Tool".to_string(),
+    category: Category::DevUtilities,
+    description: "Brief description of the tool".to_string(),
+    install_method: InstallMethod::Script("scripts/my-tool.sh".to_string()),
+    detection_method: DetectionMethod::Command("my-tool".to_string()),
+    dependencies: vec!["git".to_string(), "curl".to_string()],
+});
+```
+
+Supported `InstallMethod`s:
+- `InstallMethod::Script(path)`: Invokes an idempotent workstation bash script in `scripts/`.
+- `InstallMethod::AiAdapter(path)`: Invokes an AI assistant adapter script in `ai/adapters/`.
+- `InstallMethod::AptPackage(package_name)`: Installs an official APT package via `sudo apt-get install -y`.
+- `InstallMethod::SnapPackage { name, classic }`: Installs a Snap package.
+- `InstallMethod::ShellCommand(command)`: Executes a validated shell command.
+
+After modifying the registry, recompile with:
+```bash
+cargo build --release --manifest-path mena/Cargo.toml && ln -sfn "$PWD/mena/target/release/mena" ~/.local/bin/mena
+```
+
+### Running Automated CLI Tests
+
+The `mena` test suite verifies cancellation safety, plan summary matching, and catalog integrity:
+
+```bash
+cargo test --manifest-path mena/Cargo.toml
+```
+
+Test coverage includes:
+- `test_cancellation_produces_zero_actions`: Verifies that an aborted plan executes zero actions and creates zero mutations.
+- `test_only_approved_actions_are_executed`: Verifies that unselected tools are never queued or executed.
+- `test_dry_run_executes_no_mutations`: Verifies that dry-run mode safely simulates all steps without modifying the workstation.
+- `test_summary_matches_plan`: Verifies that the rendered summary matches the plan items, actions count, and categories.
+- `test_catalog_completeness` & `test_category_filtering`: Verifies registry completeness across all 7 categories.
 
 ---
 
@@ -175,6 +292,39 @@ Validate the syntax of all Bash scripts, executable permissions, Git secret hygi
 ./scripts/verify.sh
 ```
 
+### Continuous Integration (GitHub Actions)
+
+The repository includes an automated CI pipeline ([`.github/workflows/ci.yml`](./.github/workflows/ci.yml)) executed on pushes and pull requests across supported Ubuntu LTS releases (`ubuntu-24.04` and `ubuntu-22.04`):
+- **Commitlint**: Automatically verifies that commit messages follow the Conventional Commits specification.
+- **Script Validation**: Tests syntax across all shell scripts using `bash -n`.
+- **Integrity & Security**: Runs `./scripts/verify.sh` to enforce permissions, secret hygiene, dotfiles links, and skills frontmatter.
+- **`mena` CLI Test Suite**: Runs all unit and integration tests (`cargo test`).
+- **Release Verification & Smoke Tests**: Compiles the release binary and executes non-mutating smoke tests (`mena --help`, `mena list`, `mena doctor`, `mena install --dry-run`).
+
+### Commit Message Standards (Commitlint)
+
+All commit messages must adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification defined in [`.commitlintrc.json`](./.commitlintrc.json):
+- **Local Hook**: Automatically configured via [`scripts/gitconfig.sh`](./scripts/gitconfig.sh) in `.git/hooks/commit-msg` with zero-dependency regex fallback.
+- **CI Pipeline**: Evaluated via `wagoid/commitlint-github-action@v6` on pull requests and branch pushes.
+- **Format**: `<type>(<optional scope>): <subject>`
+- **Allowed Types**: `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `revert`.
+- **Examples**:
+  - `feat: add cursor AI editor`
+  - `chore(cli): rename dotctl to mena`
+  - `ci: add commitlint github action`
+
+### Pull Request Checks (Title & Size)
+
+Pull requests are automatically audited and labeled via [`.github/workflows/pr-checks.yml`](./.github/workflows/pr-checks.yml):
+- **Semantic PR Title Check**: Validates that PR titles conform to Conventional Commits using `amannn/action-semantic-pull-request@v6` (with `wip: true` draft support).
+- **PR Size Labeler & Audit**: Categorizes pull request changes using `pascalgn/size-label-action@v0.5.7` (ignoring lockfiles):
+  - `size/XS`: 0–19 lines
+  - `size/S`: 20–99 lines
+  - `size/M`: 100–299 lines
+  - `size/L`: 300–799 lines
+  - `size/XL`: 800–1499 lines
+  - `size/XXL`: 1500+ lines (triggers review advisory warning)
+
 ---
 
 ## Modular Scripts Reference
@@ -186,13 +336,19 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`ai-tools.sh`](./scripts/ai-tools.sh) | Synchronizes common instructions & skills across all 6 AI CLIs | `./scripts/ai-tools.sh` |
 | [`android-studio.sh`](./scripts/android-studio.sh) | Installs Java OpenJDK and Android Studio via Snap | `./scripts/android-studio.sh` |
 | [`asdf.sh`](./scripts/asdf.sh) | Installs ASDF v0.15.0 and runtime plugins (Node, Ruby, Python, Elixir, Erlang) | `./scripts/asdf.sh` |
+| [`brave.sh`](./scripts/brave.sh) | Installs Brave Browser via official signed APT repository | `./scripts/brave.sh` |
+| [`bruno.sh`](./scripts/bruno.sh) | Installs Bruno open-source API client via official signed APT repository | `./scripts/bruno.sh` |
+| [`cursor.sh`](./scripts/cursor.sh) | Installs Cursor AI Editor via official signed APT repository | `./scripts/cursor.sh` |
 | [`docker.sh`](./scripts/docker.sh) | Installs Docker CE, CLI, Containerd, Buildx, and Compose v2 plugin | `./scripts/docker.sh` |
 | [`ghostty.sh`](./scripts/ghostty.sh) | Installs Ghostty native terminal emulator via Snap (--classic) | `./scripts/ghostty.sh` |
 | [`gitconfig.sh`](./scripts/gitconfig.sh) | Configures Git identity, aliases (`git lg`), and ED25519 SSH key | `./scripts/gitconfig.sh` |
 | [`herdr.sh`](./scripts/herdr.sh) | Installs Herdr workspace manager and sets up Zsh completion | `./scripts/herdr.sh` |
+| [`mise.sh`](./scripts/mise.sh) | Installs Mise polyglot runtime and version manager via official signed APT repository | `./scripts/mise.sh` |
 | [`mongocompass.sh`](./scripts/mongocompass.sh) | Installs MongoDB Compass GUI via official Debian package | `./scripts/mongocompass.sh` |
 | [`ohmyzsh.sh`](./scripts/ohmyzsh.sh) | Installs Zsh and Oh My Zsh (unattended) | `./scripts/ohmyzsh.sh` |
+| [`orca.sh`](./scripts/orca.sh) | Installs Orca IDE next-gen agentic development environment via official deb | `./scripts/orca.sh` |
 | [`pgadmin.sh`](./scripts/pgadmin.sh) | Installs pgAdmin 4 Desktop via official PostgreSQL APT repository | `./scripts/pgadmin.sh` |
+| [`postman.sh`](./scripts/postman.sh) | Installs Postman API development platform via Snap | `./scripts/postman.sh` |
 | [`programs.sh`](./scripts/programs.sh) | Installs Google Chrome, Flameshot, VLC, and BleachBit | `./scripts/programs.sh` |
 | [`shell.sh`](./scripts/shell.sh) | Sets up Bash & Oh My Zsh loaders, OMZ plugins, and custom themes | `./scripts/shell.sh` |
 | [`verify.sh`](./scripts/verify.sh) | Complete linting, security, and integrity verification suite | `./scripts/verify.sh` |

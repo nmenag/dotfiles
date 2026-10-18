@@ -15,7 +15,7 @@ ERRORS=0
 echo -e "${BLUE}=== Dotfiles Repository Verification Suite ===${NC}\n"
 
 # 1. Check Shell Script Syntax across entire repo
-echo -e "${BLUE}[1/6] Checking Bash script syntax (bash -n)...${NC}"
+echo -e "${BLUE}[1/7] Checking Bash script syntax (bash -n)...${NC}"
 ALL_SCRIPTS=(
   "$ROOT_DIR/install.sh"
   "$ROOT_DIR"/scripts/*.sh
@@ -36,7 +36,7 @@ for script in "${ALL_SCRIPTS[@]}"; do
 done
 
 # 2. Check Executable Permissions
-echo -e "\n${BLUE}[2/6] Checking executable permissions...${NC}"
+echo -e "\n${BLUE}[2/7] Checking executable permissions...${NC}"
 for script in "${ALL_SCRIPTS[@]}"; do
   if [[ -f "$script" ]]; then
     rel_path="${script#"$ROOT_DIR/"}"
@@ -50,11 +50,25 @@ for script in "${ALL_SCRIPTS[@]}"; do
 done
 
 # 3. Environment & Git Secret Security Checks
-echo -e "\n${BLUE}[3/6] Checking environment and secret hygiene...${NC}"
+echo -e "\n${BLUE}[3/7] Checking environment and secret hygiene...${NC}"
 if [[ -f "$ROOT_DIR/.env.sample" ]]; then
   echo -e "  ${GREEN}✓${NC} .env.sample exists"
 else
   echo -e "  ${RED}✗${NC} .env.sample is missing"
+  ERRORS=$((ERRORS + 1))
+fi
+
+if [[ -f "$ROOT_DIR/.commitlintrc.json" ]]; then
+  echo -e "  ${GREEN}✓${NC} .commitlintrc.json exists"
+else
+  echo -e "  ${RED}✗${NC} .commitlintrc.json is missing"
+  ERRORS=$((ERRORS + 1))
+fi
+
+if [[ -f "$ROOT_DIR/.github/workflows/ci.yml" && -f "$ROOT_DIR/.github/workflows/pr-checks.yml" ]]; then
+  echo -e "  ${GREEN}✓${NC} GitHub Actions workflows configured (ci.yml, pr-checks.yml)"
+else
+  echo -e "  ${RED}✗${NC} Missing GitHub Actions workflow files"
   ERRORS=$((ERRORS + 1))
 fi
 
@@ -75,7 +89,7 @@ else
 fi
 
 # 4. Check Shell Dotfiles Components
-echo -e "\n${BLUE}[4/6] Checking Shell dotfiles components...${NC}"
+echo -e "\n${BLUE}[4/7] Checking Shell dotfiles components...${NC}"
 EXPECTED_SHELL_FILES=(
   "shell/env.sh"
   "shell/aliases.sh"
@@ -94,7 +108,7 @@ for sf in "${EXPECTED_SHELL_FILES[@]}"; do
 done
 
 # 5. Check Unified AI Agent Architecture & Skills
-echo -e "\n${BLUE}[5/6] Checking AI Agent instructions and skills...${NC}"
+echo -e "\n${BLUE}[5/7] Checking AI Agent instructions and skills...${NC}"
 if [[ -f "$ROOT_DIR/AGENTS.md" ]]; then
   echo -e "  ${GREEN}✓${NC} Root AGENTS.md exists"
 else
@@ -137,7 +151,7 @@ for skill_file in "${SKILL_FILES[@]}"; do
 done
 
 # 6. Check AI Adapters Presence
-echo -e "\n${BLUE}[6/6] Checking AI adapters for 6 CLI tools...${NC}"
+echo -e "\n${BLUE}[6/7] Checking AI adapters for 6 CLI tools...${NC}"
 EXPECTED_ADAPTERS=(
   "ai/adapters/claude.sh"
   "ai/adapters/opencode.sh"
@@ -155,6 +169,28 @@ for adapter in "${EXPECTED_ADAPTERS[@]}"; do
     ERRORS=$((ERRORS + 1))
   fi
 done
+
+# 7. Check mena Rust CLI
+echo -e "\n${BLUE}[7/7] Checking mena Rust CLI...${NC}"
+if [[ -d "$HOME/.cargo/bin" ]]; then
+  export PATH="$HOME/.cargo/bin:$PATH"
+fi
+if [[ -f "$ROOT_DIR/mena/Cargo.toml" ]]; then
+  echo -e "  ${GREEN}✓${NC} mena/Cargo.toml exists"
+  if command -v cargo &>/dev/null; then
+    if cargo check --manifest-path "$ROOT_DIR/mena/Cargo.toml" --quiet 2>/dev/null; then
+      echo -e "  ${GREEN}✓${NC} mena Rust codebase compiles cleanly"
+    else
+      echo -e "  ${RED}✗${NC} mena failed cargo check"
+      ERRORS=$((ERRORS + 1))
+    fi
+  else
+    echo -e "  ${YELLOW}!${NC} Cargo not in PATH; skipping cargo check"
+  fi
+else
+  echo -e "  ${RED}✗${NC} mena/Cargo.toml missing"
+  ERRORS=$((ERRORS + 1))
+fi
 
 echo ""
 if [[ $ERRORS -eq 0 ]]; then

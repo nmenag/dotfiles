@@ -21,6 +21,7 @@ path_append() {
 # Base developer directories
 path_prepend "$HOME/bin"
 path_prepend "$HOME/.local/bin"
+path_prepend "$HOME/.cargo/bin"
 
 # ASDF Version Manager
 if [[ -d "$HOME/.asdf" ]]; then
@@ -30,6 +31,11 @@ if [[ -d "$HOME/.asdf" ]]; then
     # shellcheck disable=SC1091
     . "$HOME/.asdf/asdf.sh"
   fi
+fi
+
+# Mise Version Manager shims
+if [[ -d "$HOME/.local/share/mise/shims" ]]; then
+  path_prepend "$HOME/.local/share/mise/shims"
 fi
 
 # Erlang & Elixir history

@@ -1,0 +1,90 @@
+use mena::catalog::model::Category;
+use mena::catalog::registry::{all_tools, find_tool, tools_by_category};
+
+#[test]
+fn test_catalog_completeness() {
+    let tools = all_tools();
+    assert!(!tools.is_empty(), "Catalog must not be empty");
+
+    // Ensure every category has at least one registered tool
+    for cat in Category::all() {
+        let in_cat = tools_by_category(*cat);
+        assert!(
+            !in_cat.is_empty(),
+            "Category '{}' must have registered tools in catalog",
+            cat.display_name()
+        );
+    }
+
+    // Ensure specific core tools exist
+    assert!(find_tool("brave").is_some(), "Brave must be in catalog");
+    assert!(find_tool("chrome").is_some(), "Chrome must be in catalog");
+    assert!(find_tool("cursor").is_some(), "Cursor must be in catalog");
+    assert!(find_tool("firefox").is_none(), "Firefox should not be in catalog");
+    assert!(find_tool("claude").is_some(), "Claude must be in catalog");
+    assert!(find_tool("opencode").is_some(), "OpenCode must be in catalog");
+    assert!(find_tool("codex").is_some(), "Codex must be in catalog");
+    assert!(find_tool("kilo").is_some(), "Kilo must be in catalog");
+    assert!(find_tool("agy").is_some(), "Agy must be in catalog");
+    assert!(find_tool("pi").is_some(), "Pi must be in catalog");
+    assert!(find_tool("skills").is_some(), "skills CLI must be in catalog");
+    assert!(find_tool("orca").is_some(), "Orca must be in catalog");
+    assert!(find_tool("pgadmin").is_some(), "pgAdmin must be in catalog");
+    assert!(find_tool("mongocompass").is_some(), "MongoCompass must be in catalog");
+    assert!(find_tool("mise").is_some(), "Mise must be in catalog");
+    assert!(find_tool("git").is_some(), "Git must be in catalog");
+    assert_eq!(find_tool("git").unwrap().category, Category::CliTools);
+    assert!(find_tool("docker").is_some(), "Docker must be in catalog");
+    assert_eq!(find_tool("docker").unwrap().category, Category::CliTools);
+
+    // Desktop programs & API clients
+    assert!(find_tool("bleachbit").is_some(), "BleachBit must be in catalog");
+    assert_eq!(find_tool("bleachbit").unwrap().category, Category::Programs);
+    assert!(find_tool("flameshot").is_some(), "Flameshot must be in catalog");
+    assert_eq!(find_tool("flameshot").unwrap().category, Category::Programs);
+    assert!(find_tool("vlc").is_some(), "VLC must be in catalog");
+    assert_eq!(find_tool("vlc").unwrap().category, Category::Programs);
+    assert!(find_tool("postman").is_some(), "Postman must be in catalog");
+    assert_eq!(find_tool("postman").unwrap().category, Category::Programs);
+    assert!(find_tool("bruno").is_some(), "Bruno must be in catalog");
+    assert_eq!(find_tool("bruno").unwrap().category, Category::Programs);
+}
+
+#[test]
+fn test_wizard_categories_excludes_core_cli() {
+    let wizard_cats = Category::wizard_categories();
+    assert!(
+        !wizard_cats.contains(&Category::CliTools),
+        "Wizard categories must not contain CliTools (core tools are mandatory/auto-installed)"
+    );
+    assert!(
+        wizard_cats.contains(&Category::Programs),
+        "Wizard categories must contain Programs"
+    );
+    assert!(Category::CliTools.is_core());
+    assert!(!Category::Programs.is_core());
+    assert!(!Category::Browsers.is_core());
+}
+
+#[test]
+fn test_category_filtering() {
+    let browsers = tools_by_category(Category::Browsers);
+    assert!(!browsers.is_empty(), "Browsers category must not be empty");
+    for tool in browsers {
+        assert_eq!(tool.category, Category::Browsers);
+    }
+
+    let ai_tools = tools_by_category(Category::AiAssistants);
+    assert!(ai_tools.len() >= 6, "Must have at least 6 AI tools registered");
+    for tool in ai_tools {
+        assert_eq!(tool.category, Category::AiAssistants);
+    }
+}
+
+#[test]
+fn test_find_tool_case_insensitivity() {
+    assert!(find_tool("brave").is_some());
+    assert!(find_tool("BRAVE").is_some());
+    assert!(find_tool("Brave").is_some());
+    assert!(find_tool("nonexistent_tool_xyz").is_none());
+}
