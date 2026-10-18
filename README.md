@@ -297,8 +297,6 @@ This repository bridges 6 distinct AI CLI assistants through a common source of 
 Run the synchronizer at any time to link updated rules or skills:
 ```bash
 ./scripts/ai-tools.sh
-# or directly:
-./ai/adapters/sync-all.sh
 ```
 
 Adapters are strictly idempotent and non-destructive: existing configurations are safely backed up to `~/.dotfiles_backup/ai_<timestamp>` prior to replacement.

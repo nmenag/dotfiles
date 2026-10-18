@@ -191,7 +191,6 @@ EXPECTED_ADAPTERS=(
   "ai/adapters/kilo.sh"
   "ai/adapters/agy.sh"
   "ai/adapters/pi.sh"
-  "ai/adapters/sync-all.sh"
 )
 for adapter in "${EXPECTED_ADAPTERS[@]}"; do
   if [[ -f "$ROOT_DIR/$adapter" && -x "$ROOT_DIR/$adapter" ]]; then

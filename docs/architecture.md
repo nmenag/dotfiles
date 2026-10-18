@@ -325,8 +325,8 @@ graph TD
         Skills["ai/skills/<br/>(Reusable Agent Skills in SKILL.md format)"]
     end
 
-    subgraph AdaptersLayer["Adapter Layer (ai/adapters/)"]
-        SyncAll["sync-all.sh"]
+    subgraph AdaptersLayer["Orchestrator & Adapter Layer"]
+        AiTools["scripts/ai-tools.sh"]
         Adapters["claude.sh | opencode.sh | codex.sh | kilo.sh | agy.sh | pi.sh"]
     end
 
@@ -340,7 +340,7 @@ graph TD
     end
 
     CanonicalCore --> AdaptersLayer
-    SyncAll --> Adapters
+    AiTools --> Adapters
     Adapters --> NativeTargets
 ```
 
