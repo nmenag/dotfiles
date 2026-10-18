@@ -6,6 +6,12 @@ Automated workstation provisioning, development environment setup, unified shell
 
 ## Features
 
+- **Interactive Workstation CLI (`dotctl`)**:
+  - Written in **pure Rust** (`Clap` + `Dialoguer`), zero Node.js/TypeScript dependencies.
+  - Multi-select interactive installation across 7 tool categories with OS, package manager, and installed version pre-detection.
+  - Two-phase architecture (Planning vs. Execution): pre-installation summary, review/modification loop, and explicit confirmation.
+  - Guaranteed safe cancellation (aborts with zero mutations).
+  - Subcommands for diagnostics (`dotctl doctor`), catalog browsing (`dotctl list`), and updates (`dotctl update`).
 - **Idempotent & Safe**: Every script checks existing dependencies, avoids duplicate shell exports, handles errors safely (`set -euo pipefail`), and creates automatic timestamped backups before updating user configurations (`~/.dotfiles_backup/`).
 - **Unified Shell Layer (Bash & Oh My Zsh)**:
   - Centralized shell configuration under `shell/` for aliases, environment variables, PATH deduplication, and helper functions.
@@ -34,7 +40,10 @@ Automated workstation provisioning, development environment setup, unified shell
 ├── CLAUDE.md                  # Claude Code workspace entrypoint (links to AGENTS.md)
 ├── GEMINI.md                  # Antigravity / Gemini entrypoint (links to AGENTS.md)
 ├── install.sh                 # Master workstation setup and provisioning entrypoint
-├── LICENSE                    # MIT license
+├── dotctl/                    # Rust CLI source code (Clap + Dialoguer)
+│   ├── Cargo.toml             # Rust dependencies (clap, dialoguer, indicatif, console, serde)
+│   ├── src/                   # CLI, catalog, planner, wizard, and executor modules
+│   └── tests/                 # Integration tests (cancellation, planner, catalog)
 ├── README.md                  # DevEx documentation & usage manual
 ├── .env.sample                # Sample environment configuration (Git identity)
 ├── .gitignore                 # Hardened ignore list (secrets, keys, backups, IDE)
@@ -115,9 +124,112 @@ Installs core system dependencies, shell configurations (Bash & Oh My Zsh), desk
 ./install.sh --mongocompass # Installs only MongoDB Compass
 ./install.sh --brave        # Installs only Brave Browser
 ./install.sh --orca         # Installs only Orca IDE
+./install.sh --dotctl       # Builds and links the interactive dotctl Rust CLI
 ./install.sh --core         # Installs only core system build dependencies and headers
 ./install.sh --all          # Full installation including Docker and Android Studio
 ```
+
+---
+
+## Interactive Workstation CLI: `dotctl`
+
+`dotctl` is an interactive workstation installation and synchronization tool authored in **Rust** using `Clap` and `Dialoguer` (no TypeScript or Node.js runtime required). It provides a guided terminal experience to configure and manage developer workstations safely and idempotently.
+
+### Core Commands
+
+| Command | Description |
+| :--- | :--- |
+| `dotctl install` | Full interactive wizard asking across all tool categories with multi-select and preference prompts |
+| `dotctl install <category>` | Interactive wizard scoped to a single category (e.g. `browser`, `cli`, `ai`, `runtimes`, `dev`, `skills`, `shell`) |
+| `dotctl install -d, --dry-run` | Preview actions, dependency resolution, and planned commands without modifying the system |
+| `dotctl list` | View the complete tool catalog (28 tools) with real-time detection of installed versions |
+| `dotctl list -c <category>` | View catalog tools filtered by category (supports `--json` output) |
+| `dotctl doctor` | Comprehensive diagnostic check of OS, package managers, shell configurations, and AI adapters |
+| `dotctl update` | Updates AI assistant adapters, shell themes/plugins, and refreshes package manager caches |
+| `dotctl --help` | Display help, subcommands, and flags |
+
+### Interactive Installation Flow
+
+```text
+[1. Detect System & Tools]
+         │
+         ▼
+[2. Multi-Select Wizard per Category]
+         │
+         ▼
+[3. Gather Preferences (Git name/email, browser, etc.)]
+         │
+         ▼
+[4. Build Dependency Plan & Categorize Actions]
+         │
+         ▼
+[5. Display Pre-Installation Summary]
+         │
+         ▼
+[6. Review Loop] ──(Modify)──► [Re-enter Selection]
+         │
+   (Cancel) ──► Abort immediately (Guaranteed 0 actions, 0 mutations)
+         │
+   (Proceed)
+         │
+         ▼
+[7. Execute Approved Actions with Progress Bar]
+         │
+         ▼
+[8. Render Final Execution Report (Successes, Skips, Errors)]
+```
+
+### Safety & Idempotency Guarantees
+
+1. **Two-Phase Architecture**: Complete decoupling between the **Planning Phase** (`InstallPlan::build`) and the **Execution Phase** (`execute_plan`). All dependencies and warnings are calculated upfront before any script or command is run.
+2. **Cancellation Invariant**: If the user chooses `Cancel` during the review loop or declines final confirmation, `dotctl` immediately terminates without touching files or running package managers.
+3. **Only Confirmed Actions**: Only tools explicitly approved by the user (or required as dependencies) are queued for execution; unselected tools are never touched.
+4. **Idempotency**: Running `dotctl install` when tools are already present runs non-destructive synchronization checks rather than redundant re-installations.
+
+### How to Add a New Tool to `dotctl`
+
+To add a new tool, open [`dotctl/src/catalog/registry.rs`](./dotctl/src/catalog/registry.rs) and register it with `builder.add`:
+
+```rust
+builder.add(Tool {
+    id: "my-tool".to_string(),
+    name: "My Developer Tool".to_string(),
+    category: Category::DevUtilities,
+    description: "Brief description of the tool".to_string(),
+    install_method: InstallMethod::Script("scripts/my-tool.sh".to_string()),
+    detection_method: DetectionMethod::Command("my-tool".to_string()),
+    dependencies: vec!["git".to_string(), "curl".to_string()],
+});
+```
+
+Supported `InstallMethod`s:
+- `InstallMethod::Script(path)`: Invokes an idempotent workstation bash script in `scripts/`.
+- `InstallMethod::AiAdapter(path)`: Invokes an AI assistant adapter script in `ai/adapters/`.
+- `InstallMethod::AptPackage(package_name)`: Installs an official APT package via `sudo apt-get install -y`.
+- `InstallMethod::SnapPackage { name, classic }`: Installs a Snap package.
+- `InstallMethod::ShellCommand(command)`: Executes a validated shell command.
+
+After modifying the registry, recompile with:
+```bash
+cargo build --release --manifest-path dotctl/Cargo.toml
+# or
+./install.sh --dotctl
+```
+
+### Running Automated CLI Tests
+
+The `dotctl` test suite verifies cancellation safety, plan summary matching, and catalog integrity:
+
+```bash
+cargo test --manifest-path dotctl/Cargo.toml
+```
+
+Test coverage includes:
+- `test_cancellation_produces_zero_actions`: Verifies that an aborted plan executes zero actions and creates zero mutations.
+- `test_only_approved_actions_are_executed`: Verifies that unselected tools are never queued or executed.
+- `test_dry_run_executes_no_mutations`: Verifies that dry-run mode safely simulates all steps without modifying the workstation.
+- `test_summary_matches_plan`: Verifies that the rendered summary matches the plan items, actions count, and categories.
+- `test_catalog_completeness` & `test_category_filtering`: Verifies registry completeness across all 7 categories.
 
 ---
 

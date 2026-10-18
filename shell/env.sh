@@ -21,6 +21,7 @@ path_append() {
 # Base developer directories
 path_prepend "$HOME/bin"
 path_prepend "$HOME/.local/bin"
+path_prepend "$HOME/.cargo/bin"
 
 # ASDF Version Manager
 if [[ -d "$HOME/.asdf" ]]; then

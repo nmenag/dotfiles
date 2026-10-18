@@ -39,6 +39,7 @@ Options:
   --mongocompass  Install only MongoDB Compass
   --brave         Install only Brave Browser
   --orca          Install only Orca IDE
+  --dotctl        Build and link the interactive dotctl Rust CLI
   --help, -h      Show this help message
 
 Without options, defaults to running the standard installation suite.
@@ -69,6 +70,8 @@ elif [[ "${1:-}" == "--brave" ]]; then
   MODE="brave"
 elif [[ "${1:-}" == "--orca" ]]; then
   MODE="orca"
+elif [[ "${1:-}" == "--dotctl" ]]; then
+  MODE="dotctl"
 elif [[ "${1:-}" == "--all" ]]; then
   MODE="all"
 fi
@@ -83,6 +86,23 @@ if [[ -f "$ROOT_DIR/.env" ]]; then
 else
   log_warn "No .env file found. You can copy .env.sample to .env to configure EMAIL and USERNAME."
 fi
+
+build_dotctl() {
+  if [[ -f "$ROOT_DIR/dotctl/Cargo.toml" ]]; then
+    if [[ -d "$HOME/.cargo/bin" ]]; then
+      export PATH="$HOME/.cargo/bin:$PATH"
+    fi
+    if command -v cargo &>/dev/null; then
+      log_info "Compiling dotctl interactive CLI (Rust + Clap + Dialoguer)..."
+      cargo build --release --manifest-path "$ROOT_DIR/dotctl/Cargo.toml" --quiet
+      mkdir -p "$HOME/.local/bin"
+      ln -sfn "$ROOT_DIR/dotctl/target/release/dotctl" "$HOME/.local/bin/dotctl"
+      log_success "dotctl binary linked to ~/.local/bin/dotctl"
+    else
+      log_warn "Cargo not found in PATH. Install Rust toolchain to build dotctl."
+    fi
+  fi
+}
 
 # Modular component execution
 run_script() {
@@ -99,7 +119,11 @@ run_script() {
 }
 
 # Selective execution for user-space configs
-if [[ "$MODE" == "shell" ]]; then
+if [[ "$MODE" == "dotctl" ]]; then
+  build_dotctl
+  log_success "dotctl build completed!"
+  exit 0
+elif [[ "$MODE" == "shell" ]]; then
   run_script "shell.sh"
   log_success "Shell dotfiles installation completed!"
   exit 0
@@ -208,5 +232,9 @@ if [[ "$MODE" == "all" ]]; then
   run_script "android-studio.sh"
 fi
 
+# Build and link dotctl Rust CLI if toolchain is present
+build_dotctl
+
 log_success "Dotfiles workstation installation completed!"
+log_info "Tip: Run 'dotctl doctor' to audit your environment or 'dotctl install' to customize."
 log_info "Tip: Run './scripts/verify.sh' to validate all scripts and tools."
