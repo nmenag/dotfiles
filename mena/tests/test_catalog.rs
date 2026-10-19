@@ -55,6 +55,8 @@ fn test_catalog_completeness() {
     assert_eq!(find_tool("postman").unwrap().category, Category::Programs);
     assert!(find_tool("bruno").is_some(), "Bruno must be in catalog");
     assert_eq!(find_tool("bruno").unwrap().category, Category::Programs);
+    assert!(find_tool("stacer").is_some(), "Stacer must be in catalog");
+    assert_eq!(find_tool("stacer").unwrap().category, Category::Programs);
 }
 
 #[test]

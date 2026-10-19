@@ -32,6 +32,7 @@ pub fn handle_doctor(system: &SystemInfo) -> Result<()> {
     print_pkg_manager("Mise Version Manager (mise)", system.has_mise);
     print_pkg_manager("Node Package Manager (npm)", system.has_npm);
     print_pkg_manager("Node Executable Runner (npx)", system.has_npx);
+    print_pkg_manager("pnpm Package Manager (pnpm)", system.has_pnpm);
 
     // 3. Shell Dotfiles Integration
     println!("\n{}:", "3. Shell Dotfiles Configuration".bold());

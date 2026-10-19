@@ -192,7 +192,7 @@ graph TD
 ### 4.1 Domain Model & Registry
 - **Categories**: `Browsers`, `CliTools` (mandatory core including Git, Docker CE, Shell Dotfiles & Build Essentials; auto-filtered out from wizard), `Programs` (desktop apps & API clients), `VersionManagers` (ASDF, Mise), `DevUtilities` (editors, IDEs, terminals), `AiAssistants` (6-in-1 assistants), `SkillManagement`.
 - **Install Methods**: `Script(&'static str)`, `AiAdapter(&'static str)`, `AptPackage(&'static str)`, `SnapPackage { name, classic }`, `ShellCommand(&'static str)`.
-- **GUI Version Probing**: For Electron/GUI apps (Cursor, Postman, Bruno, pgAdmin, Android Studio), `version_flag` is set to `None` to prevent background CLI hangs during probing.
+- **GUI Version Probing**: For Electron/GUI apps (Cursor, Postman, Bruno, pgAdmin, Android Studio, Stacer), `version_flag` is set to `None` to prevent background CLI hangs during probing.
 
 ### 4.2 Interactive Wizard & Two-Phase Review Loop
 1. Presents multi-select menus grouped by category.
@@ -246,7 +246,8 @@ Prepends user directories only if they exist and are not already in `$PATH`:
 2. `~/.cargo/bin` (Cargo, Rust toolchains)
 3. `~/.asdf/bin` and `~/.asdf/shims` (ASDF version manager)
 4. `~/.local/share/mise/shims` (Mise version manager)
-5. System paths (`/usr/local/bin`, `/usr/bin`, `/bin`)
+5. `~/.local/share/pnpm` and `~/.local/share/pnpm/bin` (pnpm package manager)
+6. System paths (`/usr/local/bin`, `/usr/bin`, `/bin`)
 
 ### 5.2 Safety Aliases & DevEx Utilities
 - **Safety Defaults**: `alias rm='rm -i'`, `alias cp='cp -i'`, `alias mv='mv -i'`.
@@ -290,8 +291,8 @@ flowchart LR
 | **Brave, Bruno, Cursor, Docker, Mise, pgAdmin** | **Signed APT** | Official vendor signed keyrings in `/etc/apt/keyrings/` |
 | **Google Chrome, Orca, MongoDB Compass** | **Official Deb** | Downloaded via HTTPS to `mktemp -d`, installed with `dpkg -i` + `apt-get install -f -y` |
 | **Postman, Ghostty, Android Studio** | **Snap** | Canonical Snap confinement (`--classic` for dev tools requiring full system access) |
-| **ASDF, Zed** | **Vendor Tarball / Script** | User-space installation (`~/.asdf`, `~/.local/bin`), zero root mutations |
-| **Git, Build Essentials, VLC, Flameshot, BleachBit** | **Native Ubuntu APT** | Standard distribution repository packages (`sudo apt-get install -y`) |
+| **ASDF, Zed** | **Git Clone / Official Install Script** | User-space installation (`~/.asdf`, `~/.local/bin`), zero root mutations |
+| **Git, Build Essentials, VLC, Flameshot, BleachBit, Stacer** | **Native Ubuntu APT** | Standard distribution repository packages (`sudo apt-get install -y`) |
 
 ### 6.3 Automated Secret Hygiene
 - **Hardened `.gitignore`**: Excludes `.env`, `.env.*`, `*.pem`, `*.key`, `*.token`, `credentials.json`, and `~/.dotfiles_backup/`.

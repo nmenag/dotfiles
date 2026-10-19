@@ -21,6 +21,7 @@ pub struct SystemInfo {
     pub has_mise: bool,
     pub has_npm: bool,
     pub has_npx: bool,
+    pub has_pnpm: bool,
 }
 
 impl SystemInfo {
@@ -69,6 +70,13 @@ impl SystemInfo {
             has_mise: command_path("mise").is_some() || Path::new(&env::var("HOME").unwrap_or_default()).join(".local/bin/mise").exists(),
             has_npm: command_path("npm").is_some(),
             has_npx: command_path("npx").is_some(),
+            has_pnpm: command_path("pnpm").is_some()
+                || Path::new(&env::var("HOME").unwrap_or_default())
+                    .join(".local/share/pnpm/pnpm")
+                    .exists()
+                || Path::new(&env::var("HOME").unwrap_or_default())
+                    .join(".local/share/pnpm/bin/pnpm")
+                    .exists(),
         }
     }
 }

@@ -93,10 +93,12 @@ Automated workstation provisioning, development environment setup, unified shell
         ├── mongocompass.sh
         ├── pgadmin.sh
         ├── postman.sh
+        ├── stacer.sh
         └── vlc.sh
     └── version-managers/      # Runtime version managers (asdf, mise)
         ├── asdf.sh
-        └── mise.sh
+        ├── mise.sh
+        └── plugins.sh
 ```
 
 ---
@@ -153,7 +155,7 @@ Once bootstrapped, all workstation tools, browsers, runtimes, editors, and AI as
 mena install            # Launch interactive wizard across tool categories
 mena install core       # Re-execute core workstation essentials (Git, Docker, Shell Dotfiles, Build Tools)
 mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
-mena install programs   # Wizard scoped to desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno)
+mena install programs   # Wizard scoped to desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno, Stacer)
 mena install version-managers # Wizard scoped to ASDF and Mise version managers
 mena install dev        # Wizard scoped to editors (VS Code, Cursor, Zed), terminals & IDEs
 mena install ai         # Wizard scoped to AI terminal assistants (Claude, OpenCode, Codex, Kilo, Agy, Pi)
@@ -175,7 +177,7 @@ mena install --dry-run  # Simulate installation plan without modifying the works
 | `mena install` | Interactive wizard across optional tool categories with multi-select and preference prompts (core tools are auto-installed) |
 | `mena install <category>` | Wizard scoped to a category or core foundations (e.g. `core`, `browser`, `programs`, `version-managers`, `dev`, `ai`, `skills`, `shell`) |
 | `mena install -d, --dry-run` | Preview actions, dependency resolution, and planned commands without modifying the system |
-| `mena list` | View the complete tool catalog (34 tools) with real-time detection of installed versions |
+| `mena list` | View the complete tool catalog (35 tools) with real-time detection of installed versions |
 | `mena list -c <category>` | View catalog tools filtered by category (supports `--json` output) |
 | `mena doctor` | Comprehensive diagnostic check of OS, package managers, shell configurations, and AI adapters |
 | `mena update` | Updates AI assistant adapters, shell themes/plugins, and refreshes package manager caches |
@@ -392,9 +394,10 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`tools/mongocompass.sh`](./scripts/tools/mongocompass.sh) | Installs MongoDB Compass GUI via official Debian package | `./scripts/tools/mongocompass.sh` |
 | [`tools/pgadmin.sh`](./scripts/tools/pgadmin.sh) | Installs pgAdmin 4 Desktop via official PostgreSQL APT repository | `./scripts/tools/pgadmin.sh` |
 | [`tools/postman.sh`](./scripts/tools/postman.sh) | Installs Postman API development platform via Snap | `./scripts/tools/postman.sh` |
+| [`tools/stacer.sh`](./scripts/tools/stacer.sh) | Installs Stacer Linux system optimizer and monitoring tool via APT | `./scripts/tools/stacer.sh` |
 | [`tools/vlc.sh`](./scripts/tools/vlc.sh) | Installs VLC Media Player and multimedia framework via APT | `./scripts/tools/vlc.sh` |
-| [`version-managers/asdf.sh`](./scripts/version-managers/asdf.sh) | Installs ASDF v0.15.0 and runtime plugins (Node, Ruby, Python, Elixir, Erlang) | `./scripts/version-managers/asdf.sh` |
-| [`version-managers/mise.sh`](./scripts/version-managers/mise.sh) | Installs Mise polyglot runtime and version manager via official signed APT repository | `./scripts/version-managers/mise.sh` |
+| [`version-managers/asdf.sh`](./scripts/version-managers/asdf.sh) | Installs ASDF v0.15.0 and runtime plugins via shared plugins.sh (Node, pnpm, Ruby, Python, Elixir, Erlang) | `./scripts/version-managers/asdf.sh` |
+| [`version-managers/mise.sh`](./scripts/version-managers/mise.sh) | Installs Mise polyglot runtime manager and toolchains via shared plugins.sh | `./scripts/version-managers/mise.sh` |
 
 ---
 

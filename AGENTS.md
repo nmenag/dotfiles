@@ -112,10 +112,12 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     │   ├── mongocompass.sh
     │   ├── pgadmin.sh
     │   ├── postman.sh
+    │   ├── stacer.sh
     │   └── vlc.sh
     └── version-managers/      # Runtime version managers (asdf, mise)
         ├── asdf.sh
-        └── mise.sh
+        ├── mise.sh
+        └── plugins.sh
 ```
 
 ---

@@ -38,6 +38,11 @@ if [[ -d "$HOME/.local/share/mise/shims" ]]; then
   path_prepend "$HOME/.local/share/mise/shims"
 fi
 
+# PNPM Package Manager
+export PNPM_HOME="${PNPM_HOME:-$HOME/.local/share/pnpm}"
+path_prepend "$PNPM_HOME"
+path_prepend "$PNPM_HOME/bin"
+
 # Erlang & Elixir history
 export ERL_AFLAGS="-kernel shell_history enabled"
 

@@ -160,6 +160,16 @@ pub fn all_tools() -> Vec<Tool> {
             detection: DetectionMethod::Command("bruno"),
             version_flag: None,
         },
+        Tool {
+            id: "stacer",
+            name: "Stacer",
+            category: Category::Programs,
+            description: "Linux system optimizer, process viewer, and resource monitor",
+            dependencies: &[],
+            install_method: InstallMethod::Script("scripts/tools/stacer.sh"),
+            detection: DetectionMethod::Command("stacer"),
+            version_flag: None,
+        },
 
         // --- Version Managers ---
         Tool {

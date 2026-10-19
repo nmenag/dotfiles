@@ -4,6 +4,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR/plugins.sh"
+
 ASDF_DIR="$HOME/.asdf"
 ASDF_VERSION="v0.15.0"
 
@@ -43,34 +46,13 @@ add_plugin() {
 
 echo "Current ASDF version: $(asdf --version)"
 
-# Ruby
-echo "Configuring Ruby..."
-add_plugin "ruby" "https://github.com/asdf-vm/asdf-ruby.git"
-asdf install ruby latest || echo "Ruby install skipped or already up-to-date"
-asdf global ruby latest || true
-
-# Erlang
-echo "Configuring Erlang..."
-add_plugin "erlang" "https://github.com/asdf-vm/asdf-erlang.git"
-asdf install erlang latest || echo "Erlang install skipped or already up-to-date"
-asdf global erlang latest || true
-
-# Elixir
-echo "Configuring Elixir..."
-add_plugin "elixir" "https://github.com/asdf-vm/asdf-elixir.git"
-asdf install elixir latest || echo "Elixir install skipped or already up-to-date"
-asdf global elixir latest || true
-
-# Node.js
-echo "Configuring Node.js..."
-add_plugin "nodejs" "https://github.com/asdf-vm/asdf-nodejs.git"
-asdf install nodejs latest || echo "Node.js install skipped or already up-to-date"
-asdf global nodejs latest || true
-
-# Python
-echo "Configuring Python..."
-add_plugin "python"
-asdf install python latest || echo "Python install skipped or already up-to-date"
-asdf global python latest || true
+# Iterate through shared plugins list (DRY)
+for item in "${VERSION_MANAGER_PLUGINS[@]}"; do
+  IFS="|" read -r name asdf_url _mise_name <<< "$item"
+  echo "Configuring $name in ASDF..."
+  add_plugin "$name" "$asdf_url"
+  asdf install "$name" latest || echo "$name install skipped or already up-to-date"
+  asdf global "$name" latest || true
+done
 
 echo "ASDF installation and plugin setup completed successfully!"
