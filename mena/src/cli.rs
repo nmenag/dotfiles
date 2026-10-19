@@ -22,7 +22,7 @@ pub enum Commands {
         #[arg(value_name = "CATEGORY")]
         category: Option<String>,
 
-        /// Install or re-execute core workstation foundations (Git, Docker, Build Tools, Snapd)
+        /// Install or re-execute core workstation foundations (Git, Docker, Shell Dotfiles, Build Tools, Snapd)
         #[arg(long)]
         core: bool,
 
@@ -35,7 +35,7 @@ pub enum Commands {
         yes: bool,
     },
 
-    /// Install or re-execute core workstation foundations (Git, Docker, Build Tools, Snapd)
+    /// Install or re-execute core workstation foundations (Git, Docker, Shell Dotfiles, Build Tools, Snapd)
     #[command(hide = true)]
     Core {
         /// Run in dry-run mode without modifying the system

@@ -85,6 +85,26 @@ pub fn all_tools() -> Vec<Tool> {
             detection: DetectionMethod::Command("snap"),
             version_flag: Some("--version"),
         },
+        Tool {
+            id: "ohmyzsh",
+            name: "Zsh & Oh My Zsh (Core)",
+            category: Category::CliTools,
+            description: "Z shell installation and Oh My Zsh framework setup",
+            dependencies: &["curl", "git"],
+            install_method: InstallMethod::Script("scripts/core/shell.sh"),
+            detection: DetectionMethod::Path(".oh-my-zsh"),
+            version_flag: None,
+        },
+        Tool {
+            id: "shell-dotfiles",
+            name: "Centralized Shell Dotfiles & DevEx Theme (Core)",
+            category: Category::CliTools,
+            description: "Unified Bash & Zsh loaders, syntax highlighting, autosuggestions and prompt theme",
+            dependencies: &["git"],
+            install_method: InstallMethod::Script("scripts/core/shell.sh"),
+            detection: DetectionMethod::Path(".zshrc"),
+            version_flag: None,
+        },
 
         // --- Desktop Programs & API Clients ---
         Tool {
@@ -337,28 +357,6 @@ pub fn all_tools() -> Vec<Tool> {
             install_method: InstallMethod::ShellCommand("npm install -g skills 2>/dev/null || echo 'Skills CLI is available via npx skills'"),
             detection: DetectionMethod::Command("skills"),
             version_flag: Some("--version"),
-        },
-
-        // --- Shell Environment ---
-        Tool {
-            id: "ohmyzsh",
-            name: "Zsh & Oh My Zsh",
-            category: Category::ShellEnvironment,
-            description: "Z shell installation and Oh My Zsh framework setup",
-            dependencies: &["curl", "git"],
-            install_method: InstallMethod::Script("scripts/shell/shell.sh"),
-            detection: DetectionMethod::Path(".oh-my-zsh"),
-            version_flag: None,
-        },
-        Tool {
-            id: "shell-dotfiles",
-            name: "Centralized Shell Dotfiles & DevEx Theme",
-            category: Category::ShellEnvironment,
-            description: "Unified Bash & Zsh loaders, syntax highlighting, autosuggestions and prompt theme",
-            dependencies: &["git"],
-            install_method: InstallMethod::Script("scripts/shell/shell.sh"),
-            detection: DetectionMethod::Path(".zshrc"),
-            version_flag: None,
         },
     ]
 }

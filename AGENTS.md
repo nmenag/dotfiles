@@ -93,17 +93,16 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     ├── browsers/              # Web browsers
     │   ├── brave.sh
     │   └── chrome.sh
-    ├── core/                  # Core foundations, Git & Docker
+    ├── core/                  # Core foundations, Git, Docker & Shell
     │   ├── core.sh
     │   ├── docker.sh
-    │   └── gitconfig.sh
+    │   ├── gitconfig.sh
+    │   └── shell.sh
     ├── editors/               # Code editors & IDEs
     │   ├── android-studio.sh
     │   ├── cursor.sh
     │   ├── vscode.sh
     │   └── zed.sh
-    ├── shell/                 # Shell environment & framework installers
-    │   └── shell.sh
     ├── terminal/              # Terminals & workspace multiplexers
     │   └── ghostty.sh
     ├── tools/                 # Desktop tools, API clients & database utilities

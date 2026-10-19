@@ -149,6 +149,21 @@ else
   fi
 fi
 
+# 6. Core Shell Dotfiles & Oh My Zsh
+log_info "Configuring Core Shell Dotfiles..."
+if [[ "$DRY_RUN" == "true" ]]; then
+  log_info "[DRY-RUN] Would execute: bash scripts/core/shell.sh"
+  SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+else
+  if bash "$ROOT_DIR/scripts/core/shell.sh"; then
+    log_success "Core Shell Dotfiles configured successfully!"
+    SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
+  else
+    log_error "Core Shell Dotfiles configuration encountered errors!"
+    FAILED_COMPONENTS+=("Shell Dotfiles (scripts/core/shell.sh)")
+  fi
+fi
+
 echo ""
 echo "=================================================="
 echo "         Core Installation Summary                "

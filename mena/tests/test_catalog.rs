@@ -39,6 +39,10 @@ fn test_catalog_completeness() {
     assert_eq!(find_tool("git").unwrap().category, Category::CliTools);
     assert!(find_tool("docker").is_some(), "Docker must be in catalog");
     assert_eq!(find_tool("docker").unwrap().category, Category::CliTools);
+    assert!(find_tool("ohmyzsh").is_some(), "Oh My Zsh must be in catalog");
+    assert_eq!(find_tool("ohmyzsh").unwrap().category, Category::CliTools);
+    assert!(find_tool("shell-dotfiles").is_some(), "Shell dotfiles must be in catalog");
+    assert_eq!(find_tool("shell-dotfiles").unwrap().category, Category::CliTools);
 
     // Desktop programs & API clients
     assert!(find_tool("bleachbit").is_some(), "BleachBit must be in catalog");

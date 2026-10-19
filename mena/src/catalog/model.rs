@@ -9,7 +9,6 @@ pub enum Category {
     DevUtilities,
     AiAssistants,
     SkillManagement,
-    ShellEnvironment,
 }
 
 impl Category {
@@ -22,7 +21,6 @@ impl Category {
             Category::DevUtilities,
             Category::AiAssistants,
             Category::SkillManagement,
-            Category::ShellEnvironment,
         ]
     }
 
@@ -37,7 +35,6 @@ impl Category {
             Category::DevUtilities,
             Category::AiAssistants,
             Category::SkillManagement,
-            Category::ShellEnvironment,
         ]
     }
 
@@ -54,33 +51,30 @@ impl Category {
             Category::DevUtilities => "dev-utilities",
             Category::AiAssistants => "ai-assistants",
             Category::SkillManagement => "skills",
-            Category::ShellEnvironment => "shell",
         }
     }
 
     pub fn display_name(&self) -> &'static str {
         match self {
             Category::Browsers => "Web Browsers",
-            Category::CliTools => "CLI & Core System Tools (Core)",
+            Category::CliTools => "CLI, Shell & Core System Tools (Core)",
             Category::Programs => "Desktop Programs & API Clients",
             Category::VersionManagers => "Version Managers",
             Category::DevUtilities => "Developer Utilities, IDEs & Terminals",
             Category::AiAssistants => "AI Coding Assistants & Adapters",
             Category::SkillManagement => "Agent Skills Management",
-            Category::ShellEnvironment => "Shell Dotfiles, Oh My Zsh & Themes",
         }
     }
 
     pub fn description(&self) -> &'static str {
         match self {
             Category::Browsers => "Web browsers (Brave, Chrome) for daily and development use",
-            Category::CliTools => "Core development tools (Git, Docker CE, Build Essentials, cURL, Wget) installed automatically",
+            Category::CliTools => "Core development tools (Git, Docker CE, Shell Dotfiles, Build Essentials, cURL, Wget) installed automatically",
             Category::Programs => "Desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno)",
             Category::VersionManagers => "ASDF & Mise runtime version managers and polyglot toolchains (Node, Python, Ruby, etc.)",
             Category::DevUtilities => "Code editors, terminal emulators, workspace managers and database tools",
             Category::AiAssistants => "Terminal AI assistants (Claude, OpenCode, Codex, Kilo, Agy, Pi) with unified instructions",
             Category::SkillManagement => "Official 'skills' CLI for discovering and managing Agent Skills",
-            Category::ShellEnvironment => "Unified Bash and Zsh configurations, Oh My Zsh plugins and DevEx prompt theme",
         }
     }
 
@@ -88,13 +82,12 @@ impl Category {
         let normalized = input.to_lowercase().replace('_', "-");
         match normalized.as_str() {
             "browser" | "browsers" | "web" => Some(Category::Browsers),
-            "cli" | "clitools" | "core" | "system" => Some(Category::CliTools),
+            "cli" | "clitools" | "core" | "system" | "shell" | "zsh" | "bash" | "dotfiles" => Some(Category::CliTools),
             "program" | "programs" | "app" | "apps" | "desktop" => Some(Category::Programs),
             "version-manager" | "version-managers" | "vm" | "runtime" | "runtimes" | "asdf" | "mise" | "languages" => Some(Category::VersionManagers),
             "dev" | "dev-utilities" | "utils" | "utilities" | "ide" | "ides" => Some(Category::DevUtilities),
             "ai" | "ai-assistants" | "assistants" | "agents" => Some(Category::AiAssistants),
             "skill" | "skills" => Some(Category::SkillManagement),
-            "shell" | "zsh" | "bash" | "dotfiles" => Some(Category::ShellEnvironment),
             _ => None,
         }
     }

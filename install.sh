@@ -116,8 +116,8 @@ else
   FAILED_BOOTSTRAP_ITEMS+=("Package: libncurses-dev")
 fi
 
-# 3. Core Foundation: Git & Docker are core (yes or yes are installed)
-log_info "Configuring core essentials: Git and Docker..."
+# 3. Core Foundation: Git, Docker, and Shell are core (yes or yes are installed)
+log_info "Configuring core essentials: Git, Docker, and Shell Dotfiles..."
 if ! bash "$ROOT_DIR/scripts/core/gitconfig.sh"; then
   log_error "Core Git configuration failed"
   FAILED_BOOTSTRAP_ITEMS+=("Git Configuration (scripts/core/gitconfig.sh)")
@@ -126,6 +126,11 @@ fi
 if ! bash "$ROOT_DIR/scripts/core/docker.sh"; then
   log_error "Core Docker configuration failed"
   FAILED_BOOTSTRAP_ITEMS+=("Docker Configuration (scripts/core/docker.sh)")
+fi
+
+if ! bash "$ROOT_DIR/scripts/core/shell.sh"; then
+  log_error "Core Shell Dotfiles configuration failed"
+  FAILED_BOOTSTRAP_ITEMS+=("Shell Dotfiles Configuration (scripts/core/shell.sh)")
 fi
 
 if [[ ${#FAILED_BOOTSTRAP_ITEMS[@]} -gt 0 ]]; then

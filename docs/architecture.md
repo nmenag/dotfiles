@@ -57,6 +57,7 @@ graph TD
         Bootstrap["install.sh"]
         GitCore["scripts/core/gitconfig.sh (Core Git)"]
         DockerCore["scripts/core/docker.sh (Core Docker CE)"]
+        ShellCore["scripts/core/shell.sh (Core Shell Dotfiles & Oh My Zsh)"]
         BuildTools["Core Build Essentials & APT Caches"]
     end
 
@@ -71,9 +72,9 @@ graph TD
     subgraph L3["Layer 3: Modular Provisioning Scripts"]
         Browsers["Browsers (Brave, Chrome)"]
         Programs["Desktop Programs & API (Bruno, Postman, VLC, etc.)"]
-        Runtimes["Runtimes (ASDF, Mise)"]
+        VersionManagers["Version Managers (ASDF, Mise)"]
         DevTools["Editors & IDEs (VS Code, Cursor, Zed, Orca)"]
-        ShellScripts["Shell & System (Oh My Zsh, Herdr, Snapd)"]
+        AiTools["AI Tools & Workspace (Herdr, Orca)"]
     end
 
     subgraph L4["Layer 4: Unified Shell & DevEx Layer"]
@@ -95,6 +96,7 @@ graph TD
     Bootstrap --> BuildTools
     Bootstrap --> GitCore
     Bootstrap --> DockerCore
+    Bootstrap --> ShellCore
     Bootstrap --> MenaCLI
 
     MenaCLI --> Catalog
@@ -104,15 +106,15 @@ graph TD
 
     Executor --> Browsers
     Executor --> Programs
-    Executor --> Runtimes
+    Executor --> VersionManagers
     Executor --> DevTools
-    Executor --> ShellScripts
+    Executor --> AiTools
     Executor --> Adapters
 
-    ShellScripts --> ShellEnv
-    ShellScripts --> ShellAliases
-    ShellScripts --> ShellFuncs
-    ShellScripts --> Theme
+    ShellCore --> ShellEnv
+    ShellCore --> ShellAliases
+    ShellCore --> ShellFuncs
+    ShellCore --> Theme
     ShellEnv --> BashRC
     ShellEnv --> ZshRC
 
@@ -188,7 +190,7 @@ graph TD
 ```
 
 ### 4.1 Domain Model & Registry
-- **Categories**: `Browsers`, `CliTools` (mandatory core, auto-filtered out from wizard), `Programs` (desktop apps & API clients), `Runtimes` (ASDF, Mise), `DevUtilities` (editors, IDEs), `AiAssistants` (6-in-1 assistants), `SkillManagement`, `ShellEnvironment`.
+- **Categories**: `Browsers`, `CliTools` (mandatory core including Git, Docker CE, Shell Dotfiles & Build Essentials; auto-filtered out from wizard), `Programs` (desktop apps & API clients), `VersionManagers` (ASDF, Mise), `DevUtilities` (editors, IDEs, terminals), `AiAssistants` (6-in-1 assistants), `SkillManagement`.
 - **Install Methods**: `Script(&'static str)`, `AiAdapter(&'static str)`, `AptPackage(&'static str)`, `SnapPackage { name, classic }`, `ShellCommand(&'static str)`.
 - **GUI Version Probing**: For Electron/GUI apps (Cursor, Postman, Bruno, pgAdmin, Android Studio), `version_flag` is set to `None` to prevent background CLI hangs during probing.
 

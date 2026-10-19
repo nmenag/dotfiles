@@ -74,17 +74,16 @@ Automated workstation provisioning, development environment setup, unified shell
     ├── browsers/              # Web browsers
     │   ├── brave.sh
     │   └── chrome.sh
-    ├── core/                  # Core foundations, Git & Docker
+    ├── core/                  # Core foundations, Git, Docker & Shell
     │   ├── core.sh
     │   ├── docker.sh
-    │   └── gitconfig.sh
+    │   ├── gitconfig.sh
+    │   └── shell.sh
     ├── editors/               # Code editors & IDEs
     │   ├── android-studio.sh
     │   ├── cursor.sh
     │   ├── vscode.sh
     │   └── zed.sh
-    ├── shell/                 # Shell environment & framework installers
-    │   └── shell.sh
     ├── terminal/              # Terminals & workspace multiplexers
     │   └── ghostty.sh
     ├── tools/                 # Desktop tools, API clients & database utilities
@@ -134,7 +133,7 @@ nano .env   # Set EMAIL and USERNAME
 ### 4. Run Installation
 
 #### Bootstrap Workstation
-Bootstraps core system build tools, installs and configures **Git** and **Docker Engine** (core foundations that are always installed automatically), compiles and links the `mena` CLI to `~/.local/bin/mena` (and `~/.local/bin/dotctl`), and launches the interactive `mena` installation wizard:
+Bootstraps core system build tools, installs and configures **Git**, **Docker Engine**, and **Shell Dotfiles & Oh My Zsh** (core foundations that are always installed automatically), compiles and links the `mena` CLI to `~/.local/bin/mena` (and `~/.local/bin/dotctl`), and launches the interactive `mena` installation wizard:
 ```bash
 ./install.sh
 ```
@@ -152,7 +151,7 @@ Once bootstrapped, all workstation tools, browsers, runtimes, editors, and AI as
 
 ```bash
 mena install            # Launch interactive wizard across tool categories
-mena install core       # Re-execute core workstation essentials (Git, Docker, Build Tools)
+mena install core       # Re-execute core workstation essentials (Git, Docker, Shell Dotfiles, Build Tools)
 mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
 mena install programs   # Wizard scoped to desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno)
 mena install version-managers # Wizard scoped to ASDF and Mise version managers
@@ -285,7 +284,7 @@ Both shells automatically load shared configurations from `shell/`:
 | `reload_shell` | Reloads active shell configuration (`.zshrc` or `.bashrc`) | `reload_shell` |
 
 ### Oh My Zsh Plugins & Theme
-Running `./scripts/shell/shell.sh` automatically configures:
+Running `./scripts/core/shell.sh` automatically configures:
 - Plugins: `git`, `zsh-autosuggestions`, `zsh-syntax-highlighting`
 - Custom Theme: `devex.zsh-theme` (lightweight, displays Git branch and dirty state without terminal lag)
 
@@ -381,11 +380,11 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`core/core.sh`](./scripts/core/core.sh) | Installs core workstation foundations, build tools, Git, and Docker | `./scripts/core/core.sh` |
 | [`core/docker.sh`](./scripts/core/docker.sh) | Installs Docker CE, CLI, Containerd, Buildx, and Compose v2 plugin | `./scripts/core/docker.sh` |
 | [`core/gitconfig.sh`](./scripts/core/gitconfig.sh) | Configures Git identity, aliases (`git lg`), SSH key, and Git hooks | `./scripts/core/gitconfig.sh` |
+| [`core/shell.sh`](./scripts/core/shell.sh) | Installs Zsh & Oh My Zsh, productivity plugins, custom theme, and dotfiles loaders | `./scripts/core/shell.sh` |
 | [`editors/android-studio.sh`](./scripts/editors/android-studio.sh) | Installs Java OpenJDK and Android Studio via Snap | `./scripts/editors/android-studio.sh` |
 | [`editors/cursor.sh`](./scripts/editors/cursor.sh) | Installs Cursor AI Editor via official signed APT repository | `./scripts/editors/cursor.sh` |
 | [`editors/vscode.sh`](./scripts/editors/vscode.sh) | Installs VS Code and 25+ curated development extensions | `./scripts/editors/vscode.sh` |
 | [`editors/zed.sh`](./scripts/editors/zed.sh) | Installs Zed editor via official vendor installer | `./scripts/editors/zed.sh` |
-| [`shell/shell.sh`](./scripts/shell/shell.sh) | Installs Zsh & Oh My Zsh, productivity plugins, custom theme, and dotfiles loaders | `./scripts/shell/shell.sh` |
 | [`terminal/ghostty.sh`](./scripts/terminal/ghostty.sh) | Installs Ghostty native terminal emulator via Snap (--classic) | `./scripts/terminal/ghostty.sh` |
 | [`tools/bleachbit.sh`](./scripts/tools/bleachbit.sh) | Installs BleachBit system space cleaner and privacy manager via APT | `./scripts/tools/bleachbit.sh` |
 | [`tools/bruno.sh`](./scripts/tools/bruno.sh) | Installs Bruno open-source API client via official signed APT repository | `./scripts/tools/bruno.sh` |
