@@ -31,11 +31,18 @@ fn test_catalog_completeness() {
     assert!(find_tool("orca").is_some(), "Orca must be in catalog");
     assert!(find_tool("pgadmin").is_some(), "pgAdmin must be in catalog");
     assert!(find_tool("mongocompass").is_some(), "MongoCompass must be in catalog");
+    assert!(find_tool("asdf").is_some(), "ASDF must be in catalog");
+    assert_eq!(find_tool("asdf").unwrap().category, Category::VersionManagers);
     assert!(find_tool("mise").is_some(), "Mise must be in catalog");
+    assert_eq!(find_tool("mise").unwrap().category, Category::VersionManagers);
     assert!(find_tool("git").is_some(), "Git must be in catalog");
     assert_eq!(find_tool("git").unwrap().category, Category::CliTools);
     assert!(find_tool("docker").is_some(), "Docker must be in catalog");
     assert_eq!(find_tool("docker").unwrap().category, Category::CliTools);
+    assert!(find_tool("ohmyzsh").is_some(), "Oh My Zsh must be in catalog");
+    assert_eq!(find_tool("ohmyzsh").unwrap().category, Category::CliTools);
+    assert!(find_tool("shell-dotfiles").is_some(), "Shell dotfiles must be in catalog");
+    assert_eq!(find_tool("shell-dotfiles").unwrap().category, Category::CliTools);
 
     // Desktop programs & API clients
     assert!(find_tool("bleachbit").is_some(), "BleachBit must be in catalog");

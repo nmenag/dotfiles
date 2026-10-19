@@ -18,11 +18,11 @@ pub struct Cli {
 pub enum Commands {
     /// Launch the interactive installation wizard (all categories or filtered by category)
     Install {
-        /// Optional category or component to filter/install (e.g., 'core', 'browser', 'cli', 'programs', 'runtimes', 'dev', 'ai', 'skills', 'shell')
+        /// Optional category or component to filter/install (e.g., 'core', 'browser', 'cli', 'programs', 'version-managers', 'dev', 'ai', 'skills', 'shell')
         #[arg(value_name = "CATEGORY")]
         category: Option<String>,
 
-        /// Install or re-execute core workstation foundations (Git, Docker, Build Tools, Snapd)
+        /// Install or re-execute core workstation foundations (Git, Docker, Shell Dotfiles, Build Tools, Snapd)
         #[arg(long)]
         core: bool,
 
@@ -35,7 +35,7 @@ pub enum Commands {
         yes: bool,
     },
 
-    /// Install or re-execute core workstation foundations (Git, Docker, Build Tools, Snapd)
+    /// Install or re-execute core workstation foundations (Git, Docker, Shell Dotfiles, Build Tools, Snapd)
     #[command(hide = true)]
     Core {
         /// Run in dry-run mode without modifying the system
@@ -45,7 +45,7 @@ pub enum Commands {
 
     /// List all cataloged workstation tools, categories, and installation status
     List {
-        /// Filter tools by category (e.g., 'browser', 'cli', 'programs', 'runtimes', 'dev', 'ai', 'skills', 'shell')
+        /// Filter tools by category (e.g., 'browser', 'cli', 'programs', 'version-managers', 'dev', 'ai', 'skills', 'shell')
         #[arg(long, short = 'c')]
         category: Option<String>,
 

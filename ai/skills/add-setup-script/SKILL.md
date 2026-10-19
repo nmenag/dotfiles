@@ -20,14 +20,14 @@ Choose the preferred distribution mechanism in order of priority:
 5. **Direct GitHub Release Binary / Deb**: Preferred for standalone Go/Rust/C tools.
 
 ### 2. Use the Standard Script Boilerplate
-Create `scripts/<tool-name>.sh` using this template:
+Select the appropriate category folder under `scripts/` (e.g. `editors/`, `browsers/`, `version-managers/`, `tools/`, `terminal/`, `core/`, `ai/`) and create `scripts/<category>/<tool-name>.sh` using this template:
 
 ```bash
 #!/bin/bash
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 echo "Installing <Tool Name>..."
 
@@ -55,17 +55,17 @@ echo "<Tool Name> installation completed successfully!"
 
 ### 3. Grant Executable Permissions
 ```bash
-chmod +x scripts/<tool-name>.sh
+chmod +x scripts/<category>/<tool-name>.sh
 ```
 
 ### 4. Wire into Orchestration (Optional)
-If the tool is a core workstation dependency:
-1. Add invocation in `install.sh` under `run_script "<tool-name>.sh"`.
+If registering in `mena`:
+1. Add entry in `mena/src/catalog/registry.rs` pointing to `scripts/<category>/<tool-name>.sh`.
 2. Add the tool to the table in `README.md`.
 
 ### 5. Validate the Script
 Run:
 ```bash
-bash -n scripts/<tool-name>.sh
+bash -n scripts/<category>/<tool-name>.sh
 ./scripts/verify.sh
 ```

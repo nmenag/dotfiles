@@ -131,7 +131,7 @@ jobs:
       - name: Verify Bash script syntax (bash -n)
         run: |
           echo "Checking syntax across all shell scripts..."
-          for f in install.sh scripts/*.sh shell/*.sh ai/adapters/*.sh; do
+          for f in install.sh scripts/*.sh scripts/*/*.sh shell/*.sh ai/adapters/*.sh; do
             if [[ -f "$f" ]]; then
               bash -n "$f"
             fi

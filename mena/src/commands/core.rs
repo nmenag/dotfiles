@@ -9,7 +9,7 @@ pub fn handle_core(dry_run: bool) -> Result<()> {
     println!("Installing or repairing core workstation essentials (Git, Docker, Build Tools, Snapd)...");
 
     let root = find_dotfiles_root();
-    let script_path = root.join("scripts/core.sh");
+    let script_path = root.join("scripts/core/core.sh");
 
     if !script_path.exists() {
         anyhow::bail!("Core installation script not found at: {}", script_path.display());

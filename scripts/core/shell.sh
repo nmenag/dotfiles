@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 echo "=== Configuring Shell Dotfiles (Bash & Oh My Zsh) ==="
 
@@ -17,10 +17,19 @@ backup_file() {
   fi
 }
 
-# 1. Ensure Oh My Zsh is present
+# 1. Ensure Zsh and Oh My Zsh are installed
+if ! command -v zsh &>/dev/null; then
+  echo "Zsh not found. Installing Zsh and prerequisites..."
+  sudo apt-get update -y
+  sudo apt-get install -y zsh curl git
+fi
+
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-  echo "Oh My Zsh not found. Running ohmyzsh.sh installer..."
-  bash "$SCRIPT_DIR/ohmyzsh.sh"
+  echo "Downloading and installing Oh My Zsh (unattended)..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  echo "Oh My Zsh installed successfully!"
+else
+  echo "Oh My Zsh is already installed at $HOME/.oh-my-zsh."
 fi
 
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
@@ -114,5 +123,14 @@ fi
 
 # 6. Ensure executable permissions
 chmod +x "$ROOT_DIR"/shell/*.sh 2>/dev/null || true
+
+# 7. Check default shell
+CURRENT_SHELL="$(basename "$SHELL")"
+if [[ "$CURRENT_SHELL" != "zsh" ]]; then
+  echo "Current shell is $CURRENT_SHELL."
+  if command -v zsh &>/dev/null; then
+    echo "To make Zsh your default shell, run: chsh -s $(command -v zsh)"
+  fi
+fi
 
 echo "Shell dotfiles installation and configuration completed successfully!"

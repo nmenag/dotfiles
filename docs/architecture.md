@@ -55,8 +55,9 @@ The system is structured into five distinct, loosely-coupled layers:
 graph TD
     subgraph L1["Layer 1: Bootstrap & Core Foundation"]
         Bootstrap["install.sh"]
-        GitCore["scripts/gitconfig.sh (Core Git)"]
-        DockerCore["scripts/docker.sh (Core Docker CE)"]
+        GitCore["scripts/core/gitconfig.sh (Core Git)"]
+        DockerCore["scripts/core/docker.sh (Core Docker CE)"]
+        ShellCore["scripts/core/shell.sh (Core Shell Dotfiles & Oh My Zsh)"]
         BuildTools["Core Build Essentials & APT Caches"]
     end
 
@@ -71,9 +72,9 @@ graph TD
     subgraph L3["Layer 3: Modular Provisioning Scripts"]
         Browsers["Browsers (Brave, Chrome)"]
         Programs["Desktop Programs & API (Bruno, Postman, VLC, etc.)"]
-        Runtimes["Runtimes (ASDF, Mise)"]
+        VersionManagers["Version Managers (ASDF, Mise)"]
         DevTools["Editors & IDEs (VS Code, Cursor, Zed, Orca)"]
-        ShellScripts["Shell & System (Oh My Zsh, Herdr, Snapd)"]
+        AiTools["AI Tools & Workspace (Herdr, Orca)"]
     end
 
     subgraph L4["Layer 4: Unified Shell & DevEx Layer"]
@@ -95,6 +96,7 @@ graph TD
     Bootstrap --> BuildTools
     Bootstrap --> GitCore
     Bootstrap --> DockerCore
+    Bootstrap --> ShellCore
     Bootstrap --> MenaCLI
 
     MenaCLI --> Catalog
@@ -104,15 +106,15 @@ graph TD
 
     Executor --> Browsers
     Executor --> Programs
-    Executor --> Runtimes
+    Executor --> VersionManagers
     Executor --> DevTools
-    Executor --> ShellScripts
+    Executor --> AiTools
     Executor --> Adapters
 
-    ShellScripts --> ShellEnv
-    ShellScripts --> ShellAliases
-    ShellScripts --> ShellFuncs
-    ShellScripts --> Theme
+    ShellCore --> ShellEnv
+    ShellCore --> ShellAliases
+    ShellCore --> ShellFuncs
+    ShellCore --> Theme
     ShellEnv --> BashRC
     ShellEnv --> ZshRC
 
@@ -140,7 +142,7 @@ sequenceDiagram
     Developer->>Install: Executes ./install.sh
     Install->>Install: Sources .env configuration
     Install->>System: Updates APT & installs core build tools (gcc, make, curl, etc.)
-    Install->>Scripts: Executes scripts/gitconfig.sh & scripts/docker.sh (Mandatory Core)
+    Install->>Scripts: Executes scripts/core/gitconfig.sh & scripts/core/docker.sh (Mandatory Core)
     Install->>System: Compiles mena Rust binary & links ~/.local/bin/mena
     Install->>Mena: Hands off execution (exec mena install)
 
@@ -158,8 +160,8 @@ sequenceDiagram
 ### 3.1 Dedicated Core Recovery & Re-Execution
 While `./install.sh` automatically provisions core foundations during initial bootstrap, developers can re-execute or repair core foundations at any time without entering the interactive selection wizard:
 - **`mena install core`** (or `mena install --core`): Pure Rust CLI command that verifies, repairs, and provisions all core system foundations.
-- **`./install.sh --core`**: Executes `scripts/core.sh` directly and exits immediately without compiling or launching the wizard.
-- **`./scripts/core.sh`**: Standalone idempotent script to install build essentials, compilation headers, cURL, Wget, Snapd, Git (`scripts/gitconfig.sh`), and Docker CE (`scripts/docker.sh`).
+- **`./install.sh --core`**: Executes `scripts/core/core.sh` directly and exits immediately without compiling or launching the wizard.
+- **`./scripts/core/core.sh`**: Standalone idempotent script to install build essentials, compilation headers, cURL, Wget, Snapd, Git (`scripts/core/gitconfig.sh`), and Docker CE (`scripts/core/docker.sh`).
 
 ---
 
@@ -188,7 +190,7 @@ graph TD
 ```
 
 ### 4.1 Domain Model & Registry
-- **Categories**: `Browsers`, `CliTools` (mandatory core, auto-filtered out from wizard), `Programs` (desktop apps & API clients), `Runtimes` (ASDF, Mise), `DevUtilities` (editors, IDEs), `AiAssistants` (6-in-1 assistants), `SkillManagement`, `ShellEnvironment`.
+- **Categories**: `Browsers`, `CliTools` (mandatory core including Git, Docker CE, Shell Dotfiles & Build Essentials; auto-filtered out from wizard), `Programs` (desktop apps & API clients), `VersionManagers` (ASDF, Mise), `DevUtilities` (editors, IDEs, terminals), `AiAssistants` (6-in-1 assistants), `SkillManagement`.
 - **Install Methods**: `Script(&'static str)`, `AiAdapter(&'static str)`, `AptPackage(&'static str)`, `SnapPackage { name, classic }`, `ShellCommand(&'static str)`.
 - **GUI Version Probing**: For Electron/GUI apps (Cursor, Postman, Bruno, pgAdmin, Android Studio), `version_flag` is set to `None` to prevent background CLI hangs during probing.
 
@@ -326,7 +328,7 @@ graph TD
     end
 
     subgraph AdaptersLayer["Orchestrator & Adapter Layer"]
-        AiTools["scripts/ai-tools.sh"]
+        AiTools["scripts/ai/ai-tools.sh"]
         Adapters["claude.sh | opencode.sh | codex.sh | kilo.sh | agy.sh | pi.sh"]
     end
 
@@ -391,5 +393,5 @@ To uphold the DRY principle, `.agents/` contains zero duplicated physical files:
 ├── .agents/                   # Workspace AI agent customizations (Antigravity bridge)
 │   ├── rules/                 # Modular agent rules (symlinked to ai/rules/)
 │   └── skills/                # On-demand agent runbooks (symlinked to ai/skills/)
-└── scripts/                   # Modular installation scripts
+└── scripts/                   # Categorized modular installation scripts (editors, browsers, core, etc.)
 ```

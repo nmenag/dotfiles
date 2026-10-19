@@ -84,26 +84,38 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
 ├── .agents/                   # Workspace AI agent customizations (Antigravity bridge)
 │   ├── rules/                 # Modular agent rules
 │   └── skills/                # On-demand agent runbooks & workflows
-└── scripts/                   # Modular installation scripts
-    ├── ai-tools.sh
-    ├── android-studio.sh
-    ├── asdf.sh
-    ├── brave.sh
-    ├── cursor.sh
-    ├── docker.sh
-    ├── ghostty.sh
-    ├── gitconfig.sh
-    ├── herdr.sh
-    ├── mise.sh
-    ├── mongocompass.sh
-    ├── ohmyzsh.sh
-    ├── orca.sh
-    ├── pgadmin.sh
-    ├── programs.sh
-    ├── shell.sh
-    ├── verify.sh
-    ├── vscode.sh
-    └── zed.sh
+└── scripts/                   # Categorized modular installation scripts
+    ├── verify.sh              # Repository verification & test harness
+    ├── ai/                    # AI coding assistants, agents & tools
+    │   ├── ai-tools.sh
+    │   ├── herdr.sh
+    │   └── orca.sh
+    ├── browsers/              # Web browsers
+    │   ├── brave.sh
+    │   └── chrome.sh
+    ├── core/                  # Core foundations, Git, Docker & Shell
+    │   ├── core.sh
+    │   ├── docker.sh
+    │   ├── gitconfig.sh
+    │   └── shell.sh
+    ├── editors/               # Code editors & IDEs
+    │   ├── android-studio.sh
+    │   ├── cursor.sh
+    │   ├── vscode.sh
+    │   └── zed.sh
+    ├── terminal/              # Terminals & workspace multiplexers
+    │   └── ghostty.sh
+    ├── tools/                 # Desktop tools, API clients & database utilities
+    │   ├── bleachbit.sh
+    │   ├── bruno.sh
+    │   ├── flameshot.sh
+    │   ├── mongocompass.sh
+    │   ├── pgadmin.sh
+    │   ├── postman.sh
+    │   └── vlc.sh
+    └── version-managers/      # Runtime version managers (asdf, mise)
+        ├── asdf.sh
+        └── mise.sh
 ```
 
 ---
@@ -117,7 +129,7 @@ Before finishing any task that touches shell scripts, verify the workspace:
 ./scripts/verify.sh
 
 # 2. Test bash syntax across all scripts
-for f in install.sh scripts/*.sh shell/*.sh ai/adapters/*.sh; do bash -n "$f"; done
+for f in install.sh scripts/*.sh scripts/*/*.sh shell/*.sh ai/adapters/*.sh; do bash -n "$f"; done
 
 # 3. Run mena Rust CLI test suite
 cargo test --manifest-path mena/Cargo.toml

@@ -19,6 +19,7 @@ echo -e "${BLUE}[1/7] Checking Bash script syntax (bash -n)...${NC}"
 ALL_SCRIPTS=(
   "$ROOT_DIR/install.sh"
   "$ROOT_DIR"/scripts/*.sh
+  "$ROOT_DIR"/scripts/*/*.sh
   "$ROOT_DIR"/shell/*.sh
   "$ROOT_DIR"/ai/adapters/*.sh
 )
