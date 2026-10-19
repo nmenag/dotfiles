@@ -55,8 +55,8 @@ The system is structured into five distinct, loosely-coupled layers:
 graph TD
     subgraph L1["Layer 1: Bootstrap & Core Foundation"]
         Bootstrap["install.sh"]
-        GitCore["scripts/gitconfig.sh (Core Git)"]
-        DockerCore["scripts/docker.sh (Core Docker CE)"]
+        GitCore["scripts/core/gitconfig.sh (Core Git)"]
+        DockerCore["scripts/core/docker.sh (Core Docker CE)"]
         BuildTools["Core Build Essentials & APT Caches"]
     end
 
@@ -140,7 +140,7 @@ sequenceDiagram
     Developer->>Install: Executes ./install.sh
     Install->>Install: Sources .env configuration
     Install->>System: Updates APT & installs core build tools (gcc, make, curl, etc.)
-    Install->>Scripts: Executes scripts/gitconfig.sh & scripts/docker.sh (Mandatory Core)
+    Install->>Scripts: Executes scripts/core/gitconfig.sh & scripts/core/docker.sh (Mandatory Core)
     Install->>System: Compiles mena Rust binary & links ~/.local/bin/mena
     Install->>Mena: Hands off execution (exec mena install)
 
@@ -158,8 +158,8 @@ sequenceDiagram
 ### 3.1 Dedicated Core Recovery & Re-Execution
 While `./install.sh` automatically provisions core foundations during initial bootstrap, developers can re-execute or repair core foundations at any time without entering the interactive selection wizard:
 - **`mena install core`** (or `mena install --core`): Pure Rust CLI command that verifies, repairs, and provisions all core system foundations.
-- **`./install.sh --core`**: Executes `scripts/core.sh` directly and exits immediately without compiling or launching the wizard.
-- **`./scripts/core.sh`**: Standalone idempotent script to install build essentials, compilation headers, cURL, Wget, Snapd, Git (`scripts/gitconfig.sh`), and Docker CE (`scripts/docker.sh`).
+- **`./install.sh --core`**: Executes `scripts/core/core.sh` directly and exits immediately without compiling or launching the wizard.
+- **`./scripts/core/core.sh`**: Standalone idempotent script to install build essentials, compilation headers, cURL, Wget, Snapd, Git (`scripts/core/gitconfig.sh`), and Docker CE (`scripts/core/docker.sh`).
 
 ---
 
@@ -326,7 +326,7 @@ graph TD
     end
 
     subgraph AdaptersLayer["Orchestrator & Adapter Layer"]
-        AiTools["scripts/ai-tools.sh"]
+        AiTools["scripts/ai/ai-tools.sh"]
         Adapters["claude.sh | opencode.sh | codex.sh | kilo.sh | agy.sh | pi.sh"]
     end
 
@@ -391,5 +391,5 @@ To uphold the DRY principle, `.agents/` contains zero duplicated physical files:
 ├── .agents/                   # Workspace AI agent customizations (Antigravity bridge)
 │   ├── rules/                 # Modular agent rules (symlinked to ai/rules/)
 │   └── skills/                # On-demand agent runbooks (symlinked to ai/skills/)
-└── scripts/                   # Modular installation scripts
+└── scripts/                   # Categorized modular installation scripts (editors, browsers, core, etc.)
 ```

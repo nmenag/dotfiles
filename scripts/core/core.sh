@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 # Color definitions
 GREEN='\033[0;32m'
@@ -122,30 +122,30 @@ fi
 # 4. Core Git Configuration (SSH key, aliases, conventional commits)
 log_info "Configuring Core Git..."
 if [[ "$DRY_RUN" == "true" ]]; then
-  log_info "[DRY-RUN] Would execute: bash scripts/gitconfig.sh"
+  log_info "[DRY-RUN] Would execute: bash scripts/core/gitconfig.sh"
   SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
 else
-  if bash "$ROOT_DIR/scripts/gitconfig.sh"; then
+  if bash "$ROOT_DIR/scripts/core/gitconfig.sh"; then
     log_success "Core Git configured successfully!"
     SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
   else
     log_error "Core Git configuration encountered errors!"
-    FAILED_COMPONENTS+=("Git Configuration (scripts/gitconfig.sh)")
+    FAILED_COMPONENTS+=("Git Configuration (scripts/core/gitconfig.sh)")
   fi
 fi
 
 # 5. Core Docker CE & Compose Engine
 log_info "Configuring Core Docker CE..."
 if [[ "$DRY_RUN" == "true" ]]; then
-  log_info "[DRY-RUN] Would execute: bash scripts/docker.sh"
+  log_info "[DRY-RUN] Would execute: bash scripts/core/docker.sh"
   SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
 else
-  if bash "$ROOT_DIR/scripts/docker.sh"; then
+  if bash "$ROOT_DIR/scripts/core/docker.sh"; then
     log_success "Core Docker CE configured successfully!"
     SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
   else
     log_error "Core Docker CE configuration encountered errors!"
-    FAILED_COMPONENTS+=("Docker CE & Compose Engine (scripts/docker.sh)")
+    FAILED_COMPONENTS+=("Docker CE & Compose Engine (scripts/core/docker.sh)")
   fi
 fi
 

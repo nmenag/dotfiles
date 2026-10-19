@@ -4,7 +4,7 @@ set -euo pipefail
 # scripts/ai-tools.sh - Synchronize common instructions and skills across all 6 AI CLIs
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 ADAPTERS_DIR="$ROOT_DIR/ai/adapters"
 
 echo "=========================================================="

@@ -65,28 +65,39 @@ Automated workstation provisioning, development environment setup, unified shell
 ├── .agents/                   # Native workspace bridge for Antigravity / Agy discovery
 │   ├── rules/
 │   └── skills/
-└── scripts/                   # Modular installer scripts
-    ├── ai-tools.sh            # Synchronizes all 6 AI CLI adapters
-    ├── android-studio.sh      # Java OpenJDK & Android Studio
-    ├── asdf.sh                # ASDF runtime manager & plugins
-    ├── brave.sh               # Official Brave Browser signed APT repository & installer
-    ├── bruno.sh               # Official Bruno API Client signed APT repository & installer
-    ├── cursor.sh              # Official Cursor AI Editor signed APT repository & installer
-    ├── docker.sh              # Docker Engine, CLI, Buildx, and Compose v2
-    ├── ghostty.sh             # Fast native terminal emulator via Snap
-    ├── gitconfig.sh           # Git identity, aliases, and SSH ED25519 generation
-    ├── herdr.sh               # Terminal workspace manager for AI coding agents
-    ├── mise.sh                # Official Mise-en-place polyglot version manager & environment engine
-    ├── mongocompass.sh        # Official MongoDB Compass GUI installer
-    ├── ohmyzsh.sh             # Installs Zsh and Oh My Zsh (unattended)
-    ├── orca.sh                # Next-gen Orca IDE agentic development environment
-    ├── pgadmin.sh             # Official pgAdmin 4 Desktop APT repository & installer
-    ├── postman.sh             # Postman API Client platform via Snap
-    ├── programs.sh            # Desktop essentials (Chrome, Flameshot, VLC, BleachBit)
-    ├── shell.sh               # Configures Bash & Oh My Zsh dotfiles, plugins, and themes
+└── scripts/                   # Categorized modular installer scripts
     ├── verify.sh              # Automated repository linting & integrity verification
-    ├── vscode.sh              # VS Code installation & 25+ curated extensions
-    └── zed.sh                 # Fast modern code editor (Zed)
+    ├── ai/                    # AI coding assistants, agents & tools
+    │   ├── ai-tools.sh
+    │   ├── herdr.sh
+    │   └── orca.sh
+    ├── browsers/              # Web browsers
+    │   ├── brave.sh
+    │   └── chrome.sh
+    ├── core/                  # Core foundations, Git & Docker
+    │   ├── core.sh
+    │   ├── docker.sh
+    │   └── gitconfig.sh
+    ├── editors/               # Code editors & IDEs
+    │   ├── android-studio.sh
+    │   ├── cursor.sh
+    │   ├── vscode.sh
+    │   └── zed.sh
+    ├── shell/                 # Shell environment & framework installers
+    │   └── shell.sh
+    ├── terminal/              # Terminals & workspace multiplexers
+    │   └── ghostty.sh
+    ├── tools/                 # Desktop tools, API clients & database utilities
+        ├── bleachbit.sh
+        ├── bruno.sh
+        ├── flameshot.sh
+        ├── mongocompass.sh
+        ├── pgadmin.sh
+        ├── postman.sh
+        └── vlc.sh
+    └── version-managers/      # Runtime version managers (asdf, mise)
+        ├── asdf.sh
+        └── mise.sh
 ```
 
 ---
@@ -133,7 +144,7 @@ If core tools need to be reinstalled, repaired, or updated without running the i
 ```bash
 mena install core       # Run via mena Rust CLI
 ./install.sh --core     # Run via bootstrap script and exit
-./scripts/core.sh       # Direct script execution
+./scripts/core/core.sh  # Direct script execution
 ```
 
 #### Tool Management via `mena`
@@ -144,7 +155,7 @@ mena install            # Launch interactive wizard across tool categories
 mena install core       # Re-execute core workstation essentials (Git, Docker, Build Tools)
 mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
 mena install programs   # Wizard scoped to desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno)
-mena install runtimes   # Wizard scoped to ASDF and Mise version managers
+mena install version-managers # Wizard scoped to ASDF and Mise version managers
 mena install dev        # Wizard scoped to editors (VS Code, Cursor, Zed), terminals & IDEs
 mena install ai         # Wizard scoped to AI terminal assistants (Claude, OpenCode, Codex, Kilo, Agy, Pi)
 mena install skills     # Wizard scoped to Agent Skills CLI
@@ -163,7 +174,7 @@ mena install --dry-run  # Simulate installation plan without modifying the works
 | Command | Description |
 | :--- | :--- |
 | `mena install` | Interactive wizard across optional tool categories with multi-select and preference prompts (core tools are auto-installed) |
-| `mena install <category>` | Wizard scoped to a category or core foundations (e.g. `core`, `browser`, `programs`, `runtimes`, `dev`, `ai`, `skills`, `shell`) |
+| `mena install <category>` | Wizard scoped to a category or core foundations (e.g. `core`, `browser`, `programs`, `version-managers`, `dev`, `ai`, `skills`, `shell`) |
 | `mena install -d, --dry-run` | Preview actions, dependency resolution, and planned commands without modifying the system |
 | `mena list` | View the complete tool catalog (34 tools) with real-time detection of installed versions |
 | `mena list -c <category>` | View catalog tools filtered by category (supports `--json` output) |
@@ -274,7 +285,7 @@ Both shells automatically load shared configurations from `shell/`:
 | `reload_shell` | Reloads active shell configuration (`.zshrc` or `.bashrc`) | `reload_shell` |
 
 ### Oh My Zsh Plugins & Theme
-Running `./scripts/shell.sh` automatically configures:
+Running `./scripts/shell/shell.sh` automatically configures:
 - Plugins: `git`, `zsh-autosuggestions`, `zsh-syntax-highlighting`
 - Custom Theme: `devex.zsh-theme` (lightweight, displays Git branch and dirty state without terminal lag)
 
@@ -296,7 +307,7 @@ This repository bridges 6 distinct AI CLI assistants through a common source of 
 ### Synchronizing Adapters
 Run the synchronizer at any time to link updated rules or skills:
 ```bash
-./scripts/ai-tools.sh
+./scripts/ai/ai-tools.sh
 ```
 
 Adapters are strictly idempotent and non-destructive: existing configurations are safely backed up to `~/.dotfiles_backup/ai_<timestamp>` prior to replacement.
@@ -321,7 +332,7 @@ The repository includes an automated CI pipeline ([`.github/workflows/ci.yml`](.
 
 ### Git Hooks (Pre-Commit & Commitlint)
 
-Local development integrity is reinforced via automated Git hooks provisioned by [`scripts/gitconfig.sh`](./scripts/gitconfig.sh):
+Local development integrity is reinforced via automated Git hooks provisioned by [`scripts/core/gitconfig.sh`](./scripts/core/gitconfig.sh):
 - **Pre-Commit Hook (`.git/hooks/pre-commit`)**:
   - Blocks staging or committing secrets/credentials (`.env`, `.key`, `.pem`, etc.).
   - Runs syntax checking (`bash -n`) on all staged shell scripts.
@@ -333,7 +344,7 @@ Local development integrity is reinforced via automated Git hooks provisioned by
 ### Commit Message Standards (Commitlint)
 
 All commit messages must adhere to the [Conventional Commits](https://www.conventionalcommits.org/) specification defined in [`.commitlintrc.json`](./.commitlintrc.json):
-- **Local Hook**: Automatically configured via [`scripts/gitconfig.sh`](./scripts/gitconfig.sh) in `.git/hooks/commit-msg` with zero-dependency regex fallback.
+- **Local Hook**: Automatically configured via [`scripts/core/gitconfig.sh`](./scripts/core/gitconfig.sh) in `.git/hooks/commit-msg` with zero-dependency regex fallback.
 - **CI Pipeline**: Evaluated via native Commitlint CLI in [`.github/workflows/ci.yml`](./.github/workflows/ci.yml) on pull requests and branch pushes.
 - **Format**: `<type>(<optional scope>): <subject>`
 - **Allowed Types**: `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `revert`.
@@ -361,27 +372,30 @@ All modules in `scripts/` can be executed independently from any directory:
 
 | Script | Description | Run Command |
 | :--- | :--- | :--- |
-| [`ai-tools.sh`](./scripts/ai-tools.sh) | Synchronizes common instructions & skills across all 6 AI CLIs | `./scripts/ai-tools.sh` |
-| [`android-studio.sh`](./scripts/android-studio.sh) | Installs Java OpenJDK and Android Studio via Snap | `./scripts/android-studio.sh` |
-| [`asdf.sh`](./scripts/asdf.sh) | Installs ASDF v0.15.0 and runtime plugins (Node, Ruby, Python, Elixir, Erlang) | `./scripts/asdf.sh` |
-| [`brave.sh`](./scripts/brave.sh) | Installs Brave Browser via official signed APT repository | `./scripts/brave.sh` |
-| [`bruno.sh`](./scripts/bruno.sh) | Installs Bruno open-source API client via official signed APT repository | `./scripts/bruno.sh` |
-| [`cursor.sh`](./scripts/cursor.sh) | Installs Cursor AI Editor via official signed APT repository | `./scripts/cursor.sh` |
-| [`docker.sh`](./scripts/docker.sh) | Installs Docker CE, CLI, Containerd, Buildx, and Compose v2 plugin | `./scripts/docker.sh` |
-| [`ghostty.sh`](./scripts/ghostty.sh) | Installs Ghostty native terminal emulator via Snap (--classic) | `./scripts/ghostty.sh` |
-| [`gitconfig.sh`](./scripts/gitconfig.sh) | Configures Git identity, aliases (`git lg`), and ED25519 SSH key | `./scripts/gitconfig.sh` |
-| [`herdr.sh`](./scripts/herdr.sh) | Installs Herdr workspace manager and sets up Zsh completion | `./scripts/herdr.sh` |
-| [`mise.sh`](./scripts/mise.sh) | Installs Mise polyglot runtime and version manager via official signed APT repository | `./scripts/mise.sh` |
-| [`mongocompass.sh`](./scripts/mongocompass.sh) | Installs MongoDB Compass GUI via official Debian package | `./scripts/mongocompass.sh` |
-| [`ohmyzsh.sh`](./scripts/ohmyzsh.sh) | Installs Zsh and Oh My Zsh (unattended) | `./scripts/ohmyzsh.sh` |
-| [`orca.sh`](./scripts/orca.sh) | Installs Orca IDE next-gen agentic development environment via official deb | `./scripts/orca.sh` |
-| [`pgadmin.sh`](./scripts/pgadmin.sh) | Installs pgAdmin 4 Desktop via official PostgreSQL APT repository | `./scripts/pgadmin.sh` |
-| [`postman.sh`](./scripts/postman.sh) | Installs Postman API development platform via Snap | `./scripts/postman.sh` |
-| [`programs.sh`](./scripts/programs.sh) | Installs Google Chrome, Flameshot, VLC, and BleachBit | `./scripts/programs.sh` |
-| [`shell.sh`](./scripts/shell.sh) | Sets up Bash & Oh My Zsh loaders, OMZ plugins, and custom themes | `./scripts/shell.sh` |
 | [`verify.sh`](./scripts/verify.sh) | Complete linting, security, and integrity verification suite | `./scripts/verify.sh` |
-| [`vscode.sh`](./scripts/vscode.sh) | Installs VS Code and 25+ curated development extensions | `./scripts/vscode.sh` |
-| [`zed.sh`](./scripts/zed.sh) | Installs Zed editor via official vendor installer | `./scripts/zed.sh` |
+| [`ai/ai-tools.sh`](./scripts/ai/ai-tools.sh) | Synchronizes common instructions & skills across all 6 AI CLIs | `./scripts/ai/ai-tools.sh` |
+| [`ai/herdr.sh`](./scripts/ai/herdr.sh) | Installs Herdr workspace manager and sets up Zsh completion | `./scripts/ai/herdr.sh` |
+| [`ai/orca.sh`](./scripts/ai/orca.sh) | Installs Orca IDE next-gen agentic development environment via official deb | `./scripts/ai/orca.sh` |
+| [`browsers/brave.sh`](./scripts/browsers/brave.sh) | Installs Brave Browser via official signed APT repository | `./scripts/browsers/brave.sh` |
+| [`browsers/chrome.sh`](./scripts/browsers/chrome.sh) | Installs Google Chrome stable via official deb package | `./scripts/browsers/chrome.sh` |
+| [`core/core.sh`](./scripts/core/core.sh) | Installs core workstation foundations, build tools, Git, and Docker | `./scripts/core/core.sh` |
+| [`core/docker.sh`](./scripts/core/docker.sh) | Installs Docker CE, CLI, Containerd, Buildx, and Compose v2 plugin | `./scripts/core/docker.sh` |
+| [`core/gitconfig.sh`](./scripts/core/gitconfig.sh) | Configures Git identity, aliases (`git lg`), SSH key, and Git hooks | `./scripts/core/gitconfig.sh` |
+| [`editors/android-studio.sh`](./scripts/editors/android-studio.sh) | Installs Java OpenJDK and Android Studio via Snap | `./scripts/editors/android-studio.sh` |
+| [`editors/cursor.sh`](./scripts/editors/cursor.sh) | Installs Cursor AI Editor via official signed APT repository | `./scripts/editors/cursor.sh` |
+| [`editors/vscode.sh`](./scripts/editors/vscode.sh) | Installs VS Code and 25+ curated development extensions | `./scripts/editors/vscode.sh` |
+| [`editors/zed.sh`](./scripts/editors/zed.sh) | Installs Zed editor via official vendor installer | `./scripts/editors/zed.sh` |
+| [`shell/shell.sh`](./scripts/shell/shell.sh) | Installs Zsh & Oh My Zsh, productivity plugins, custom theme, and dotfiles loaders | `./scripts/shell/shell.sh` |
+| [`terminal/ghostty.sh`](./scripts/terminal/ghostty.sh) | Installs Ghostty native terminal emulator via Snap (--classic) | `./scripts/terminal/ghostty.sh` |
+| [`tools/bleachbit.sh`](./scripts/tools/bleachbit.sh) | Installs BleachBit system space cleaner and privacy manager via APT | `./scripts/tools/bleachbit.sh` |
+| [`tools/bruno.sh`](./scripts/tools/bruno.sh) | Installs Bruno open-source API client via official signed APT repository | `./scripts/tools/bruno.sh` |
+| [`tools/flameshot.sh`](./scripts/tools/flameshot.sh) | Installs Flameshot screenshot and annotation tool via APT | `./scripts/tools/flameshot.sh` |
+| [`tools/mongocompass.sh`](./scripts/tools/mongocompass.sh) | Installs MongoDB Compass GUI via official Debian package | `./scripts/tools/mongocompass.sh` |
+| [`tools/pgadmin.sh`](./scripts/tools/pgadmin.sh) | Installs pgAdmin 4 Desktop via official PostgreSQL APT repository | `./scripts/tools/pgadmin.sh` |
+| [`tools/postman.sh`](./scripts/tools/postman.sh) | Installs Postman API development platform via Snap | `./scripts/tools/postman.sh` |
+| [`tools/vlc.sh`](./scripts/tools/vlc.sh) | Installs VLC Media Player and multimedia framework via APT | `./scripts/tools/vlc.sh` |
+| [`version-managers/asdf.sh`](./scripts/version-managers/asdf.sh) | Installs ASDF v0.15.0 and runtime plugins (Node, Ruby, Python, Elixir, Erlang) | `./scripts/version-managers/asdf.sh` |
+| [`version-managers/mise.sh`](./scripts/version-managers/mise.sh) | Installs Mise polyglot runtime and version manager via official signed APT repository | `./scripts/version-managers/mise.sh` |
 
 ---
 

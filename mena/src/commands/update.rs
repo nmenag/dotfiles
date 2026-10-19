@@ -13,7 +13,7 @@ pub fn handle_update() -> Result<()> {
 
     // 1. Synchronize AI adapters
     println!("\n{}:", "1. Synchronizing AI Coding Agent Adapters".bold());
-    let ai_script = root.join("scripts/ai-tools.sh");
+    let ai_script = root.join("scripts/ai/ai-tools.sh");
     if ai_script.exists() {
         let status = Command::new("bash").arg(&ai_script).status()?;
         if status.success() {

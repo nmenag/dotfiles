@@ -30,7 +30,7 @@ Bootstraps core workstation requirements (Git & Docker) and launches mena.
 All development tools, runtimes, browsers, editors, and shell dotfiles are managed via mena.
 
 Arguments:
-  [CATEGORY]     Optional category to install (e.g. core, browser, cli, runtimes, dev, ai, shell)
+  [CATEGORY]     Optional category to install (e.g. core, browser, cli, version-managers, dev, ai, shell)
 
 Options:
   -d, --dry-run  Preview actions without modifying the system
@@ -46,7 +46,7 @@ fi
 
 if [[ "${1:-}" == "--core" ]]; then
   log_info "Executing core workstation foundations setup directly..."
-  bash "$ROOT_DIR/scripts/core.sh" "${@:2}"
+  bash "$ROOT_DIR/scripts/core/core.sh" "${@:2}"
   exit 0
 fi
 
@@ -118,14 +118,14 @@ fi
 
 # 3. Core Foundation: Git & Docker are core (yes or yes are installed)
 log_info "Configuring core essentials: Git and Docker..."
-if ! bash "$ROOT_DIR/scripts/gitconfig.sh"; then
+if ! bash "$ROOT_DIR/scripts/core/gitconfig.sh"; then
   log_error "Core Git configuration failed"
-  FAILED_BOOTSTRAP_ITEMS+=("Git Configuration (scripts/gitconfig.sh)")
+  FAILED_BOOTSTRAP_ITEMS+=("Git Configuration (scripts/core/gitconfig.sh)")
 fi
 
-if ! bash "$ROOT_DIR/scripts/docker.sh"; then
+if ! bash "$ROOT_DIR/scripts/core/docker.sh"; then
   log_error "Core Docker configuration failed"
-  FAILED_BOOTSTRAP_ITEMS+=("Docker Configuration (scripts/docker.sh)")
+  FAILED_BOOTSTRAP_ITEMS+=("Docker Configuration (scripts/core/docker.sh)")
 fi
 
 if [[ ${#FAILED_BOOTSTRAP_ITEMS[@]} -gt 0 ]]; then
