@@ -398,7 +398,7 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`editors/android-studio.sh`](./scripts/editors/android-studio.sh) | Installs Java OpenJDK and Android Studio via Snap | `./scripts/editors/android-studio.sh` |
 | [`editors/cursor.sh`](./scripts/editors/cursor.sh) | Installs Cursor AI Editor via official signed APT repository | `./scripts/editors/cursor.sh` |
 | [`editors/vscode.sh`](./scripts/editors/vscode.sh) | Installs VS Code and 25+ curated development extensions | `./scripts/editors/vscode.sh` |
-| [`editors/zed.sh`](./scripts/editors/zed.sh) | Installs Zed editor via official vendor installer | `./scripts/editors/zed.sh` |
+| [`editors/zed.sh`](./scripts/editors/zed.sh) | Installs Zed editor and configures curated plugins and language support | `./scripts/editors/zed.sh` |
 | [`terminal/ghostty.sh`](./scripts/terminal/ghostty.sh) | Installs Ghostty native terminal emulator via Snap (--classic) | `./scripts/terminal/ghostty.sh` |
 | [`tools/bleachbit.sh`](./scripts/tools/bleachbit.sh) | Installs BleachBit system space cleaner and privacy manager via APT | `./scripts/tools/bleachbit.sh` |
 | [`tools/flameshot.sh`](./scripts/tools/flameshot.sh) | Installs Flameshot screenshot and annotation tool via APT | `./scripts/tools/flameshot.sh` |

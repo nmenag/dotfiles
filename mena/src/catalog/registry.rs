@@ -220,7 +220,7 @@ pub fn all_tools() -> Vec<Tool> {
             id: "zed",
             name: "Zed Code Editor",
             category: Category::DevUtilities,
-            description: "High-performance, multiplayer code editor written in Rust",
+            description: "High-performance, multiplayer code editor written in Rust with curated plugins and language support",
             dependencies: &["curl"],
             install_method: InstallMethod::Script("scripts/editors/zed.sh"),
             detection: DetectionMethod::Command("zed"),
