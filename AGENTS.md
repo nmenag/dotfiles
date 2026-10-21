@@ -90,6 +90,9 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     │   ├── ai-tools.sh
     │   ├── herdr.sh
     │   └── orca.sh
+    ├── api/                   # API clients & exploration tools
+    │   ├── bruno.sh
+    │   └── postman.sh
     ├── browsers/              # Web browsers
     │   ├── brave.sh
     │   └── chrome.sh
@@ -110,11 +113,9 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     │   └── zed.sh
     ├── terminal/              # Terminals & workspace multiplexers
     │   └── ghostty.sh
-    ├── tools/                 # Desktop tools, API clients & utilities
+    ├── tools/                 # Desktop tools & system utilities
     │   ├── bleachbit.sh
-    │   ├── bruno.sh
     │   ├── flameshot.sh
-    │   ├── postman.sh
     │   ├── stacer.sh
     │   └── vlc.sh
     └── version-managers/      # Runtime version managers (asdf, mise)

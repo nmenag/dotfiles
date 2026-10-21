@@ -138,12 +138,24 @@ pub fn all_tools() -> Vec<Tool> {
             version_flag: Some("--version"),
         },
         Tool {
+            id: "stacer",
+            name: "Stacer",
+            category: Category::Programs,
+            description: "Linux system optimizer, process viewer, and resource monitor",
+            dependencies: &[],
+            install_method: InstallMethod::Script("scripts/tools/stacer.sh"),
+            detection: DetectionMethod::Command("stacer"),
+            version_flag: None,
+        },
+
+        // --- API Development Clients ---
+        Tool {
             id: "postman",
             name: "Postman",
-            category: Category::Programs,
+            category: Category::ApiClients,
             description: "Complete API development, testing, and collaboration platform",
             dependencies: &["snapd"],
-            install_method: InstallMethod::Script("scripts/tools/postman.sh"),
+            install_method: InstallMethod::Script("scripts/api/postman.sh"),
             detection: DetectionMethod::CommandOrFlatpak {
                 cmd: "postman",
                 flatpak_id: "com.getpostman.Postman",
@@ -153,21 +165,11 @@ pub fn all_tools() -> Vec<Tool> {
         Tool {
             id: "bruno",
             name: "Bruno API Client",
-            category: Category::Programs,
+            category: Category::ApiClients,
             description: "Fast, git-friendly, open-source API exploration & testing client (usebruno)",
             dependencies: &["curl"],
-            install_method: InstallMethod::Script("scripts/tools/bruno.sh"),
+            install_method: InstallMethod::Script("scripts/api/bruno.sh"),
             detection: DetectionMethod::Command("bruno"),
-            version_flag: None,
-        },
-        Tool {
-            id: "stacer",
-            name: "Stacer",
-            category: Category::Programs,
-            description: "Linux system optimizer, process viewer, and resource monitor",
-            dependencies: &[],
-            install_method: InstallMethod::Script("scripts/tools/stacer.sh"),
-            detection: DetectionMethod::Command("stacer"),
             version_flag: None,
         },
 

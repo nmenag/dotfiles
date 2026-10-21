@@ -8,7 +8,7 @@ Automated workstation provisioning, development environment setup, unified shell
 
 - **Interactive Workstation CLI (`mena`)**:
   - Written in **pure Rust** (`Clap` + `Dialoguer`)
-  - Multi-select interactive installation across 8 tool categories with OS, package manager, and installed version pre-detection.
+  - Multi-select interactive installation across 9 tool categories with OS, package manager, and installed version pre-detection.
   - Two-phase architecture (Planning vs. Execution): pre-installation summary, review/modification loop, and explicit confirmation.
   - Guaranteed safe cancellation (aborts with zero mutations).
   - Subcommands for diagnostics (`mena doctor`), catalog browsing (`mena list`), and updates (`mena update`).
@@ -71,6 +71,9 @@ Automated workstation provisioning, development environment setup, unified shell
     │   ├── ai-tools.sh
     │   ├── herdr.sh
     │   └── orca.sh
+    ├── api/                   # API exploration, testing & development clients
+    │   ├── bruno.sh
+    │   └── postman.sh
     ├── browsers/              # Web browsers
     │   ├── brave.sh
     │   └── chrome.sh
@@ -91,11 +94,9 @@ Automated workstation provisioning, development environment setup, unified shell
     │   └── zed.sh
     ├── terminal/              # Terminals & workspace multiplexers
     │   └── ghostty.sh
-    ├── tools/                 # Desktop tools, API clients & utilities
+    ├── tools/                 # Desktop tools & system utilities
     │   ├── bleachbit.sh
-    │   ├── bruno.sh
     │   ├── flameshot.sh
-    │   ├── postman.sh
     │   ├── stacer.sh
     │   └── vlc.sh
     └── version-managers/      # Runtime version managers (asdf, mise)
@@ -158,7 +159,8 @@ Once bootstrapped, all workstation tools, browsers, runtimes, editors, and AI as
 mena install            # Launch interactive wizard across tool categories
 mena install core       # Re-execute core workstation essentials (Git, Docker, Shell Dotfiles, Build Tools)
 mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
-mena install programs   # Wizard scoped to desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno, Stacer)
+mena install programs   # Wizard scoped to desktop programs & system utilities (BleachBit, Flameshot, VLC, Stacer)
+mena install api        # Wizard scoped to API clients (Postman, Bruno)
 mena install version-managers # Wizard scoped to ASDF and Mise version managers
 mena install dev        # Wizard scoped to editors (VS Code, Cursor, Zed), terminals & IDEs
 mena install databases  # Wizard scoped to database clients (pgAdmin, MongoDB Compass, DBeaver, DbGate)
@@ -179,7 +181,7 @@ mena install --dry-run  # Simulate installation plan without modifying the works
 | Command | Description |
 | :--- | :--- |
 | `mena install` | Interactive wizard across optional tool categories with multi-select and preference prompts (core tools are auto-installed) |
-| `mena install <category>` | Wizard scoped to a category or core foundations (e.g. `core`, `browser`, `database`, `programs`, `version-managers`, `dev`, `ai`, `skills`, `shell`) |
+| `mena install <category>` | Wizard scoped to a category or core foundations (e.g. `core`, `browser`, `database`, `api`, `programs`, `version-managers`, `dev`, `ai`, `skills`, `shell`) |
 | `mena install -d, --dry-run` | Preview actions, dependency resolution, and planned commands without modifying the system |
 | `mena list` | View the complete tool catalog (37 tools) with real-time detection of installed versions |
 | `mena list -c <category>` | View catalog tools filtered by category (supports `--json` output) |
@@ -266,7 +268,7 @@ Test coverage includes:
 - `test_only_approved_actions_are_executed`: Verifies that unselected tools are never queued or executed.
 - `test_dry_run_executes_no_mutations`: Verifies that dry-run mode safely simulates all steps without modifying the workstation.
 - `test_summary_matches_plan`: Verifies that the rendered summary matches the plan items, actions count, and categories.
-- `test_catalog_completeness` & `test_category_filtering`: Verifies registry completeness across all 8 categories.
+- `test_catalog_completeness` & `test_category_filtering`: Verifies registry completeness across all 9 categories.
 
 ---
 
@@ -381,6 +383,8 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`ai/ai-tools.sh`](./scripts/ai/ai-tools.sh) | Synchronizes common instructions & skills across all 6 AI CLIs | `./scripts/ai/ai-tools.sh` |
 | [`ai/herdr.sh`](./scripts/ai/herdr.sh) | Installs Herdr workspace manager and sets up Zsh completion | `./scripts/ai/herdr.sh` |
 | [`ai/orca.sh`](./scripts/ai/orca.sh) | Installs Orca IDE next-gen agentic development environment via official deb | `./scripts/ai/orca.sh` |
+| [`api/bruno.sh`](./scripts/api/bruno.sh) | Installs Bruno open-source API client via official signed APT repository | `./scripts/api/bruno.sh` |
+| [`api/postman.sh`](./scripts/api/postman.sh) | Installs Postman API development platform via Snap | `./scripts/api/postman.sh` |
 | [`browsers/brave.sh`](./scripts/browsers/brave.sh) | Installs Brave Browser via official signed APT repository | `./scripts/browsers/brave.sh` |
 | [`browsers/chrome.sh`](./scripts/browsers/chrome.sh) | Installs Google Chrome stable via official deb package | `./scripts/browsers/chrome.sh` |
 | [`core/core.sh`](./scripts/core/core.sh) | Installs core workstation foundations, build tools, Git, and Docker | `./scripts/core/core.sh` |
@@ -397,9 +401,7 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`editors/zed.sh`](./scripts/editors/zed.sh) | Installs Zed editor via official vendor installer | `./scripts/editors/zed.sh` |
 | [`terminal/ghostty.sh`](./scripts/terminal/ghostty.sh) | Installs Ghostty native terminal emulator via Snap (--classic) | `./scripts/terminal/ghostty.sh` |
 | [`tools/bleachbit.sh`](./scripts/tools/bleachbit.sh) | Installs BleachBit system space cleaner and privacy manager via APT | `./scripts/tools/bleachbit.sh` |
-| [`tools/bruno.sh`](./scripts/tools/bruno.sh) | Installs Bruno open-source API client via official signed APT repository | `./scripts/tools/bruno.sh` |
 | [`tools/flameshot.sh`](./scripts/tools/flameshot.sh) | Installs Flameshot screenshot and annotation tool via APT | `./scripts/tools/flameshot.sh` |
-| [`tools/postman.sh`](./scripts/tools/postman.sh) | Installs Postman API development platform via Snap | `./scripts/tools/postman.sh` |
 | [`tools/stacer.sh`](./scripts/tools/stacer.sh) | Installs Stacer Linux system optimizer and monitoring tool via APT | `./scripts/tools/stacer.sh` |
 | [`tools/vlc.sh`](./scripts/tools/vlc.sh) | Installs VLC Media Player and multimedia framework via APT | `./scripts/tools/vlc.sh` |
 | [`version-managers/asdf.sh`](./scripts/version-managers/asdf.sh) | Installs ASDF v0.15.0 and runtime plugins via shared plugins.sh (Node, pnpm, Ruby, Python, Elixir, Erlang) | `./scripts/version-managers/asdf.sh` |

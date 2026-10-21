@@ -119,6 +119,7 @@ impl InstallPlan {
                         || script_path.contains("cursor")
                         || script_path.contains("postman")
                         || script_path.contains("bruno")
+                        || script_path.contains("api")
                     {
                         requires_sudo = true;
                     }

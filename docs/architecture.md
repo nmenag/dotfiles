@@ -71,7 +71,8 @@ graph TD
 
     subgraph L3["Layer 3: Modular Provisioning Scripts"]
         Browsers["Browsers (Brave, Chrome)"]
-        Programs["Desktop Programs & API (Bruno, Postman, VLC, etc.)"]
+        Programs["Desktop Programs & Utilities (BleachBit, Flameshot, VLC, Stacer)"]
+        ApiClients["API Clients (Bruno, Postman)"]
         Databases["Database Clients & Tools (pgAdmin, DBeaver, DbGate, Compass)"]
         VersionManagers["Version Managers (ASDF, Mise)"]
         DevTools["Editors & IDEs (VS Code, Cursor, Zed, Orca)"]
@@ -107,6 +108,7 @@ graph TD
 
     Executor --> Browsers
     Executor --> Programs
+    Executor --> ApiClients
     Executor --> Databases
     Executor --> VersionManagers
     Executor --> DevTools
@@ -192,7 +194,7 @@ graph TD
 ```
 
 ### 4.1 Domain Model & Registry
-- **Categories**: `Browsers`, `CliTools` (mandatory core including Git, Docker CE, Shell Dotfiles & Build Essentials; auto-filtered out from wizard), `Programs` (desktop apps & API clients), `VersionManagers` (ASDF, Mise), `DevUtilities` (editors, IDEs, terminals), `Databases` (pgAdmin, MongoDB Compass, DBeaver, DbGate), `AiAssistants` (6-in-1 assistants), `SkillManagement`.
+- **Categories**: `Browsers`, `CliTools` (mandatory core including Git, Docker CE, Shell Dotfiles & Build Essentials; auto-filtered out from wizard), `Programs` (desktop apps & utilities), `ApiClients` (Bruno, Postman), `VersionManagers` (ASDF, Mise), `DevUtilities` (editors, IDEs, terminals), `Databases` (pgAdmin, MongoDB Compass, DBeaver, DbGate), `AiAssistants` (6-in-1 assistants), `SkillManagement`.
 - **Install Methods**: `Script(&'static str)`, `AiAdapter(&'static str)`, `AptPackage(&'static str)`, `SnapPackage { name, classic }`, `ShellCommand(&'static str)`.
 - **GUI Version Probing**: For Electron/GUI apps (Cursor, Postman, Bruno, pgAdmin, Android Studio, Stacer), `version_flag` is set to `None` to prevent background CLI hangs during probing.
 

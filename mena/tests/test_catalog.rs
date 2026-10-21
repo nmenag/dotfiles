@@ -50,19 +50,21 @@ fn test_catalog_completeness() {
     assert!(find_tool("shell-dotfiles").is_some(), "Shell dotfiles must be in catalog");
     assert_eq!(find_tool("shell-dotfiles").unwrap().category, Category::CliTools);
 
-    // Desktop programs & API clients
+    // Desktop programs
     assert!(find_tool("bleachbit").is_some(), "BleachBit must be in catalog");
     assert_eq!(find_tool("bleachbit").unwrap().category, Category::Programs);
     assert!(find_tool("flameshot").is_some(), "Flameshot must be in catalog");
     assert_eq!(find_tool("flameshot").unwrap().category, Category::Programs);
     assert!(find_tool("vlc").is_some(), "VLC must be in catalog");
     assert_eq!(find_tool("vlc").unwrap().category, Category::Programs);
-    assert!(find_tool("postman").is_some(), "Postman must be in catalog");
-    assert_eq!(find_tool("postman").unwrap().category, Category::Programs);
-    assert!(find_tool("bruno").is_some(), "Bruno must be in catalog");
-    assert_eq!(find_tool("bruno").unwrap().category, Category::Programs);
     assert!(find_tool("stacer").is_some(), "Stacer must be in catalog");
     assert_eq!(find_tool("stacer").unwrap().category, Category::Programs);
+
+    // API clients
+    assert!(find_tool("postman").is_some(), "Postman must be in catalog");
+    assert_eq!(find_tool("postman").unwrap().category, Category::ApiClients);
+    assert!(find_tool("bruno").is_some(), "Bruno must be in catalog");
+    assert_eq!(find_tool("bruno").unwrap().category, Category::ApiClients);
 }
 
 #[test]
@@ -105,6 +107,15 @@ fn test_category_filtering() {
     assert!(db_ids.contains(&"mongocompass"));
     assert!(db_ids.contains(&"dbgate"));
     assert!(db_ids.contains(&"dbeaver"));
+
+    let api_tools = tools_by_category(Category::ApiClients);
+    assert_eq!(api_tools.len(), 2, "Must have exactly 2 API tools registered");
+    for tool in &api_tools {
+        assert_eq!(tool.category, Category::ApiClients);
+    }
+    let api_ids: Vec<&str> = api_tools.iter().map(|t| t.id).collect();
+    assert!(api_ids.contains(&"postman"));
+    assert!(api_ids.contains(&"bruno"));
 }
 
 #[test]
