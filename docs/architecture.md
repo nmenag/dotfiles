@@ -63,7 +63,7 @@ graph TD
 
     subgraph L2["Layer 2: Interactive Workstation Orchestrator"]
         MenaCLI["mena CLI (Rust)"]
-        Catalog["Catalog Registry (34 Tools)"]
+        Catalog["Catalog Registry (37 Tools)"]
         Planner["Two-Phase Planner Engine"]
         Wizard["Interactive Multi-Select Wizard"]
         Executor["Execution Engine & Progress Bar"]
@@ -72,6 +72,7 @@ graph TD
     subgraph L3["Layer 3: Modular Provisioning Scripts"]
         Browsers["Browsers (Brave, Chrome)"]
         Programs["Desktop Programs & API (Bruno, Postman, VLC, etc.)"]
+        Databases["Database Clients & Tools (pgAdmin, DBeaver, DbGate, Compass)"]
         VersionManagers["Version Managers (ASDF, Mise)"]
         DevTools["Editors & IDEs (VS Code, Cursor, Zed, Orca)"]
         AiTools["AI Tools & Workspace (Herdr, Orca)"]
@@ -106,6 +107,7 @@ graph TD
 
     Executor --> Browsers
     Executor --> Programs
+    Executor --> Databases
     Executor --> VersionManagers
     Executor --> DevTools
     Executor --> AiTools
@@ -190,7 +192,7 @@ graph TD
 ```
 
 ### 4.1 Domain Model & Registry
-- **Categories**: `Browsers`, `CliTools` (mandatory core including Git, Docker CE, Shell Dotfiles & Build Essentials; auto-filtered out from wizard), `Programs` (desktop apps & API clients), `VersionManagers` (ASDF, Mise), `DevUtilities` (editors, IDEs, terminals), `AiAssistants` (6-in-1 assistants), `SkillManagement`.
+- **Categories**: `Browsers`, `CliTools` (mandatory core including Git, Docker CE, Shell Dotfiles & Build Essentials; auto-filtered out from wizard), `Programs` (desktop apps & API clients), `VersionManagers` (ASDF, Mise), `DevUtilities` (editors, IDEs, terminals), `Databases` (pgAdmin, MongoDB Compass, DBeaver, DbGate), `AiAssistants` (6-in-1 assistants), `SkillManagement`.
 - **Install Methods**: `Script(&'static str)`, `AiAdapter(&'static str)`, `AptPackage(&'static str)`, `SnapPackage { name, classic }`, `ShellCommand(&'static str)`.
 - **GUI Version Probing**: For Electron/GUI apps (Cursor, Postman, Bruno, pgAdmin, Android Studio, Stacer), `version_flag` is set to `None` to prevent background CLI hangs during probing.
 
@@ -288,8 +290,8 @@ flowchart LR
 ### 6.2 Packaging Strategy Matrix
 | Tool | Installation Channel | Method & Sandbox Properties |
 | :--- | :--- | :--- |
-| **Brave, Bruno, Cursor, Docker, Mise, pgAdmin** | **Signed APT** | Official vendor signed keyrings in `/etc/apt/keyrings/` |
-| **Google Chrome, Orca, MongoDB Compass** | **Official Deb** | Downloaded via HTTPS to `mktemp -d`, installed with `dpkg -i` + `apt-get install -f -y` |
+| **Brave, Bruno, Cursor, DBeaver, Docker, Mise, pgAdmin** | **Signed APT** | Official vendor signed keyrings in `/etc/apt/keyrings/` |
+| **Google Chrome, Orca, MongoDB Compass, DbGate** | **Official Deb** | Downloaded via HTTPS to `mktemp -d`, installed with `dpkg -i` + `apt-get install -f -y` |
 | **Postman, Ghostty, Android Studio** | **Snap** | Canonical Snap confinement (`--classic` for dev tools requiring full system access) |
 | **ASDF, Zed** | **Git Clone / Official Install Script** | User-space installation (`~/.asdf`, `~/.local/bin`), zero root mutations |
 | **Git, Build Essentials, VLC, Flameshot, BleachBit, Stacer** | **Native Ubuntu APT** | Standard distribution repository packages (`sudo apt-get install -y`) |

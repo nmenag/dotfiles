@@ -7,6 +7,7 @@ pub enum Category {
     Programs,
     VersionManagers,
     DevUtilities,
+    Databases,
     AiAssistants,
     SkillManagement,
 }
@@ -19,6 +20,7 @@ impl Category {
             Category::Programs,
             Category::VersionManagers,
             Category::DevUtilities,
+            Category::Databases,
             Category::AiAssistants,
             Category::SkillManagement,
         ]
@@ -33,6 +35,7 @@ impl Category {
             Category::Programs,
             Category::VersionManagers,
             Category::DevUtilities,
+            Category::Databases,
             Category::AiAssistants,
             Category::SkillManagement,
         ]
@@ -49,6 +52,7 @@ impl Category {
             Category::Programs => "programs",
             Category::VersionManagers => "version-managers",
             Category::DevUtilities => "dev-utilities",
+            Category::Databases => "databases",
             Category::AiAssistants => "ai-assistants",
             Category::SkillManagement => "skills",
         }
@@ -61,6 +65,7 @@ impl Category {
             Category::Programs => "Desktop Programs & API Clients",
             Category::VersionManagers => "Version Managers",
             Category::DevUtilities => "Developer Utilities, IDEs & Terminals",
+            Category::Databases => "Database Clients & Tools",
             Category::AiAssistants => "AI Coding Assistants & Adapters",
             Category::SkillManagement => "Agent Skills Management",
         }
@@ -72,7 +77,8 @@ impl Category {
             Category::CliTools => "Core development tools (Git, Docker CE, Shell Dotfiles, Build Essentials, cURL, Wget) installed automatically",
             Category::Programs => "Desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno)",
             Category::VersionManagers => "ASDF & Mise runtime version managers and polyglot toolchains (Node, Python, Ruby, etc.)",
-            Category::DevUtilities => "Code editors, terminal emulators, workspace managers and database tools",
+            Category::DevUtilities => "Code editors, terminal emulators and workspace managers",
+            Category::Databases => "Database GUI clients (pgAdmin, MongoDB Compass, DBeaver, DbGate)",
             Category::AiAssistants => "Terminal AI assistants (Claude, OpenCode, Codex, Kilo, Agy, Pi) with unified instructions",
             Category::SkillManagement => "Official 'skills' CLI for discovering and managing Agent Skills",
         }
@@ -86,6 +92,7 @@ impl Category {
             "program" | "programs" | "app" | "apps" | "desktop" => Some(Category::Programs),
             "version-manager" | "version-managers" | "vm" | "runtime" | "runtimes" | "asdf" | "mise" | "languages" => Some(Category::VersionManagers),
             "dev" | "dev-utilities" | "utils" | "utilities" | "ide" | "ides" => Some(Category::DevUtilities),
+            "db" | "database" | "databases" => Some(Category::Databases),
             "ai" | "ai-assistants" | "assistants" | "agents" => Some(Category::AiAssistants),
             "skill" | "skills" => Some(Category::SkillManagement),
             _ => None,

@@ -20,7 +20,7 @@ Choose the preferred distribution mechanism in order of priority:
 5. **Direct GitHub Release Binary / Deb**: Preferred for standalone Go/Rust/C tools.
 
 ### 2. Use the Standard Script Boilerplate
-Select the appropriate category folder under `scripts/` (e.g. `editors/`, `browsers/`, `version-managers/`, `tools/`, `terminal/`, `core/`, `ai/`) and create `scripts/<category>/<tool-name>.sh` using this template:
+Select the appropriate category folder under `scripts/` (e.g. `editors/`, `browsers/`, `database/`, `version-managers/`, `tools/`, `terminal/`, `core/`, `ai/`) and create `scripts/<category>/<tool-name>.sh` using this template:
 
 ```bash
 #!/bin/bash

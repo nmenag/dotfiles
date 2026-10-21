@@ -31,6 +31,12 @@ fn test_catalog_completeness() {
     assert!(find_tool("orca").is_some(), "Orca must be in catalog");
     assert!(find_tool("pgadmin").is_some(), "pgAdmin must be in catalog");
     assert!(find_tool("mongocompass").is_some(), "MongoCompass must be in catalog");
+    assert!(find_tool("dbgate").is_some(), "DbGate must be in catalog");
+    assert_eq!(find_tool("dbgate").unwrap().category, Category::Databases);
+    assert!(find_tool("dbeaver").is_some(), "DBeaver must be in catalog");
+    assert_eq!(find_tool("dbeaver").unwrap().category, Category::Databases);
+    assert_eq!(find_tool("pgadmin").unwrap().category, Category::Databases);
+    assert_eq!(find_tool("mongocompass").unwrap().category, Category::Databases);
     assert!(find_tool("asdf").is_some(), "ASDF must be in catalog");
     assert_eq!(find_tool("asdf").unwrap().category, Category::VersionManagers);
     assert!(find_tool("mise").is_some(), "Mise must be in catalog");
@@ -88,6 +94,17 @@ fn test_category_filtering() {
     for tool in ai_tools {
         assert_eq!(tool.category, Category::AiAssistants);
     }
+
+    let db_tools = tools_by_category(Category::Databases);
+    assert_eq!(db_tools.len(), 4, "Must have exactly 4 database tools registered");
+    for tool in &db_tools {
+        assert_eq!(tool.category, Category::Databases);
+    }
+    let db_ids: Vec<&str> = db_tools.iter().map(|t| t.id).collect();
+    assert!(db_ids.contains(&"pgadmin"));
+    assert!(db_ids.contains(&"mongocompass"));
+    assert!(db_ids.contains(&"dbgate"));
+    assert!(db_ids.contains(&"dbeaver"));
 }
 
 #[test]

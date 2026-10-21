@@ -98,6 +98,11 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     │   ├── docker.sh
     │   ├── gitconfig.sh
     │   └── shell.sh
+    ├── database/              # Database management tools & clients
+    │   ├── dbeaver.sh
+    │   ├── dbgate.sh
+    │   ├── mongocompass.sh
+    │   └── pgadmin.sh
     ├── editors/               # Code editors & IDEs
     │   ├── android-studio.sh
     │   ├── cursor.sh
@@ -105,12 +110,10 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     │   └── zed.sh
     ├── terminal/              # Terminals & workspace multiplexers
     │   └── ghostty.sh
-    ├── tools/                 # Desktop tools, API clients & database utilities
+    ├── tools/                 # Desktop tools, API clients & utilities
     │   ├── bleachbit.sh
     │   ├── bruno.sh
     │   ├── flameshot.sh
-    │   ├── mongocompass.sh
-    │   ├── pgadmin.sh
     │   ├── postman.sh
     │   ├── stacer.sh
     │   └── vlc.sh

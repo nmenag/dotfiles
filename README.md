@@ -8,7 +8,7 @@ Automated workstation provisioning, development environment setup, unified shell
 
 - **Interactive Workstation CLI (`mena`)**:
   - Written in **pure Rust** (`Clap` + `Dialoguer`)
-  - Multi-select interactive installation across 7 tool categories with OS, package manager, and installed version pre-detection.
+  - Multi-select interactive installation across 8 tool categories with OS, package manager, and installed version pre-detection.
   - Two-phase architecture (Planning vs. Execution): pre-installation summary, review/modification loop, and explicit confirmation.
   - Guaranteed safe cancellation (aborts with zero mutations).
   - Subcommands for diagnostics (`mena doctor`), catalog browsing (`mena list`), and updates (`mena update`).
@@ -79,6 +79,11 @@ Automated workstation provisioning, development environment setup, unified shell
     │   ├── docker.sh
     │   ├── gitconfig.sh
     │   └── shell.sh
+    ├── database/              # Database management tools & clients
+    │   ├── dbeaver.sh
+    │   ├── dbgate.sh
+    │   ├── mongocompass.sh
+    │   └── pgadmin.sh
     ├── editors/               # Code editors & IDEs
     │   ├── android-studio.sh
     │   ├── cursor.sh
@@ -86,15 +91,13 @@ Automated workstation provisioning, development environment setup, unified shell
     │   └── zed.sh
     ├── terminal/              # Terminals & workspace multiplexers
     │   └── ghostty.sh
-    ├── tools/                 # Desktop tools, API clients & database utilities
-        ├── bleachbit.sh
-        ├── bruno.sh
-        ├── flameshot.sh
-        ├── mongocompass.sh
-        ├── pgadmin.sh
-        ├── postman.sh
-        ├── stacer.sh
-        └── vlc.sh
+    ├── tools/                 # Desktop tools, API clients & utilities
+    │   ├── bleachbit.sh
+    │   ├── bruno.sh
+    │   ├── flameshot.sh
+    │   ├── postman.sh
+    │   ├── stacer.sh
+    │   └── vlc.sh
     └── version-managers/      # Runtime version managers (asdf, mise)
         ├── asdf.sh
         ├── mise.sh
@@ -158,6 +161,7 @@ mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
 mena install programs   # Wizard scoped to desktop programs & API clients (BleachBit, Flameshot, VLC, Postman, Bruno, Stacer)
 mena install version-managers # Wizard scoped to ASDF and Mise version managers
 mena install dev        # Wizard scoped to editors (VS Code, Cursor, Zed), terminals & IDEs
+mena install databases  # Wizard scoped to database clients (pgAdmin, MongoDB Compass, DBeaver, DbGate)
 mena install ai         # Wizard scoped to AI terminal assistants (Claude, OpenCode, Codex, Kilo, Agy, Pi)
 mena install skills     # Wizard scoped to Agent Skills CLI
 mena install shell      # Wizard scoped to unified Bash & Oh My Zsh dotfiles
@@ -175,9 +179,9 @@ mena install --dry-run  # Simulate installation plan without modifying the works
 | Command | Description |
 | :--- | :--- |
 | `mena install` | Interactive wizard across optional tool categories with multi-select and preference prompts (core tools are auto-installed) |
-| `mena install <category>` | Wizard scoped to a category or core foundations (e.g. `core`, `browser`, `programs`, `version-managers`, `dev`, `ai`, `skills`, `shell`) |
+| `mena install <category>` | Wizard scoped to a category or core foundations (e.g. `core`, `browser`, `database`, `programs`, `version-managers`, `dev`, `ai`, `skills`, `shell`) |
 | `mena install -d, --dry-run` | Preview actions, dependency resolution, and planned commands without modifying the system |
-| `mena list` | View the complete tool catalog (35 tools) with real-time detection of installed versions |
+| `mena list` | View the complete tool catalog (37 tools) with real-time detection of installed versions |
 | `mena list -c <category>` | View catalog tools filtered by category (supports `--json` output) |
 | `mena doctor` | Comprehensive diagnostic check of OS, package managers, shell configurations, and AI adapters |
 | `mena update` | Updates AI assistant adapters, shell themes/plugins, and refreshes package manager caches |
@@ -262,7 +266,7 @@ Test coverage includes:
 - `test_only_approved_actions_are_executed`: Verifies that unselected tools are never queued or executed.
 - `test_dry_run_executes_no_mutations`: Verifies that dry-run mode safely simulates all steps without modifying the workstation.
 - `test_summary_matches_plan`: Verifies that the rendered summary matches the plan items, actions count, and categories.
-- `test_catalog_completeness` & `test_category_filtering`: Verifies registry completeness across all 7 categories.
+- `test_catalog_completeness` & `test_category_filtering`: Verifies registry completeness across all 8 categories.
 
 ---
 
@@ -383,6 +387,10 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`core/docker.sh`](./scripts/core/docker.sh) | Installs Docker CE, CLI, Containerd, Buildx, and Compose v2 plugin | `./scripts/core/docker.sh` |
 | [`core/gitconfig.sh`](./scripts/core/gitconfig.sh) | Configures Git identity, aliases (`git lg`), SSH key, and Git hooks | `./scripts/core/gitconfig.sh` |
 | [`core/shell.sh`](./scripts/core/shell.sh) | Installs Zsh & Oh My Zsh, productivity plugins, custom theme, and dotfiles loaders | `./scripts/core/shell.sh` |
+| [`database/dbeaver.sh`](./scripts/database/dbeaver.sh) | Installs DBeaver Community Edition via official signed APT repository | `./scripts/database/dbeaver.sh` |
+| [`database/dbgate.sh`](./scripts/database/dbgate.sh) | Installs DbGate cross-platform SQL & NoSQL database manager via official Debian package | `./scripts/database/dbgate.sh` |
+| [`database/mongocompass.sh`](./scripts/database/mongocompass.sh) | Installs MongoDB Compass GUI via official Debian package | `./scripts/database/mongocompass.sh` |
+| [`database/pgadmin.sh`](./scripts/database/pgadmin.sh) | Installs pgAdmin 4 Desktop via official PostgreSQL APT repository | `./scripts/database/pgadmin.sh` |
 | [`editors/android-studio.sh`](./scripts/editors/android-studio.sh) | Installs Java OpenJDK and Android Studio via Snap | `./scripts/editors/android-studio.sh` |
 | [`editors/cursor.sh`](./scripts/editors/cursor.sh) | Installs Cursor AI Editor via official signed APT repository | `./scripts/editors/cursor.sh` |
 | [`editors/vscode.sh`](./scripts/editors/vscode.sh) | Installs VS Code and 25+ curated development extensions | `./scripts/editors/vscode.sh` |
@@ -391,8 +399,6 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`tools/bleachbit.sh`](./scripts/tools/bleachbit.sh) | Installs BleachBit system space cleaner and privacy manager via APT | `./scripts/tools/bleachbit.sh` |
 | [`tools/bruno.sh`](./scripts/tools/bruno.sh) | Installs Bruno open-source API client via official signed APT repository | `./scripts/tools/bruno.sh` |
 | [`tools/flameshot.sh`](./scripts/tools/flameshot.sh) | Installs Flameshot screenshot and annotation tool via APT | `./scripts/tools/flameshot.sh` |
-| [`tools/mongocompass.sh`](./scripts/tools/mongocompass.sh) | Installs MongoDB Compass GUI via official Debian package | `./scripts/tools/mongocompass.sh` |
-| [`tools/pgadmin.sh`](./scripts/tools/pgadmin.sh) | Installs pgAdmin 4 Desktop via official PostgreSQL APT repository | `./scripts/tools/pgadmin.sh` |
 | [`tools/postman.sh`](./scripts/tools/postman.sh) | Installs Postman API development platform via Snap | `./scripts/tools/postman.sh` |
 | [`tools/stacer.sh`](./scripts/tools/stacer.sh) | Installs Stacer Linux system optimizer and monitoring tool via APT | `./scripts/tools/stacer.sh` |
 | [`tools/vlc.sh`](./scripts/tools/vlc.sh) | Installs VLC Media Player and multimedia framework via APT | `./scripts/tools/vlc.sh` |
