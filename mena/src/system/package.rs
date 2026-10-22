@@ -55,11 +55,33 @@ fn is_executable(path: &Path) -> bool {
 
 /// Check if a deb package is installed via dpkg
 pub fn is_dpkg_installed(pkg: &str) -> bool {
-    Command::new("dpkg")
-        .args(["-s", pkg])
+    Command::new("dpkg-query")
+        .args(["-W", "-f=${Status}", pkg])
         .output()
-        .map(|out| out.status.success())
+        .map(|out| {
+            if out.status.success() {
+                let status = String::from_utf8_lossy(&out.stdout);
+                status.trim() == "install ok installed"
+            } else {
+                false
+            }
+        })
         .unwrap_or(false)
+}
+
+/// Query version of an installed dpkg package
+pub fn query_dpkg_version(pkg: &str) -> Option<String> {
+    let output = Command::new("dpkg-query")
+        .args(["-W", "-f=${Version}", pkg])
+        .output()
+        .ok()?;
+    if output.status.success() {
+        let ver = String::from_utf8_lossy(&output.stdout).trim().to_string();
+        if !ver.is_empty() {
+            return Some(ver);
+        }
+    }
+    None
 }
 
 /// Check if a path relative to $HOME exists
@@ -113,14 +135,38 @@ pub fn check_flatpak_installed(app_id: &str) -> Option<String> {
     }
 }
 
+/// Check if a snap package is installed and return its version
+pub fn check_snap_version(name: &str) -> Option<String> {
+    let output = Command::new("snap")
+        .args(["list", name])
+        .output()
+        .ok()?;
+    if output.status.success() {
+        let text = String::from_utf8_lossy(&output.stdout);
+        if let Some(line) = text.lines().nth(1) {
+            let mut parts = line.split_whitespace();
+            let _snap_name = parts.next();
+            if let Some(ver) = parts.next() {
+                if !ver.is_empty() {
+                    return Some(ver.to_string());
+                }
+            }
+        }
+    }
+    None
+}
+
 /// Determine the ToolStatus for a given Tool definition
 pub fn check_tool_status(tool: &Tool) -> ToolStatus {
     match tool.detection {
         DetectionMethod::Command(cmd) => {
             if let Some(path) = command_path(cmd) {
-                let version = tool
+                let mut version = tool
                     .version_flag
                     .and_then(|flag| query_version(cmd, flag));
+                if version.is_none() && path.to_string_lossy().starts_with("/snap/") {
+                    version = check_snap_version(cmd);
+                }
                 ToolStatus::Installed {
                     version,
                     path: Some(path.to_string_lossy().to_string()),
@@ -164,8 +210,38 @@ pub fn check_tool_status(tool: &Tool) -> ToolStatus {
         }
         DetectionMethod::Dpkg(pkg) => {
             if is_dpkg_installed(pkg) {
+                let version = query_dpkg_version(pkg);
                 ToolStatus::Installed {
-                    version: None,
+                    version,
+                    path: Some(format!("dpkg: {}", pkg)),
+                }
+            } else {
+                ToolStatus::NotInstalled
+            }
+        }
+        DetectionMethod::CommandOrDpkg { cmd, pkg } => {
+            let cmd_path = command_path(cmd);
+            let dpkg_installed = is_dpkg_installed(pkg);
+
+            if let Some(path) = cmd_path {
+                let mut version = tool
+                    .version_flag
+                    .and_then(|flag| query_version(cmd, flag));
+                if version.is_none() {
+                    if path.to_string_lossy().starts_with("/snap/") {
+                        version = check_snap_version(cmd);
+                    } else if dpkg_installed {
+                        version = query_dpkg_version(pkg);
+                    }
+                }
+                ToolStatus::Installed {
+                    version,
+                    path: Some(path.to_string_lossy().to_string()),
+                }
+            } else if dpkg_installed {
+                let version = query_dpkg_version(pkg);
+                ToolStatus::Installed {
+                    version,
                     path: Some(format!("dpkg: {}", pkg)),
                 }
             } else {

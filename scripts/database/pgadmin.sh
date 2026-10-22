@@ -7,7 +7,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 echo "=== Installing pgAdmin 4 Desktop ==="
 
 # 1. Check if already installed
-if dpkg -s pgadmin4-desktop &>/dev/null || command -v pgadmin4 &>/dev/null; then
+if (dpkg-query -W -f='${Status}' pgadmin4-desktop 2>/dev/null | grep -q "install ok installed") || command -v pgadmin4 &>/dev/null; then
   echo "pgAdmin 4 Desktop is already installed."
   exit 0
 fi

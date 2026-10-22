@@ -7,7 +7,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 echo "=== Installing MongoDB Compass ==="
 
 # 1. Check if already installed
-if dpkg -s mongodb-compass &>/dev/null || command -v mongodb-compass &>/dev/null; then
+if (dpkg-query -W -f='${Status}' mongodb-compass 2>/dev/null | grep -q "install ok installed") || command -v mongodb-compass &>/dev/null; then
   echo "MongoDB Compass is already installed: $(command -v mongodb-compass 2>/dev/null || echo 'dpkg: mongodb-compass')"
   exit 0
 fi

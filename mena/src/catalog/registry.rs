@@ -169,7 +169,10 @@ pub fn all_tools() -> Vec<Tool> {
             description: "Fast, git-friendly, open-source API exploration & testing client (usebruno)",
             dependencies: &["curl"],
             install_method: InstallMethod::Script("scripts/api/bruno.sh"),
-            detection: DetectionMethod::Command("bruno"),
+            detection: DetectionMethod::CommandOrFlatpak {
+                cmd: "bruno",
+                flatpak_id: "com.usebruno.Bruno",
+            },
             version_flag: None,
         },
 
@@ -213,7 +216,7 @@ pub fn all_tools() -> Vec<Tool> {
             description: "AI-first code editor built for pair programming with generative models",
             dependencies: &["curl"],
             install_method: InstallMethod::Script("scripts/editors/cursor.sh"),
-            detection: DetectionMethod::Command("cursor"),
+            detection: DetectionMethod::Dpkg("cursor"),
             version_flag: None,
         },
         Tool {
@@ -275,7 +278,10 @@ pub fn all_tools() -> Vec<Tool> {
             description: "Cross-platform SQL and NoSQL database manager (PostgreSQL, MySQL, MongoDB, Redis)",
             dependencies: &["curl"],
             install_method: InstallMethod::Script("scripts/database/dbgate.sh"),
-            detection: DetectionMethod::Dpkg("dbgate"),
+            detection: DetectionMethod::CommandOrDpkg {
+                cmd: "dbgate",
+                pkg: "dbgate",
+            },
             version_flag: None,
         },
         Tool {
@@ -285,7 +291,10 @@ pub fn all_tools() -> Vec<Tool> {
             description: "Universal multi-platform database administration & SQL development IDE (dbeaver-ce)",
             dependencies: &["curl"],
             install_method: InstallMethod::Script("scripts/database/dbeaver.sh"),
-            detection: DetectionMethod::Dpkg("dbeaver-ce"),
+            detection: DetectionMethod::CommandOrDpkg {
+                cmd: "dbeaver",
+                pkg: "dbeaver-ce",
+            },
             version_flag: None,
         },
 

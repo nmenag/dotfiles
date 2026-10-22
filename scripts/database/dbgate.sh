@@ -7,7 +7,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 echo "=== Installing DbGate ==="
 
 # 1. Check if already installed
-if dpkg -s dbgate &>/dev/null || command -v dbgate &>/dev/null; then
+if (dpkg-query -W -f='${Status}' dbgate 2>/dev/null | grep -q "install ok installed") || command -v dbgate &>/dev/null; then
   echo "DbGate is already installed: $(command -v dbgate 2>/dev/null || echo 'dpkg: dbgate')"
   exit 0
 fi

@@ -7,7 +7,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 echo "=== Installing DBeaver Community Edition ==="
 
 # 1. Check if already installed
-if dpkg -s dbeaver-ce &>/dev/null || command -v dbeaver &>/dev/null || command -v dbeaver-ce &>/dev/null; then
+if (dpkg-query -W -f='${Status}' dbeaver-ce 2>/dev/null | grep -q "install ok installed") || command -v dbeaver &>/dev/null || command -v dbeaver-ce &>/dev/null; then
   echo "DBeaver CE is already installed."
   exit 0
 fi

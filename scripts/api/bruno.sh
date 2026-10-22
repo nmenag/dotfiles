@@ -9,6 +9,21 @@ if command -v bruno &>/dev/null; then
   exit 0
 fi
 
+# Check if installed via Flatpak
+if command -v flatpak &>/dev/null && flatpak info com.usebruno.Bruno &>/dev/null; then
+  echo "Bruno is already installed via Flatpak (com.usebruno.Bruno)."
+  mkdir -p "$HOME/.local/bin"
+  if [[ ! -f "$HOME/.local/bin/bruno" ]]; then
+    cat <<'EOF' > "$HOME/.local/bin/bruno"
+#!/bin/sh
+exec flatpak run com.usebruno.Bruno "$@"
+EOF
+    chmod +x "$HOME/.local/bin/bruno"
+    echo "Created ~/.local/bin/bruno CLI shim for Flatpak."
+  fi
+  exit 0
+fi
+
 echo "Installing Bruno dependencies..."
 sudo apt-get update -y
 sudo apt-get install -y gpg curl ca-certificates

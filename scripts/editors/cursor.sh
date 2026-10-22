@@ -6,11 +6,16 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 echo "Installing Cursor AI Editor..."
 
-# Check if already installed
-if command -v cursor &>/dev/null || [[ -x "/opt/cursor.appimage" ]] || [[ -x "$HOME/.local/bin/cursor" ]]; then
-  EXISTING_PATH="$(command -v cursor 2>/dev/null || echo "/opt/cursor.appimage")"
-  echo "Cursor is already installed at: $EXISTING_PATH"
+# 1. Check if already installed via official APT package
+if dpkg-query -W -f='${Status}' cursor 2>/dev/null | grep -q "install ok installed"; then
+  echo "Cursor AI Editor is already installed via APT."
   exit 0
+fi
+
+# Clean up legacy /usr/local/bin/cursor symlink if it points to /opt/cursor.appimage so it doesn't shadow /usr/bin/cursor
+if [[ -L "/usr/local/bin/cursor" ]] && [[ "$(readlink "/usr/local/bin/cursor" 2>/dev/null)" == "/opt/cursor.appimage" ]]; then
+  echo "Removing legacy /usr/local/bin/cursor symlink pointing to /opt/cursor.appimage..."
+  sudo rm -f "/usr/local/bin/cursor"
 fi
 
 # Ensure prerequisite utilities exist
