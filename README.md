@@ -70,7 +70,9 @@ Automated workstation provisioning, development environment setup, unified shell
     ├── ai/                    # AI coding assistants, agents & tools
     │   ├── ai-tools.sh
     │   ├── herdr.sh
-    │   └── orca.sh
+    │   ├── orca.sh
+    │   ├── claude-desktop.sh
+    │   └── agy-desktop.sh
     ├── api/                   # API exploration, testing & development clients
     │   ├── bruno.sh
     │   └── postman.sh
@@ -383,6 +385,8 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`ai/ai-tools.sh`](./scripts/ai/ai-tools.sh) | Synchronizes common instructions & skills across all 6 AI CLIs | `./scripts/ai/ai-tools.sh` |
 | [`ai/herdr.sh`](./scripts/ai/herdr.sh) | Installs Herdr workspace manager and sets up Zsh completion | `./scripts/ai/herdr.sh` |
 | [`ai/orca.sh`](./scripts/ai/orca.sh) | Installs Orca IDE next-gen agentic development environment via official deb | `./scripts/ai/orca.sh` |
+| [`ai/claude-desktop.sh`](./scripts/ai/claude-desktop.sh) | Installs Claude Desktop via the official Anthropic apt repository | `./scripts/ai/claude-desktop.sh` |
+| [`ai/agy-desktop.sh`](./scripts/ai/agy-desktop.sh) | Installs Antigravity 2.0 desktop app user-local from a tarball (`ANTIGRAVITY_TARBALL`) | `ANTIGRAVITY_TARBALL=<url-or-path> ./scripts/ai/agy-desktop.sh` |
 | [`api/bruno.sh`](./scripts/api/bruno.sh) | Installs Bruno open-source API client via official signed APT repository | `./scripts/api/bruno.sh` |
 | [`api/postman.sh`](./scripts/api/postman.sh) | Installs Postman API development platform via Snap | `./scripts/api/postman.sh` |
 | [`browsers/brave.sh`](./scripts/browsers/brave.sh) | Installs Brave Browser via official signed APT repository | `./scripts/browsers/brave.sh` |

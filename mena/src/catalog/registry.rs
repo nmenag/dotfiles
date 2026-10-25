@@ -389,6 +389,26 @@ pub fn all_tools() -> Vec<Tool> {
             detection: DetectionMethod::Command("orca-ide"),
             version_flag: Some("--version"),
         },
+        Tool {
+            id: "claude-desktop",
+            name: "Claude Desktop",
+            category: Category::AiAssistants,
+            description: "Official Claude desktop app (beta) from Anthropic's apt repository",
+            dependencies: &["curl"],
+            install_method: InstallMethod::Script("scripts/ai/claude-desktop.sh"),
+            detection: DetectionMethod::Command("claude-desktop"),
+            version_flag: None,
+        },
+        Tool {
+            id: "agy-desktop",
+            name: "Agy Desktop (Antigravity 2.0)",
+            category: Category::AiAssistants,
+            description: "Google Antigravity 2.0 desktop app (user-local tarball; set ANTIGRAVITY_TARBALL)",
+            dependencies: &["curl"],
+            install_method: InstallMethod::Script("scripts/ai/agy-desktop.sh"),
+            detection: DetectionMethod::Command("antigravity"),
+            version_flag: None,
+        },
 
         // --- Skill Management ---
         Tool {

@@ -115,6 +115,8 @@ impl InstallPlan {
                         || script_path.contains("dbeaver")
                         || script_path.contains("database")
                         || script_path.contains("orca")
+                        || script_path.contains("claude-desktop")
+                        || script_path.contains("agy-desktop")
                         || script_path.contains("mise")
                         || script_path.contains("cursor")
                         || script_path.contains("postman")
