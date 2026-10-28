@@ -153,3 +153,12 @@ fn test_install_core_cli_parsing() {
         _ => panic!("Expected Commands::Install with dry_run true"),
     }
 }
+
+#[test]
+fn test_install_unknown_target_errors() {
+    use mena::commands::handle_install;
+    use mena::system::detector::SystemInfo;
+
+    let result = handle_install(Some("definitely-not-a-tool".to_string()), true, false, &SystemInfo::detect());
+    assert!(result.is_err(), "Unknown tool/category must return an error");
+}

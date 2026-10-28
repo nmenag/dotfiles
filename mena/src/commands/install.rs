@@ -2,7 +2,7 @@ use anyhow::Result;
 use colored::Colorize;
 
 use crate::catalog::model::Category;
-use crate::catalog::registry::{all_tools, tools_by_category};
+use crate::catalog::registry::{all_tools, find_tool, tools_by_category};
 use crate::executor::runner::execute_plan;
 use crate::interactive::wizard::run_wizard;
 use crate::planner::plan::InstallPlan;
@@ -21,6 +21,25 @@ pub fn handle_install(
         .unwrap_or(false)
     {
         return super::core::handle_core(dry_run);
+    }
+
+    // A specific tool id (e.g. `mena install obsidian`) installs just that tool.
+    if let Some(tool) = category_arg.as_deref().and_then(|a| find_tool(&a.to_lowercase())) {
+        if check_tool_status(&tool).is_installed() && tool.id != "ai-sync" && tool.id != "shell-dotfiles" {
+            println!("{} is already installed.", tool.name.green().bold());
+            return Ok(());
+        }
+        let plan = InstallPlan::build(&[tool.id.to_string()], system);
+        println!("{}", plan.render_summary());
+        let report = execute_plan(&plan, dry_run)?;
+        report.print_summary();
+        return Ok(());
+    }
+
+    if let Some(arg) = category_arg.as_deref() {
+        if Category::from_str_loose(arg).is_none() {
+            anyhow::bail!("'{}' is not a known tool or category. Run `mena list` to see available ones.", arg);
+        }
     }
 
     let filter_category = category_arg.as_deref().and_then(Category::from_str_loose);

@@ -7,7 +7,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 echo "=== Installing Obsidian ==="
 
 # 1. Check if already installed
-if dpkg -s obsidian &>/dev/null || command -v obsidian &>/dev/null; then
+if dpkg-query -W -f='${Status}' obsidian 2>/dev/null | grep -q "install ok installed" || command -v obsidian &>/dev/null; then
   echo "Obsidian is already installed."
   exit 0
 fi

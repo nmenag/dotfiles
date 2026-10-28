@@ -16,9 +16,9 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
-    /// Launch the interactive installation wizard (all categories or filtered by category)
+    /// Launch the interactive installation wizard, or install a specific tool by id (`mena install obsidian`)
     Install {
-        /// Optional category or component to filter/install (e.g., 'core', 'browser', 'cli', 'programs', 'version-managers', 'dev', 'ai', 'skills', 'shell')
+        /// Tool id (e.g., 'obsidian', 'vlc') or category to filter/install (e.g., 'core', 'browser', 'cli', 'programs', 'version-managers', 'dev', 'ai', 'skills', 'shell')
         #[arg(value_name = "CATEGORY")]
         category: Option<String>,
 

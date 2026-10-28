@@ -163,6 +163,7 @@ mena install            # Launch interactive wizard across tool categories
 mena install core       # Re-execute core workstation essentials (Git, Docker, Shell Dotfiles, Build Tools)
 mena install browser    # Wizard scoped to web browsers (Brave, Chrome)
 mena install programs   # Wizard scoped to desktop programs & system utilities (BleachBit, Flameshot, VLC, Stacer)
+mena install obsidian   # Install one specific tool by id (see `mena list`); add -d for a dry run
 mena install api        # Wizard scoped to API clients (Postman, Bruno)
 mena install version-managers # Wizard scoped to ASDF and Mise version managers
 mena install dev        # Wizard scoped to editors (VS Code, Cursor, Zed), terminals & IDEs
