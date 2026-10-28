@@ -116,6 +116,7 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     ├── tools/                 # Desktop tools & system utilities
     │   ├── bleachbit.sh
     │   ├── flameshot.sh
+    │   ├── obsidian.sh
     │   ├── stacer.sh
     │   └── vlc.sh
     └── version-managers/      # Runtime version managers (asdf, mise)

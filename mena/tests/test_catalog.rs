@@ -57,6 +57,8 @@ fn test_catalog_completeness() {
     assert_eq!(find_tool("flameshot").unwrap().category, Category::Programs);
     assert!(find_tool("vlc").is_some(), "VLC must be in catalog");
     assert_eq!(find_tool("vlc").unwrap().category, Category::Programs);
+    assert!(find_tool("obsidian").is_some(), "Obsidian must be in catalog");
+    assert_eq!(find_tool("obsidian").unwrap().category, Category::Programs);
     assert!(find_tool("stacer").is_some(), "Stacer must be in catalog");
     assert_eq!(find_tool("stacer").unwrap().category, Category::Programs);
 

@@ -138,6 +138,16 @@ pub fn all_tools() -> Vec<Tool> {
             version_flag: Some("--version"),
         },
         Tool {
+            id: "obsidian",
+            name: "Obsidian",
+            category: Category::Programs,
+            description: "Markdown-based knowledge base and note-taking app",
+            dependencies: &[],
+            install_method: InstallMethod::Script("scripts/tools/obsidian.sh"),
+            detection: DetectionMethod::Command("obsidian"),
+            version_flag: None,
+        },
+        Tool {
             id: "stacer",
             name: "Stacer",
             category: Category::Programs,

@@ -99,6 +99,7 @@ Automated workstation provisioning, development environment setup, unified shell
     ├── tools/                 # Desktop tools & system utilities
     │   ├── bleachbit.sh
     │   ├── flameshot.sh
+    │   ├── obsidian.sh
     │   ├── stacer.sh
     │   └── vlc.sh
     └── version-managers/      # Runtime version managers (asdf, mise)
@@ -406,6 +407,7 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`terminal/ghostty.sh`](./scripts/terminal/ghostty.sh) | Installs Ghostty native terminal emulator via Snap (--classic) | `./scripts/terminal/ghostty.sh` |
 | [`tools/bleachbit.sh`](./scripts/tools/bleachbit.sh) | Installs BleachBit system space cleaner and privacy manager via APT | `./scripts/tools/bleachbit.sh` |
 | [`tools/flameshot.sh`](./scripts/tools/flameshot.sh) | Installs Flameshot screenshot and annotation tool via APT | `./scripts/tools/flameshot.sh` |
+| [`tools/obsidian.sh`](./scripts/tools/obsidian.sh) | Installs Obsidian note-taking app via official GitHub release `.deb` | `./scripts/tools/obsidian.sh` |
 | [`tools/stacer.sh`](./scripts/tools/stacer.sh) | Installs Stacer Linux system optimizer and monitoring tool via APT | `./scripts/tools/stacer.sh` |
 | [`tools/vlc.sh`](./scripts/tools/vlc.sh) | Installs VLC Media Player and multimedia framework via APT | `./scripts/tools/vlc.sh` |
 | [`version-managers/asdf.sh`](./scripts/version-managers/asdf.sh) | Installs ASDF v0.15.0 and runtime plugins via shared plugins.sh (Node, pnpm, Ruby, Python, Elixir, Erlang) | `./scripts/version-managers/asdf.sh` |
