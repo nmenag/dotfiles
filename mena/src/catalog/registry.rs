@@ -56,6 +56,16 @@ pub fn all_tools() -> Vec<Tool> {
             version_flag: Some("--version"),
         },
         Tool {
+            id: "gh",
+            name: "GitHub CLI",
+            category: Category::CliTools,
+            description: "Official GitHub command-line tool via signed APT repository",
+            dependencies: &["curl"],
+            install_method: InstallMethod::Script("scripts/core/gh.sh"),
+            detection: DetectionMethod::Command("gh"),
+            version_flag: Some("--version"),
+        },
+        Tool {
             id: "curl",
             name: "cURL",
             category: Category::CliTools,
@@ -378,6 +388,16 @@ pub fn all_tools() -> Vec<Tool> {
             install_method: InstallMethod::Script("scripts/ai/ai-tools.sh"),
             detection: DetectionMethod::Path(".claude/CLAUDE.md"),
             version_flag: None,
+        },
+        Tool {
+            id: "cursor-cli",
+            name: "Cursor CLI",
+            category: Category::AiAssistants,
+            description: "Cursor Agent terminal assistant (cursor-agent)",
+            dependencies: &["curl"],
+            install_method: InstallMethod::Script("scripts/ai/cursor-cli.sh"),
+            detection: DetectionMethod::Command("cursor-agent"),
+            version_flag: Some("--version"),
         },
         Tool {
             id: "herdr",

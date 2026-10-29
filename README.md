@@ -69,6 +69,7 @@ Automated workstation provisioning, development environment setup, unified shell
     ├── verify.sh              # Automated repository linting & integrity verification
     ├── ai/                    # AI coding assistants, agents & tools
     │   ├── ai-tools.sh
+    │   ├── cursor-cli.sh
     │   ├── herdr.sh
     │   ├── orca.sh
     │   ├── claude-desktop.sh
@@ -82,6 +83,7 @@ Automated workstation provisioning, development environment setup, unified shell
     ├── core/                  # Core foundations, Git, Docker & Shell
     │   ├── core.sh
     │   ├── docker.sh
+    │   ├── gh.sh
     │   ├── gitconfig.sh
     │   └── shell.sh
     ├── database/              # Database management tools & clients
@@ -385,6 +387,7 @@ All modules in `scripts/` can be executed independently from any directory:
 | :--- | :--- | :--- |
 | [`verify.sh`](./scripts/verify.sh) | Complete linting, security, and integrity verification suite | `./scripts/verify.sh` |
 | [`ai/ai-tools.sh`](./scripts/ai/ai-tools.sh) | Synchronizes common instructions & skills across all 6 AI CLIs | `./scripts/ai/ai-tools.sh` |
+| [`ai/cursor-cli.sh`](./scripts/ai/cursor-cli.sh) | Installs Cursor CLI (`cursor-agent`) via official installer | `./scripts/ai/cursor-cli.sh` |
 | [`ai/herdr.sh`](./scripts/ai/herdr.sh) | Installs Herdr workspace manager and sets up Zsh completion | `./scripts/ai/herdr.sh` |
 | [`ai/orca.sh`](./scripts/ai/orca.sh) | Installs Orca IDE next-gen agentic development environment via official deb | `./scripts/ai/orca.sh` |
 | [`ai/claude-desktop.sh`](./scripts/ai/claude-desktop.sh) | Installs Claude Desktop via the official Anthropic apt repository | `./scripts/ai/claude-desktop.sh` |
@@ -394,6 +397,7 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`browsers/brave.sh`](./scripts/browsers/brave.sh) | Installs Brave Browser via official signed APT repository | `./scripts/browsers/brave.sh` |
 | [`browsers/chrome.sh`](./scripts/browsers/chrome.sh) | Installs Google Chrome stable via official deb package | `./scripts/browsers/chrome.sh` |
 | [`core/core.sh`](./scripts/core/core.sh) | Installs core workstation foundations, build tools, Git, and Docker | `./scripts/core/core.sh` |
+| [`core/gh.sh`](./scripts/core/gh.sh) | Installs GitHub CLI (`gh`) via official signed APT repository | `./scripts/core/gh.sh` |
 | [`core/docker.sh`](./scripts/core/docker.sh) | Installs Docker CE, CLI, Containerd, Buildx, and Compose v2 plugin | `./scripts/core/docker.sh` |
 | [`core/gitconfig.sh`](./scripts/core/gitconfig.sh) | Configures Git identity, aliases (`git lg`), SSH key, and Git hooks | `./scripts/core/gitconfig.sh` |
 | [`core/shell.sh`](./scripts/core/shell.sh) | Installs Zsh & Oh My Zsh, productivity plugins, custom theme, and dotfiles loaders | `./scripts/core/shell.sh` |
