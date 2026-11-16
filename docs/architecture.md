@@ -56,6 +56,7 @@ graph TD
     subgraph L1["Layer 1: Bootstrap & Core Foundation"]
         Bootstrap["install.sh"]
         GitCore["scripts/core/gitconfig.sh (Core Git)"]
+        SSHCore["scripts/core/github-ssh.sh (GitHub SSH & Keys)"]
         DockerCore["scripts/core/docker.sh (Core Docker CE)"]
         ShellCore["scripts/core/shell.sh (Core Shell Dotfiles & Oh My Zsh)"]
         BuildTools["Core Build Essentials & APT Caches"]
@@ -63,7 +64,7 @@ graph TD
 
     subgraph L2["Layer 2: Interactive Workstation Orchestrator"]
         MenaCLI["mena CLI (Rust)"]
-        Catalog["Catalog Registry (37 Tools)"]
+        Catalog["Catalog Registry (38 Tools)"]
         Planner["Two-Phase Planner Engine"]
         Wizard["Interactive Multi-Select Wizard"]
         Executor["Execution Engine & Progress Bar"]

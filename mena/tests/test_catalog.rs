@@ -47,6 +47,10 @@ fn test_catalog_completeness() {
     assert_eq!(find_tool("docker").unwrap().category, Category::CliTools);
     assert!(find_tool("ohmyzsh").is_some(), "Oh My Zsh must be in catalog");
     assert_eq!(find_tool("ohmyzsh").unwrap().category, Category::CliTools);
+    assert!(find_tool("gh").is_some(), "GitHub CLI must be in catalog");
+    assert_eq!(find_tool("gh").unwrap().category, Category::CliTools);
+    assert!(find_tool("github-ssh").is_some(), "GitHub SSH must be in catalog");
+    assert_eq!(find_tool("github-ssh").unwrap().category, Category::CliTools);
     assert!(find_tool("shell-dotfiles").is_some(), "Shell dotfiles must be in catalog");
     assert_eq!(find_tool("shell-dotfiles").unwrap().category, Category::CliTools);
 

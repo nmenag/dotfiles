@@ -82,8 +82,10 @@ Automated workstation provisioning, development environment setup, unified shell
     │   └── chrome.sh
     ├── core/                  # Core foundations, Git, Docker & Shell
     │   ├── core.sh
+    │   ├── deploy-ssh.sh
     │   ├── docker.sh
     │   ├── gh.sh
+    │   ├── github-ssh.sh
     │   ├── gitconfig.sh
     │   └── shell.sh
     ├── database/              # Database management tools & clients
@@ -397,8 +399,10 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`browsers/brave.sh`](./scripts/browsers/brave.sh) | Installs Brave Browser via official signed APT repository | `./scripts/browsers/brave.sh` |
 | [`browsers/chrome.sh`](./scripts/browsers/chrome.sh) | Installs Google Chrome stable via official deb package | `./scripts/browsers/chrome.sh` |
 | [`core/core.sh`](./scripts/core/core.sh) | Installs core workstation foundations, build tools, Git, and Docker | `./scripts/core/core.sh` |
-| [`core/gh.sh`](./scripts/core/gh.sh) | Installs GitHub CLI (`gh`) via official signed APT repository | `./scripts/core/gh.sh` |
+| [`core/deploy-ssh.sh`](./scripts/core/deploy-ssh.sh) | Deploys public SSH key to GitHub and verifies authentication | `./scripts/core/deploy-ssh.sh` |
 | [`core/docker.sh`](./scripts/core/docker.sh) | Installs Docker CE, CLI, Containerd, Buildx, and Compose v2 plugin | `./scripts/core/docker.sh` |
+| [`core/gh.sh`](./scripts/core/gh.sh) | Installs GitHub CLI (`gh`) via official signed APT repository | `./scripts/core/gh.sh` |
+| [`core/github-ssh.sh`](./scripts/core/github-ssh.sh) | Generates ED25519 SSH keys, configures `~/.ssh/config`, and deploys to GitHub | `./scripts/core/github-ssh.sh` |
 | [`core/gitconfig.sh`](./scripts/core/gitconfig.sh) | Configures Git identity, aliases (`git lg`), SSH key, and Git hooks | `./scripts/core/gitconfig.sh` |
 | [`core/shell.sh`](./scripts/core/shell.sh) | Installs Zsh & Oh My Zsh, productivity plugins, custom theme, and dotfiles loaders | `./scripts/core/shell.sh` |
 | [`database/dbeaver.sh`](./scripts/database/dbeaver.sh) | Installs DBeaver Community Edition via official signed APT repository | `./scripts/database/dbeaver.sh` |

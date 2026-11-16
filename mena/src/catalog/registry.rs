@@ -66,6 +66,16 @@ pub fn all_tools() -> Vec<Tool> {
             version_flag: Some("--version"),
         },
         Tool {
+            id: "github-ssh",
+            name: "GitHub SSH Key & Config (Core)",
+            category: Category::CliTools,
+            description: "Generate and deploy ED25519 SSH keys for GitHub with ~/.ssh/config and ssh-agent integration",
+            dependencies: &["curl"],
+            install_method: InstallMethod::Script("scripts/core/github-ssh.sh"),
+            detection: DetectionMethod::Path(".ssh/id_ed25519"),
+            version_flag: None,
+        },
+        Tool {
             id: "curl",
             name: "cURL",
             category: Category::CliTools,

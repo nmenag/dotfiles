@@ -48,6 +48,10 @@ alias dpsa='docker ps -a'
 # Fast access to dotfiles
 alias dotfiles='cd "${DOTFILES_DIR:-$HOME/personal-projects/dotfiles}"'
 
+# SSH & GitHub Key management
+alias github-ssh='bash "${DOTFILES_DIR:-$HOME/personal-projects/dotfiles}/scripts/core/github-ssh.sh"'
+alias deploy-ssh='bash "${DOTFILES_DIR:-$HOME/personal-projects/dotfiles}/scripts/core/deploy-ssh.sh"'
+
 # Desktop / Development tools shortcuts
 if command -v orca-ide &>/dev/null; then
   alias orca='orca-ide'

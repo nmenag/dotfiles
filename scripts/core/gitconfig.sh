@@ -64,32 +64,9 @@ set_git_config color.status.untracked "cyan"
 # Aliases
 set_git_config alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
-# SSH Key Configuration (Idempotent)
-SSH_KEY="$HOME/.ssh/id_ed25519"
-if [[ -f "$SSH_KEY" ]]; then
-  echo "SSH key already exists at $SSH_KEY. Skipping generation."
-else
-  echo "Generating new ED25519 SSH key..."
-  mkdir -p "$HOME/.ssh"
-  chmod 700 "$HOME/.ssh"
-  ssh-keygen -t ed25519 -C "${EMAIL:-git-user}" -f "$SSH_KEY" -N ""
-  echo "Generated SSH key at $SSH_KEY"
-fi
-
-# Add key to ssh-agent
-eval "$(ssh-agent -s)" > /dev/null
-ssh-add "$SSH_KEY" 2>/dev/null || true
-
-# Copy public key to clipboard if clipboard tool is available
-if command -v wl-copy &>/dev/null; then
-  wl-copy < "${SSH_KEY}.pub"
-  echo "Public key copied to clipboard using wl-copy."
-elif command -v xclip &>/dev/null; then
-  xclip -selection clipboard < "${SSH_KEY}.pub"
-  echo "Public key copied to clipboard using xclip."
-else
-  echo "Public key (${SSH_KEY}.pub):"
-  cat "${SSH_KEY}.pub"
+# SSH Key Configuration (Delegated to github-ssh.sh)
+if [[ -f "$SCRIPT_DIR/github-ssh.sh" ]]; then
+  bash "$SCRIPT_DIR/github-ssh.sh" generate
 fi
 
 # Setup Git pre-commit and commit-msg hooks if inside dotfiles git repo
