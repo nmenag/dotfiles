@@ -393,7 +393,7 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`ai/herdr.sh`](./scripts/ai/herdr.sh) | Installs Herdr workspace manager and sets up Zsh completion | `./scripts/ai/herdr.sh` |
 | [`ai/orca.sh`](./scripts/ai/orca.sh) | Installs Orca IDE next-gen agentic development environment via official deb | `./scripts/ai/orca.sh` |
 | [`ai/claude-desktop.sh`](./scripts/ai/claude-desktop.sh) | Installs Claude Desktop via the official Anthropic apt repository | `./scripts/ai/claude-desktop.sh` |
-| [`ai/agy-desktop.sh`](./scripts/ai/agy-desktop.sh) | Installs Antigravity 2.0 desktop app user-local from a tarball (`ANTIGRAVITY_TARBALL`) | `ANTIGRAVITY_TARBALL=<url-or-path> ./scripts/ai/agy-desktop.sh` |
+| [`ai/agy-desktop.sh`](./scripts/ai/agy-desktop.sh) | Installs Antigravity 2.0 desktop app user-local from `antigravity.google/download` | `./scripts/ai/agy-desktop.sh` |
 | [`api/bruno.sh`](./scripts/api/bruno.sh) | Installs Bruno open-source API client via official signed APT repository | `./scripts/api/bruno.sh` |
 | [`api/postman.sh`](./scripts/api/postman.sh) | Installs Postman API development platform via Snap | `./scripts/api/postman.sh` |
 | [`browsers/brave.sh`](./scripts/browsers/brave.sh) | Installs Brave Browser via official signed APT repository | `./scripts/browsers/brave.sh` |

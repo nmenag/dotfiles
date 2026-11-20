@@ -443,7 +443,7 @@ pub fn all_tools() -> Vec<Tool> {
             id: "agy-desktop",
             name: "Agy Desktop (Antigravity 2.0)",
             category: Category::AiAssistants,
-            description: "Google Antigravity 2.0 desktop app (user-local tarball; set ANTIGRAVITY_TARBALL)",
+            description: "Google Antigravity 2.0 desktop app (user-local tarball from antigravity.google)",
             dependencies: &["curl"],
             install_method: InstallMethod::Script("scripts/ai/agy-desktop.sh"),
             detection: DetectionMethod::Command("antigravity"),
