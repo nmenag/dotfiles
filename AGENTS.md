@@ -112,6 +112,7 @@ All installer and provisioning scripts inside [`scripts/`](./scripts) and [`inst
     │   ├── vscode.sh
     │   └── zed.sh
     ├── terminal/              # Terminals & workspace multiplexers
+    │   ├── cosmic-term.sh
     │   └── ghostty.sh
     ├── tools/                 # Desktop tools & system utilities
     │   ├── bleachbit.sh

@@ -18,7 +18,7 @@ pub struct Cli {
 pub enum Commands {
     /// Launch the interactive installation wizard, or install a specific tool by id (`mena install obsidian`)
     Install {
-        /// Tool id (e.g., 'obsidian', 'vlc') or category to filter/install (e.g., 'core', 'browser', 'cli', 'programs', 'version-managers', 'dev', 'ai', 'skills', 'shell')
+        /// Tool id (e.g., 'obsidian', 'vlc') or category to filter/install (e.g., 'core', 'browser', 'cli', 'programs', 'version-managers', 'editors', 'terminals', 'ai', 'skills', 'shell')
         #[arg(value_name = "CATEGORY")]
         category: Option<String>,
 
@@ -45,7 +45,7 @@ pub enum Commands {
 
     /// List all cataloged workstation tools, categories, and installation status
     List {
-        /// Filter tools by category (e.g., 'browser', 'cli', 'programs', 'version-managers', 'dev', 'ai', 'skills', 'shell')
+        /// Filter tools by category (e.g., 'browser', 'cli', 'programs', 'version-managers', 'editors', 'terminals', 'ai', 'skills', 'shell')
         #[arg(long, short = 'c')]
         category: Option<String>,
 

@@ -107,6 +107,7 @@ impl InstallPlan {
                     if script_path.contains("brave")
                         || script_path.contains("docker")
                         || script_path.contains("programs")
+                        || script_path.contains("cosmic-term")
                         || script_path.contains("ghostty")
                         || script_path.contains("android-studio")
                         || script_path.contains("pgadmin")

@@ -20,6 +20,11 @@ fn test_catalog_completeness() {
     assert!(find_tool("brave").is_some(), "Brave must be in catalog");
     assert!(find_tool("chrome").is_some(), "Chrome must be in catalog");
     assert!(find_tool("cursor").is_some(), "Cursor must be in catalog");
+    assert_eq!(find_tool("cursor").unwrap().category, Category::DevUtilities);
+    assert!(find_tool("cosmic-term").is_some(), "COSMIC Terminal must be in catalog");
+    assert_eq!(find_tool("cosmic-term").unwrap().category, Category::Terminals);
+    assert!(find_tool("ghostty").is_some(), "Ghostty must be in catalog");
+    assert_eq!(find_tool("ghostty").unwrap().category, Category::Terminals);
     assert!(find_tool("firefox").is_none(), "Firefox should not be in catalog");
     assert!(find_tool("claude").is_some(), "Claude must be in catalog");
     assert!(find_tool("opencode").is_some(), "OpenCode must be in catalog");

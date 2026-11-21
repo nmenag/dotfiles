@@ -297,7 +297,7 @@ flowchart LR
 | **Google Chrome, Orca, MongoDB Compass, DbGate** | **Official Deb** | Downloaded via HTTPS to `mktemp -d`, installed with `dpkg -i` + `apt-get install -f -y` |
 | **Postman, Ghostty, Android Studio** | **Snap** | Canonical Snap confinement (`--classic` for dev tools requiring full system access) |
 | **ASDF, Zed** | **Git Clone / Official Install Script** | User-space installation (`~/.asdf`, `~/.local/bin`), zero root mutations |
-| **Git, Build Essentials, VLC, Flameshot, BleachBit, Stacer** | **Native Ubuntu APT** | Standard distribution repository packages (`sudo apt-get install -y`) |
+| **Git, Build Essentials, COSMIC Terminal, VLC, Flameshot, BleachBit, Stacer** | **Native Ubuntu APT** | Standard distribution repository packages (`sudo apt-get install -y`) |
 
 ### 6.3 Automated Secret Hygiene
 - **Hardened `.gitignore`**: Excludes `.env`, `.env.*`, `*.pem`, `*.key`, `*.token`, `credentials.json`, and `~/.dotfiles_backup/`.

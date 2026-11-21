@@ -32,3 +32,27 @@ if command -v mise &>/dev/null; then
   eval "$(mise activate zsh)"
 fi
 
+# 5. COSMIC Terminal split-pane working directory inheritance
+# Works around cosmic-term PaneSplit focusing the new empty pane before querying cwd.
+if [[ -r "/proc/$PPID/comm" ]] && [[ "$(<"/proc/$PPID/comm")" == "cosmic-term" ]]; then
+  _COSMIC_TERM_CWD_FILE="${XDG_RUNTIME_DIR:-/tmp}/cosmic_term_cwd_${PPID}"
+  if [[ "$PWD" == "$HOME" && -f "$_COSMIC_TERM_CWD_FILE" ]]; then
+    _COSMIC_SAVED_CWD="$(<"$_COSMIC_TERM_CWD_FILE")"
+    if [[ -n "$_COSMIC_SAVED_CWD" && -d "$_COSMIC_SAVED_CWD" && "$_COSMIC_SAVED_CWD" != "$HOME" ]]; then
+      builtin cd -- "$_COSMIC_SAVED_CWD" || true
+    fi
+    unset _COSMIC_SAVED_CWD
+  fi
+  _cosmic_term_track_cwd() {
+    printf '%s' "$PWD" > "${XDG_RUNTIME_DIR:-/tmp}/cosmic_term_cwd_${PPID}" 2>/dev/null || true
+  }
+  _cosmic_term_track_cwd
+  if [[ " ${chpwd_functions[*]:-} " != *" _cosmic_term_track_cwd "* ]]; then
+    chpwd_functions+=(_cosmic_term_track_cwd)
+  fi
+  if [[ " ${precmd_functions[*]:-} " != *" _cosmic_term_track_cwd "* ]]; then
+    precmd_functions+=(_cosmic_term_track_cwd)
+  fi
+fi
+
+

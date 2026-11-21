@@ -29,7 +29,7 @@ Automated workstation provisioning, development environment setup, unified shell
 - **Modern APT Keyrings & Security**: Uses `/etc/apt/keyrings/` instead of deprecated `apt-key`. Strictly enforces `.gitignore` rules against tokens, keys, and credentials.
 - **Distribution Agnostic**: Automatically resolves Ubuntu release codenames across standard Ubuntu and derivatives like Pop!_OS and Linux Mint.
 - **KISS Principle & Minimal Footprint**: Focuses on direct, readable, and essential implementations without over-engineering, unnecessary abstractions, or file fragmentation.
-- **Developer Tools & Desktop Suites**: Automated setup for ASDF and Mise (Node.js, Ruby, Python, Elixir, Erlang, Rust), Docker Engine, VS Code, Cursor (+ curated extensions), Zed, Ghostty, Git (+ SSH ED25519), and Android Studio.
+- **Developer Tools & Desktop Suites**: Automated setup for ASDF and Mise (Node.js, Ruby, Python, Elixir, Erlang, Rust), Docker Engine, VS Code, Cursor (+ curated extensions), Zed, COSMIC Terminal, Ghostty, Git (+ SSH ED25519), and Android Studio.
 
 ---
 
@@ -99,6 +99,7 @@ Automated workstation provisioning, development environment setup, unified shell
     │   ├── vscode.sh
     │   └── zed.sh
     ├── terminal/              # Terminals & workspace multiplexers
+    │   ├── cosmic-term.sh
     │   └── ghostty.sh
     ├── tools/                 # Desktop tools & system utilities
     │   ├── bleachbit.sh
@@ -413,6 +414,7 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`editors/cursor.sh`](./scripts/editors/cursor.sh) | Installs Cursor AI Editor via official signed APT repository | `./scripts/editors/cursor.sh` |
 | [`editors/vscode.sh`](./scripts/editors/vscode.sh) | Installs VS Code and 25+ curated development extensions | `./scripts/editors/vscode.sh` |
 | [`editors/zed.sh`](./scripts/editors/zed.sh) | Installs Zed editor and configures curated plugins and language support | `./scripts/editors/zed.sh` |
+| [`terminal/cosmic-term.sh`](./scripts/terminal/cosmic-term.sh) | Installs and configures native COSMIC Terminal (`cosmic-term`) with Tilix theme and Ghostty-like keybindings | `./scripts/terminal/cosmic-term.sh` |
 | [`terminal/ghostty.sh`](./scripts/terminal/ghostty.sh) | Installs Ghostty native terminal emulator via Snap (--classic) | `./scripts/terminal/ghostty.sh` |
 | [`tools/bleachbit.sh`](./scripts/tools/bleachbit.sh) | Installs BleachBit system space cleaner and privacy manager via APT | `./scripts/tools/bleachbit.sh` |
 | [`tools/flameshot.sh`](./scripts/tools/flameshot.sh) | Installs Flameshot screenshot and annotation tool via APT | `./scripts/tools/flameshot.sh` |

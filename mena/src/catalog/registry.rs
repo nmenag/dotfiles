@@ -228,7 +228,7 @@ pub fn all_tools() -> Vec<Tool> {
             version_flag: Some("--version"),
         },
 
-        // --- Developer Utilities, IDEs & Terminals ---
+        // --- Code Editors & IDEs ---
         Tool {
             id: "vscode",
             name: "Visual Studio Code",
@@ -260,16 +260,6 @@ pub fn all_tools() -> Vec<Tool> {
             version_flag: Some("--version"),
         },
         Tool {
-            id: "ghostty",
-            name: "Ghostty Terminal",
-            category: Category::DevUtilities,
-            description: "Fast, feature-rich, GPU-accelerated terminal emulator",
-            dependencies: &["snapd"],
-            install_method: InstallMethod::Script("scripts/terminal/ghostty.sh"),
-            detection: DetectionMethod::Command("ghostty"),
-            version_flag: Some("--version"),
-        },
-        Tool {
             id: "android-studio",
             name: "Android Studio & SDK",
             category: Category::DevUtilities,
@@ -278,6 +268,28 @@ pub fn all_tools() -> Vec<Tool> {
             install_method: InstallMethod::Script("scripts/editors/android-studio.sh"),
             detection: DetectionMethod::Command("android-studio"),
             version_flag: None,
+        },
+
+        // --- Terminals ---
+        Tool {
+            id: "cosmic-term",
+            name: "COSMIC Terminal",
+            category: Category::Terminals,
+            description: "Native GPU-accelerated COSMIC terminal emulator with Tilix theme and keybindings",
+            dependencies: &[],
+            install_method: InstallMethod::Script("scripts/terminal/cosmic-term.sh"),
+            detection: DetectionMethod::Command("cosmic-term"),
+            version_flag: Some("--version"),
+        },
+        Tool {
+            id: "ghostty",
+            name: "Ghostty Terminal",
+            category: Category::Terminals,
+            description: "Fast, feature-rich, GPU-accelerated terminal emulator",
+            dependencies: &["snapd"],
+            install_method: InstallMethod::Script("scripts/terminal/ghostty.sh"),
+            detection: DetectionMethod::Command("ghostty"),
+            version_flag: Some("--version"),
         },
 
         // --- Database Management & Tools ---
