@@ -7,7 +7,27 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR/common.sh"
 
-echo "=== Syncing Agy (Antigravity CLI) Adapter ==="
+echo "=== Installing & Syncing Agy (Antigravity CLI) Adapter ==="
+
+export PATH="$HOME/.local/bin:$PATH"
+
+# 0. Install Agy CLI binary if not present
+if [[ -x "$HOME/.local/bin/agy" ]] || command -v agy &>/dev/null; then
+  echo "Agy CLI is already installed: $(command -v agy 2>/dev/null || echo "$HOME/.local/bin/agy")"
+else
+  if ! command -v curl &>/dev/null; then
+    echo "Installing curl..."
+    sudo apt-get update -y
+    sudo apt-get install -y curl
+  fi
+  echo "Downloading and installing Agy CLI via official installer (https://antigravity.google/cli/install.sh)..."
+  curl -fsSL https://antigravity.google/cli/install.sh | bash
+fi
+
+if ! command -v agy &>/dev/null; then
+  echo "ERROR: Agy CLI installation failed (agy binary not found in PATH)" >&2
+  exit 1
+fi
 
 GEMINI_DIR="$HOME/.gemini"
 ensure_dir "$GEMINI_DIR"

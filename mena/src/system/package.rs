@@ -21,6 +21,8 @@ pub fn command_path(cmd: &str) -> Option<PathBuf> {
             ".cargo/bin",
             ".local/bin",
             "bin",
+            ".kilo/bin",
+            ".opencode/bin",
             ".asdf/shims",
             ".local/share/mise/shims",
             ".local/share/flatpak/exports/bin",
