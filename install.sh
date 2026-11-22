@@ -27,6 +27,16 @@ log_error() {
   echo -e "${RED}[ERROR]${NC} $1"
 }
 
+RETRY_SCRIPT="$ROOT_DIR/scripts/retry.sh"
+
+run_with_retry() {
+  if [[ -f "$RETRY_SCRIPT" ]]; then
+    bash "$RETRY_SCRIPT" -- "$@"
+  else
+    "$@"
+  fi
+}
+
 show_help() {
   cat << EOF
 Usage: ./install.sh [OPTIONS] [CATEGORY]
@@ -68,7 +78,7 @@ fi
 
 # 2. Update package lists & install core system build tools
 log_info "Updating package lists..."
-if ! sudo apt-get update -y; then
+if ! run_with_retry sudo apt-get update -y; then
   log_warn "Package list update finished with warnings or errors; continuing."
 fi
 
@@ -80,7 +90,7 @@ install_pkg() {
     echo "  Package already installed: $pkg"
   else
     echo "  Installing package: $pkg..."
-    if ! sudo apt-get install -y "$pkg"; then
+    if ! run_with_retry sudo apt-get install -y "$pkg"; then
       log_error "Failed to install package: $pkg"
       FAILED_BOOTSTRAP_ITEMS+=("Package: $pkg")
     fi
@@ -123,17 +133,17 @@ fi
 
 # 3. Core Foundation: Git, Docker, and Shell are core (yes or yes are installed)
 log_info "Configuring core essentials: Git, Docker, and Shell Dotfiles..."
-if ! bash "$ROOT_DIR/scripts/core/gitconfig.sh"; then
+if ! run_with_retry bash "$ROOT_DIR/scripts/core/gitconfig.sh"; then
   log_error "Core Git configuration failed"
   FAILED_BOOTSTRAP_ITEMS+=("Git Configuration (scripts/core/gitconfig.sh)")
 fi
 
-if ! bash "$ROOT_DIR/scripts/core/docker.sh"; then
+if ! run_with_retry bash "$ROOT_DIR/scripts/core/docker.sh"; then
   log_error "Core Docker configuration failed"
   FAILED_BOOTSTRAP_ITEMS+=("Docker Configuration (scripts/core/docker.sh)")
 fi
 
-if ! bash "$ROOT_DIR/scripts/core/shell.sh"; then
+if ! run_with_retry bash "$ROOT_DIR/scripts/core/shell.sh"; then
   log_error "Core Shell Dotfiles configuration failed"
   FAILED_BOOTSTRAP_ITEMS+=("Shell Dotfiles Configuration (scripts/core/shell.sh)")
 fi
@@ -200,12 +210,12 @@ if ! command -v cargo &>/dev/null; then
     fi
 
     if [[ "$VM_CHOICE" == "asdf" ]]; then
-      if ! bash "$ROOT_DIR/scripts/version-managers/asdf.sh" rust; then
+      if ! run_with_retry bash "$ROOT_DIR/scripts/version-managers/asdf.sh" rust; then
         log_error "Failed to bootstrap ASDF and Rust toolchain."
         FAILED_BOOTSTRAP_ITEMS+=("Rust via ASDF (scripts/version-managers/asdf.sh rust)")
       fi
     else
-      if ! bash "$ROOT_DIR/scripts/version-managers/mise.sh" rust; then
+      if ! run_with_retry bash "$ROOT_DIR/scripts/version-managers/mise.sh" rust; then
         log_error "Failed to bootstrap Mise and Rust toolchain."
         FAILED_BOOTSTRAP_ITEMS+=("Rust via Mise (scripts/version-managers/mise.sh rust)")
       fi

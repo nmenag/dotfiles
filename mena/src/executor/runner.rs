@@ -1,6 +1,8 @@
 use std::env;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::thread;
+use std::time::Duration;
 
 use anyhow::{Context, Result};
 use colored::Colorize;
@@ -9,6 +11,9 @@ use indicatif::{ProgressBar, ProgressStyle};
 use super::report::{ExecutionReport, ReportError, ReportItem};
 use crate::catalog::model::InstallMethod;
 use crate::planner::plan::{ActionType, InstallPlan, PlannedAction};
+
+const MAX_ATTEMPTS: u32 = 3;
+const RETRY_BASE_DELAY_SECS: u64 = 2;
 
 pub fn find_dotfiles_root() -> PathBuf {
     if let Ok(dir) = env::var("DOTFILES_DIR") {
@@ -73,7 +78,7 @@ pub fn execute_plan(plan: &InstallPlan, dry_run: bool) -> Result<ExecutionReport
     for (idx, action) in plan.actions.iter().enumerate() {
         pb.set_message(format!("{}: {}", action.tool_name, action.summary));
 
-        let res = execute_action(action, &root);
+        let res = execute_action_with_retry(action, &root, &pb);
         match res {
             Ok(msg) => {
                 if action.action_type == ActionType::VerifyOrSync && msg.contains("Already installed") {
@@ -101,6 +106,49 @@ pub fn execute_plan(plan: &InstallPlan, dry_run: bool) -> Result<ExecutionReport
 
     pb.finish_with_message("Execution complete");
     Ok(report)
+}
+
+fn execute_action_with_retry(
+    action: &PlannedAction,
+    root: &Path,
+    pb: &ProgressBar,
+) -> Result<String> {
+    let mut last_err = None;
+
+    for attempt in 1..=MAX_ATTEMPTS {
+        if attempt > 1 {
+            pb.set_message(format!(
+                "{} (retry {}/{}): {}",
+                action.tool_name, attempt, MAX_ATTEMPTS, action.summary
+            ));
+        }
+
+        match execute_action(action, root) {
+            Ok(msg) => {
+                if attempt > 1 {
+                    return Ok(format!("{} (succeeded on attempt {}/{})", msg, attempt, MAX_ATTEMPTS));
+                }
+                return Ok(msg);
+            }
+            Err(err) => {
+                last_err = Some(err);
+                if attempt < MAX_ATTEMPTS {
+                    let wait_secs = RETRY_BASE_DELAY_SECS * u64::from(attempt);
+                    eprintln!(
+                        "\n{} Installation of '{}' failed (attempt {}/{}). Retrying in {}s...",
+                        "[RETRY]".yellow().bold(),
+                        action.tool_name,
+                        attempt,
+                        MAX_ATTEMPTS,
+                        wait_secs
+                    );
+                    thread::sleep(Duration::from_secs(wait_secs));
+                }
+            }
+        }
+    }
+
+    Err(last_err.unwrap_or_else(|| anyhow::anyhow!("Action failed after {} attempts", MAX_ATTEMPTS)))
 }
 
 fn execute_action(action: &PlannedAction, root: &Path) -> Result<String> {

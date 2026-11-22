@@ -34,6 +34,16 @@ log_error() {
   echo -e "${RED}[ERROR]${NC} $1"
 }
 
+RETRY_SCRIPT="$ROOT_DIR/scripts/retry.sh"
+
+run_with_retry() {
+  if [[ -f "$RETRY_SCRIPT" ]]; then
+    bash "$RETRY_SCRIPT" -- "$@"
+  else
+    "$@"
+  fi
+}
+
 log_info "Starting Core & System Foundations installation..."
 if [[ "$DRY_RUN" == "true" ]]; then
   log_warn "DRY-RUN mode enabled: No system modifications will be performed."
@@ -53,7 +63,7 @@ if [[ "$DRY_RUN" == "true" ]]; then
   log_info "[DRY-RUN] Would run: sudo apt-get update -y"
 else
   log_info "Updating APT package lists..."
-  if ! sudo apt-get update -y; then
+  if ! run_with_retry sudo apt-get update -y; then
     log_warn "APT package list update finished with warnings or errors; continuing with installation."
   fi
 fi
@@ -73,7 +83,7 @@ install_pkg() {
       SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
     else
       echo "  Installing package: $pkg..."
-      if sudo apt-get install -y "$pkg"; then
+      if run_with_retry sudo apt-get install -y "$pkg"; then
         echo -e "  ${GREEN}✓${NC} Package installed successfully: $pkg"
         SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
       else
@@ -125,7 +135,7 @@ if [[ "$DRY_RUN" == "true" ]]; then
   log_info "[DRY-RUN] Would execute: bash scripts/core/gitconfig.sh"
   SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
 else
-  if bash "$ROOT_DIR/scripts/core/gitconfig.sh"; then
+  if run_with_retry bash "$ROOT_DIR/scripts/core/gitconfig.sh"; then
     log_success "Core Git configured successfully!"
     SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
   else
@@ -140,7 +150,7 @@ if [[ "$DRY_RUN" == "true" ]]; then
   log_info "[DRY-RUN] Would execute: bash scripts/core/docker.sh"
   SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
 else
-  if bash "$ROOT_DIR/scripts/core/docker.sh"; then
+  if run_with_retry bash "$ROOT_DIR/scripts/core/docker.sh"; then
     log_success "Core Docker CE configured successfully!"
     SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
   else
@@ -155,7 +165,7 @@ if [[ "$DRY_RUN" == "true" ]]; then
   log_info "[DRY-RUN] Would execute: bash scripts/core/shell.sh"
   SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
 else
-  if bash "$ROOT_DIR/scripts/core/shell.sh"; then
+  if run_with_retry bash "$ROOT_DIR/scripts/core/shell.sh"; then
     log_success "Core Shell Dotfiles configured successfully!"
     SUCCESS_COUNT=$((SUCCESS_COUNT + 1))
   else
