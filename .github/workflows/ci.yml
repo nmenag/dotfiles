@@ -30,6 +30,9 @@ jobs:
   lint-commits-and-pr:
     name: Lint Commits & PR Quality
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -48,6 +51,9 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           BASE_REF: ${{ github.base_ref }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
         run: |
           echo "Auditing pull request change size against origin/$BASE_REF..."
           git fetch origin "$BASE_REF" --depth=1 || true
@@ -82,6 +88,31 @@ jobs:
             echo "::warning title=Large Pull Request::This pull request introduces $TOTAL_LINES lines of change (excluding lockfiles). Consider breaking large changes into smaller, atomic pull requests for easier review."
           fi
           echo "Assigned Size Assessment: $SIZE_CATEGORY"
+
+          # Map each size category to a color and description, then create the
+          # label if it does not yet exist (idempotent) and apply it to this PR.
+          case "$SIZE_CATEGORY" in
+            size/XS)  COLOR="3ecf8e"; DESC="Extra small PR (< 20 lines changed, excluding lockfiles)" ;;
+            size/S)   COLOR="5319e7"; DESC="Small PR (20-99 lines changed, excluding lockfiles)" ;;
+            size/M)   COLOR="fbca04"; DESC="Medium PR (100-299 lines changed, excluding lockfiles)" ;;
+            size/L)   COLOR="d93f0b"; DESC="Large PR (300-799 lines changed, excluding lockfiles)" ;;
+            size/XL)  COLOR="b60205"; DESC="Extra large PR (800-1499 lines changed, excluding lockfiles)" ;;
+            size/XXL) COLOR="8b0000"; DESC="Very large PR (1500+ lines changed, excluding lockfiles)" ;;
+            *)        COLOR="ededed"; DESC="Automatically assigned pull request size" ;;
+          esac
+
+          gh label create "$SIZE_CATEGORY" --color "$COLOR" --description "$DESC" --repo "$REPO" 2>/dev/null || true
+
+          # Remove any stale size label before applying the current one so the
+          # category always reflects the latest push.
+          for label in size/XS size/S size/M size/L size/XL size/XXL; do
+            gh pr edit "$PR_NUMBER" --repo "$REPO" --remove-label "$label" 2>/dev/null || true
+          done
+          if ! gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label "$SIZE_CATEGORY"; then
+            echo "::warning title=Labeling skipped::Could not apply '$SIZE_CATEGORY' to PR #$PR_NUMBER. The workflow token may lack write access (e.g. Dependabot or fork PRs)."
+          else
+            echo "Applied label '$SIZE_CATEGORY' to PR #$PR_NUMBER."
+          fi
 
       - name: Validate Commit Messages (Conventional Commits)
         run: |
