@@ -66,6 +66,7 @@ Automated workstation provisioning, development environment setup, unified shell
 │   ├── rules/
 │   └── skills/
 └── scripts/                   # Categorized modular installer scripts
+    ├── retry.sh               # Automatic retry wrapper for failed installations
     ├── verify.sh              # Automated repository linting & integrity verification
     ├── ai/                    # AI coding assistants, agents & tools
     │   ├── ai-tools.sh
@@ -388,6 +389,7 @@ All modules in `scripts/` can be executed independently from any directory:
 
 | Script | Description | Run Command |
 | :--- | :--- | :--- |
+| [`retry.sh`](./scripts/retry.sh) | Executes an installer script or command and automatically retries on failure | `./scripts/retry.sh <script-or-cmd>` |
 | [`verify.sh`](./scripts/verify.sh) | Complete linting, security, and integrity verification suite | `./scripts/verify.sh` |
 | [`ai/ai-tools.sh`](./scripts/ai/ai-tools.sh) | Synchronizes common instructions & skills across all 6 AI CLIs | `./scripts/ai/ai-tools.sh` |
 | [`ai/cursor-cli.sh`](./scripts/ai/cursor-cli.sh) | Installs Cursor CLI (`cursor-agent`) via official installer | `./scripts/ai/cursor-cli.sh` |
