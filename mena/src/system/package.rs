@@ -22,6 +22,7 @@ pub fn command_path(cmd: &str) -> Option<PathBuf> {
             ".local/bin",
             "bin",
             ".asdf/shims",
+            ".local/share/mise/shims",
             ".local/share/flatpak/exports/bin",
         ] {
             let candidate = home_p.join(extra).join(cmd);

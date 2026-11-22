@@ -218,9 +218,11 @@ done
 
 # 7. Check mena Rust CLI
 echo -e "\n${BLUE}[7/7] Checking mena Rust CLI...${NC}"
-if [[ -d "$HOME/.cargo/bin" ]]; then
-  export PATH="$HOME/.cargo/bin:$PATH"
-fi
+for rust_dir in "$HOME/.cargo/bin" "$HOME/.local/share/mise/shims" "$HOME/.asdf/shims"; do
+  if [[ -d "$rust_dir" ]] && [[ ":$PATH:" != *":$rust_dir:"* ]]; then
+    export PATH="$rust_dir:$PATH"
+  fi
+done
 if [[ -f "$ROOT_DIR/mena/Cargo.toml" ]]; then
   echo -e "  ${GREEN}✓${NC} mena/Cargo.toml exists"
   if command -v cargo &>/dev/null; then
