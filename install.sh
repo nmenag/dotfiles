@@ -8,6 +8,7 @@ ROOT_DIR="$(cd "$SCRIPT_DIR" && pwd)"
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 log_info() {
@@ -20,6 +21,10 @@ log_success() {
 
 log_warn() {
   echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+  echo -e "${RED}[ERROR]${NC} $1"
 }
 
 show_help() {
@@ -143,13 +148,70 @@ if [[ ${#FAILED_BOOTSTRAP_ITEMS[@]} -gt 0 ]]; then
 fi
 
 # 4. Build and link mena Rust CLI
-if [[ -d "$HOME/.cargo/bin" ]]; then
-  export PATH="$HOME/.cargo/bin:$PATH"
-fi
+load_rust_env() {
+  for dir in "$HOME/.cargo/bin" "$HOME/.local/bin" "$HOME/.local/share/mise/shims" "$HOME/.asdf/shims"; do
+    if [[ -d "$dir" ]] && [[ ":$PATH:" != *":$dir:"* ]]; then
+      export PATH="$dir:$PATH"
+    fi
+  done
+
+  if [[ -f "$HOME/.asdf/asdf.sh" ]]; then
+    # shellcheck disable=SC1091
+    . "$HOME/.asdf/asdf.sh"
+  fi
+}
+
+load_rust_env
 
 if ! command -v cargo &>/dev/null; then
-  if [[ -x "$HOME/.cargo/bin/cargo" ]]; then
-    export PATH="$HOME/.cargo/bin:$PATH"
+  AUTO_YES=false
+  DRY_RUN=false
+  for arg in "$@"; do
+    case "$arg" in
+      -y|--yes) AUTO_YES=true ;;
+      -d|--dry-run) DRY_RUN=true ;;
+    esac
+  done
+
+  if [[ "$DRY_RUN" == "true" ]]; then
+    log_info "[DRY-RUN] Cargo not found; would bootstrap version manager (Mise or ASDF) and Rust toolchain."
+  else
+    VM_CHOICE=""
+    if command -v mise &>/dev/null || [[ -x "$HOME/.local/bin/mise" ]]; then
+      VM_CHOICE="mise"
+      log_info "Mise detected. Installing Rust toolchain via Mise to build mena..."
+    elif command -v asdf &>/dev/null || [[ -d "$HOME/.asdf" ]]; then
+      VM_CHOICE="asdf"
+      log_info "ASDF detected. Installing Rust toolchain via ASDF to build mena..."
+    elif [[ "$AUTO_YES" == "true" || ! -t 0 ]]; then
+      VM_CHOICE="mise"
+      log_info "Cargo not found. Non-interactive mode: bootstrapping Mise and Rust toolchain..."
+    else
+      echo ""
+      log_warn "Rust (cargo) is required to build the mena workstation CLI."
+      echo "Select a version manager to install Rust:"
+      echo "  1) Mise Version Manager (recommended)"
+      echo "  2) ASDF Version Manager"
+      read -r -p "Enter choice [1-2, default: 1]: " vm_input || true
+      case "${vm_input:-1}" in
+        2|asdf|ASDF) VM_CHOICE="asdf" ;;
+        *) VM_CHOICE="mise" ;;
+      esac
+    fi
+
+    if [[ "$VM_CHOICE" == "asdf" ]]; then
+      if ! bash "$ROOT_DIR/scripts/version-managers/asdf.sh" rust; then
+        log_error "Failed to bootstrap ASDF and Rust toolchain."
+        FAILED_BOOTSTRAP_ITEMS+=("Rust via ASDF (scripts/version-managers/asdf.sh rust)")
+      fi
+    else
+      if ! bash "$ROOT_DIR/scripts/version-managers/mise.sh" rust; then
+        log_error "Failed to bootstrap Mise and Rust toolchain."
+        FAILED_BOOTSTRAP_ITEMS+=("Rust via Mise (scripts/version-managers/mise.sh rust)")
+      fi
+    fi
+
+    load_rust_env
   fi
 fi
 

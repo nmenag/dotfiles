@@ -42,15 +42,20 @@ fi
 
 echo "Current Mise version: $(mise --version)"
 
+TARGET_PLUGIN="${1:-}"
+
 # 3. Configure shared toolchains natively in Mise (completely independent of ASDF)
 for item in "${VERSION_MANAGER_PLUGINS[@]}"; do
   IFS="|" read -r name _asdf_url mise_name <<< "$item"
+  if [[ -n "$TARGET_PLUGIN" && "$name" != "$TARGET_PLUGIN" && "$mise_name" != "$TARGET_PLUGIN" ]]; then
+    continue
+  fi
   echo "Configuring $name in Mise..."
-  mise install "$mise_name" || mise use --global "${mise_name}@latest" || echo "$name install skipped or already up-to-date"
+  mise use --global "${mise_name}@latest" || mise install "$mise_name" || echo "$name install skipped or already up-to-date"
 done
 
 # 4. If a ~/.tool-versions or config.toml exists, ensure all declared tools are installed
-if [[ -f "$HOME/.tool-versions" || -f "$HOME/.config/mise/config.toml" ]]; then
+if [[ -z "$TARGET_PLUGIN" ]] && [[ -f "$HOME/.tool-versions" || -f "$HOME/.config/mise/config.toml" ]]; then
   echo "Installing any remaining tools declared in config..."
   mise install || true
 fi

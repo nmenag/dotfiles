@@ -111,6 +111,11 @@ elif [[ -f "$ROOT_DIR/scripts/verify.sh" ]]; then
 fi
 
 # 4. Run mena Rust tests if mena files are staged
+for rust_dir in "$HOME/.cargo/bin" "$HOME/.local/share/mise/shims" "$HOME/.asdf/shims"; do
+  if [[ -d "$rust_dir" ]] && [[ ":$PATH:" != *":$rust_dir:"* ]]; then
+    export PATH="$rust_dir:$PATH"
+  fi
+done
 STAGED_RUST="$(git diff --cached --name-only --diff-filter=d | grep -E '^mena/.*\.(rs|toml)$' || true)"
 if [[ -n "$STAGED_RUST" ]] && command -v cargo &>/dev/null; then
   echo "Staged changes detected in mena. Running cargo test..."

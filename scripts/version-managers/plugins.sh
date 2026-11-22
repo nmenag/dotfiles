@@ -7,6 +7,7 @@ set -euo pipefail
 # Format per entry: "<tool_name>|<asdf_plugin_url>|<mise_tool_name>"
 
 VERSION_MANAGER_PLUGINS=(
+  "rust|https://github.com/asdf-community/asdf-rust.git|rust"
   "ruby|https://github.com/asdf-vm/asdf-ruby.git|ruby"
   "erlang|https://github.com/asdf-vm/asdf-erlang.git|erlang"
   "elixir|https://github.com/asdf-vm/asdf-elixir.git|elixir"

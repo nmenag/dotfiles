@@ -46,13 +46,19 @@ add_plugin() {
 
 echo "Current ASDF version: $(asdf --version)"
 
+TARGET_PLUGIN="${1:-}"
+
 # Iterate through shared plugins list (DRY)
 for item in "${VERSION_MANAGER_PLUGINS[@]}"; do
   IFS="|" read -r name asdf_url _mise_name <<< "$item"
+  if [[ -n "$TARGET_PLUGIN" && "$name" != "$TARGET_PLUGIN" ]]; then
+    continue
+  fi
   echo "Configuring $name in ASDF..."
   add_plugin "$name" "$asdf_url"
   asdf install "$name" latest || echo "$name install skipped or already up-to-date"
   asdf global "$name" latest || true
+  asdf reshim "$name" || true
 done
 
 echo "ASDF installation and plugin setup completed successfully!"
