@@ -63,6 +63,14 @@ fi
 # 4. Configure ~/.zshrc integration idempotently
 ZSHRC="$HOME/.zshrc"
 if [[ -f "$ZSHRC" ]]; then
+  # Ensure Oh My Zsh core loader is present even if ~/.zshrc was pre-created by another tool
+  if ! grep -q "oh-my-zsh.sh" "$ZSHRC"; then
+    backup_file "$ZSHRC"
+    echo "  Prepending Oh My Zsh initialization to existing ~/.zshrc..."
+    OMZ_HEADER=$'export ZSH="$HOME/.oh-my-zsh"\nZSH_THEME="robbyrussell"\nplugins=(git zsh-autosuggestions zsh-syntax-highlighting)\nif [[ -f "$ZSH/oh-my-zsh.sh" ]]; then\n  source "$ZSH/oh-my-zsh.sh"\nfi\n'
+    printf '%s\n%s\n' "$OMZ_HEADER" "$(cat "$ZSHRC")" > "${ZSHRC}.tmp" && mv "${ZSHRC}.tmp" "$ZSHRC"
+  fi
+
   # Ensure plugins line contains git, zsh-autosuggestions, and zsh-syntax-highlighting if only git is set
   if grep -q "^plugins=(git)" "$ZSHRC"; then
     backup_file "$ZSHRC"
@@ -74,11 +82,11 @@ if [[ -f "$ZSHRC" ]]; then
   if ! grep -q "DOTFILES SHELL INTEGRATION" "$ZSHRC"; then
     backup_file "$ZSHRC"
     echo "  Adding dotfiles loader to ~/.zshrc..."
-    cat << 'EOF' >> "$ZSHRC"
+    cat << EOF >> "$ZSHRC"
 
 # >>> DOTFILES SHELL INTEGRATION >>>
-if [[ -f "$HOME/personal-projects/dotfiles/shell/zshrc.sh" ]]; then
-  source "$HOME/personal-projects/dotfiles/shell/zshrc.sh"
+if [[ -f "$ROOT_DIR/shell/zshrc.sh" ]]; then
+  source "$ROOT_DIR/shell/zshrc.sh"
 fi
 # <<< DOTFILES SHELL INTEGRATION <<<
 EOF
@@ -87,49 +95,80 @@ EOF
   fi
 else
   echo "  Warning: ~/.zshrc does not exist. Creating a minimal one with dotfiles loader..."
-  cat << 'EOF' > "$ZSHRC"
-export ZSH="$HOME/.oh-my-zsh"
+  cat << EOF > "$ZSHRC"
+export ZSH="\$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
-if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
-  source "$ZSH/oh-my-zsh.sh"
+if [[ -f "\$ZSH/oh-my-zsh.sh" ]]; then
+  source "\$ZSH/oh-my-zsh.sh"
 fi
 
 # >>> DOTFILES SHELL INTEGRATION >>>
-if [[ -f "$HOME/personal-projects/dotfiles/shell/zshrc.sh" ]]; then
-  source "$HOME/personal-projects/dotfiles/shell/zshrc.sh"
+if [[ -f "$ROOT_DIR/shell/zshrc.sh" ]]; then
+  source "$ROOT_DIR/shell/zshrc.sh"
 fi
 # <<< DOTFILES SHELL INTEGRATION <<<
 EOF
 fi
 
-# 5. Configure ~/.bashrc integration idempotently
+# 5. Configure ~/.bashrc integration and auto-launch Zsh in interactive terminals idempotently
 BASHRC="$HOME/.bashrc"
-if [[ -f "$BASHRC" ]]; then
-  if ! grep -q "DOTFILES SHELL INTEGRATION" "$BASHRC"; then
-    backup_file "$BASHRC"
-    echo "  Adding dotfiles loader to ~/.bashrc..."
-    LOADER_BLOCK=$'\n# >>> DOTFILES SHELL INTEGRATION >>>\nif [[ -f "$HOME/personal-projects/dotfiles/shell/bashrc.sh" ]]; then\n  source "$HOME/personal-projects/dotfiles/shell/bashrc.sh"\nfi\n# <<< DOTFILES SHELL INTEGRATION <<<\n'
-    if grep -q "exec zsh" "$BASHRC"; then
-      # Insert before exec zsh
-      awk -v block="$LOADER_BLOCK" '/exec zsh/ {print block; print; next} 1' "$BASHRC" > "${BASHRC}.tmp" && mv "${BASHRC}.tmp" "$BASHRC"
-    else
-      echo "$LOADER_BLOCK" >> "$BASHRC"
-    fi
+if [[ ! -f "$BASHRC" ]]; then
+  touch "$BASHRC"
+fi
+
+if ! grep -q "DOTFILES SHELL INTEGRATION" "$BASHRC"; then
+  backup_file "$BASHRC"
+  echo "  Adding dotfiles loader to ~/.bashrc..."
+  LOADER_BLOCK="
+# >>> DOTFILES SHELL INTEGRATION >>>
+if [[ -f \"$ROOT_DIR/shell/bashrc.sh\" ]]; then
+  source \"$ROOT_DIR/shell/bashrc.sh\"
+fi
+# <<< DOTFILES SHELL INTEGRATION <<<
+"
+  if grep -q "exec zsh" "$BASHRC"; then
+    # Insert before exec zsh
+    awk -v block="$LOADER_BLOCK" '/exec zsh/ {print block; print; next} 1' "$BASHRC" > "${BASHRC}.tmp" && mv "${BASHRC}.tmp" "$BASHRC"
   else
-    echo "  Dotfiles integration already present in ~/.bashrc"
+    echo "$LOADER_BLOCK" >> "$BASHRC"
   fi
+else
+  echo "  Dotfiles integration already present in ~/.bashrc"
+fi
+
+# Ensure interactive Bash terminals automatically switch to Zsh + Oh My Zsh
+# (handles active desktop sessions before re-login or terminals spawning /bin/bash)
+if ! grep -q "exec zsh" "$BASHRC"; then
+  backup_file "$BASHRC"
+  echo "  Adding automatic Zsh handoff for interactive terminals to ~/.bashrc..."
+  cat << 'EOF' >> "$BASHRC"
+
+# Start Zsh automatically in interactive terminals
+if [[ $- == *i* ]] && [[ -z "${ZSH_VERSION:-}" ]] && [[ -z "${BASH_EXEC_ZSH_SKIP:-}" ]] && command -v zsh >/dev/null 2>&1; then
+  exec zsh -l
+fi
+EOF
 fi
 
 # 6. Ensure executable permissions
 chmod +x "$ROOT_DIR"/shell/*.sh 2>/dev/null || true
 
-# 7. Check default shell
-CURRENT_SHELL="$(basename "$SHELL")"
-if [[ "$CURRENT_SHELL" != "zsh" ]]; then
-  echo "Current shell is $CURRENT_SHELL."
-  if command -v zsh &>/dev/null; then
-    echo "To make Zsh your default shell, run: chsh -s $(command -v zsh)"
+# 7. Set Zsh as the default login shell in /etc/passwd non-interactively
+ZSH_BIN="$(command -v zsh || true)"
+TARGET_USER="${SUDO_USER:-${USER:-$(id -un)}}"
+USER_LOGIN_SHELL="$(getent passwd "$TARGET_USER" 2>/dev/null | cut -d: -f7 || echo "${SHELL:-}")"
+
+if [[ -n "$ZSH_BIN" ]]; then
+  if [[ "$USER_LOGIN_SHELL" != "$ZSH_BIN" ]]; then
+    echo "Setting Zsh ($ZSH_BIN) as default login shell for $TARGET_USER..."
+    if sudo usermod -s "$ZSH_BIN" "$TARGET_USER" 2>/dev/null || sudo chsh -s "$ZSH_BIN" "$TARGET_USER" 2>/dev/null; then
+      echo "  Default login shell updated to $ZSH_BIN for $TARGET_USER."
+    else
+      echo "  Could not update /etc/passwd automatically; ~/.bashrc will still auto-launch Zsh in interactive terminals."
+    fi
+  else
+    echo "Default login shell for $TARGET_USER is already $ZSH_BIN."
   fi
 fi
 

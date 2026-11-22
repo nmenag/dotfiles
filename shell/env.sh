@@ -33,9 +33,10 @@ if [[ -d "$HOME/.asdf" ]]; then
   fi
 fi
 
-# Mise Version Manager shims
-if [[ -d "$HOME/.local/share/mise/shims" ]]; then
-  path_prepend "$HOME/.local/share/mise/shims"
+# Mise Version Manager
+if [[ -d "$HOME/.local/share/mise" ]] || command -v mise &>/dev/null; then
+  export MISE_DATA_DIR="${MISE_DATA_DIR:-$HOME/.local/share/mise}"
+  path_prepend "$MISE_DATA_DIR/shims"
 fi
 
 # PNPM Package Manager

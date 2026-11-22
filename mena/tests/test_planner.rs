@@ -49,3 +49,30 @@ fn test_dependency_resolution() {
     // In all cases, plan.selected_tools must contain asdf
     assert_eq!(plan.selected_tools[0].tool.id, "asdf");
 }
+
+#[test]
+fn test_mise_matches_asdf_dependencies_and_always_runs_in_install() {
+    use mena::catalog::registry::find_tool;
+    use mena::commands::handle_install;
+
+    let system = SystemInfo::detect();
+    let asdf = find_tool("asdf").expect("asdf must exist");
+    let mise = find_tool("mise").expect("mise must exist");
+
+    assert_eq!(
+        mise.dependencies, asdf.dependencies,
+        "Mise and ASDF must share the same prerequisite build dependencies"
+    );
+
+    let plan = InstallPlan::build(&["mise".to_string()], &system);
+    assert!(!plan.actions.is_empty(), "Plan for mise must not be empty");
+    assert!(
+        plan.actions.iter().any(|a| a.tool_id == "mise"),
+        "Plan must include mise action"
+    );
+
+    // `mena install mise --dry-run` must always execute its plan to configure all
+    // languages in scripts/version-managers/plugins.sh even if `mise` binary exists.
+    let res = handle_install(Some("mise".to_string()), true, false, &system);
+    assert!(res.is_ok(), "mena install mise --dry-run should succeed");
+}

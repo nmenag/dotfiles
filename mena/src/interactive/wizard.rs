@@ -64,10 +64,13 @@ pub fn run_wizard(
                 let item_text = format!("{:<24} [{}] - {}", tool.name.bold(), status_str, tool.description);
                 items.push(item_text);
 
-                // Default selection: pre-select if uninstalled or if it's core (git, docker) or shell/ai
+                // Default selection: pre-select if uninstalled or if it's core (git, docker),
+                // primary version manager (mise, to ensure all languages in plugins.sh are configured),
+                // or shell/ai sync
                 let preselect = !status.is_installed()
                     || tool.id == "git"
                     || tool.id == "docker"
+                    || tool.id == "mise"
                     || tool.id == "shell-dotfiles"
                     || tool.id == "ai-sync";
                 defaults.push(preselect);

@@ -1,7 +1,7 @@
 use anyhow::Result;
 use colored::Colorize;
 
-use crate::catalog::model::Category;
+use crate::catalog::model::{Category, InstallMethod};
 use crate::catalog::registry::{all_tools, find_tool, tools_by_category};
 use crate::executor::runner::execute_plan;
 use crate::interactive::wizard::run_wizard;
@@ -24,8 +24,16 @@ pub fn handle_install(
     }
 
     // A specific tool id (e.g. `mena install obsidian`) installs just that tool.
+    // Version managers (`mise`, `asdf`), dotfiles, and AI adapters always run so all
+    // configured language toolchains in `scripts/version-managers/plugins.sh` and
+    // adapter symlinks are provisioned even if the base CLI binary already exists.
     if let Some(tool) = category_arg.as_deref().and_then(|a| find_tool(&a.to_lowercase())) {
-        if check_tool_status(&tool).is_installed() && tool.id != "ai-sync" && tool.id != "shell-dotfiles" {
+        let always_sync = matches!(
+            tool.id,
+            "ai-sync" | "shell-dotfiles" | "ohmyzsh" | "mise" | "asdf"
+        ) || matches!(tool.install_method, InstallMethod::AiAdapter(_));
+
+        if check_tool_status(&tool).is_installed() && !always_sync {
             println!("{} is already installed.", tool.name.green().bold());
             return Ok(());
         }
@@ -52,10 +60,17 @@ pub fn handle_install(
             None => all_tools(),
         };
 
-        // Select uninstalled tools or adapters needing sync
+        // Select uninstalled tools, plus `mise`, `shell-dotfiles`, and `ai-sync`
+        // so all language plugins in `scripts/version-managers/plugins.sh` are
+        // installed even when `mise` was bootstrapped with only `rust`.
         let selected_ids: Vec<String> = candidate_tools
             .iter()
-            .filter(|t| !check_tool_status(t).is_installed() || t.id == "ai-sync" || t.id == "shell-dotfiles")
+            .filter(|t| {
+                !check_tool_status(t).is_installed()
+                    || t.id == "mise"
+                    || t.id == "ai-sync"
+                    || t.id == "shell-dotfiles"
+            })
             .map(|t| t.id.to_string())
             .collect();
 
