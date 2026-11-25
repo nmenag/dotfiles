@@ -269,6 +269,16 @@ pub fn all_tools() -> Vec<Tool> {
             detection: DetectionMethod::Command("android-studio"),
             version_flag: None,
         },
+        Tool {
+            id: "android-tools",
+            name: "Kotlin CLI & ADB",
+            category: Category::DevUtilities,
+            description: "Kotlin compiler CLI plus ADB/fastboot with udev rules and plugdev device access",
+            dependencies: &[],
+            install_method: InstallMethod::Script("scripts/editors/android-tools.sh"),
+            detection: DetectionMethod::Command("adb"),
+            version_flag: Some("version"),
+        },
 
         // --- Terminals ---
         Tool {

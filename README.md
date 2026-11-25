@@ -96,6 +96,7 @@ Automated workstation provisioning, development environment setup, unified shell
     │   └── pgadmin.sh
     ├── editors/               # Code editors & IDEs
     │   ├── android-studio.sh
+    │   ├── android-tools.sh
     │   ├── cursor.sh
     │   ├── vscode.sh
     │   └── zed.sh
@@ -413,6 +414,7 @@ All modules in `scripts/` can be executed independently from any directory:
 | [`database/mongocompass.sh`](./scripts/database/mongocompass.sh) | Installs MongoDB Compass GUI via official Debian package | `./scripts/database/mongocompass.sh` |
 | [`database/pgadmin.sh`](./scripts/database/pgadmin.sh) | Installs pgAdmin 4 Desktop via official PostgreSQL APT repository | `./scripts/database/pgadmin.sh` |
 | [`editors/android-studio.sh`](./scripts/editors/android-studio.sh) | Installs Java OpenJDK and Android Studio via Snap | `./scripts/editors/android-studio.sh` |
+| [`editors/android-tools.sh`](./scripts/editors/android-tools.sh) | Installs Kotlin CLI (ASDF/snap) and ADB with udev rules + `plugdev` device access | `./scripts/editors/android-tools.sh` |
 | [`editors/cursor.sh`](./scripts/editors/cursor.sh) | Installs Cursor AI Editor via official signed APT repository | `./scripts/editors/cursor.sh` |
 | [`editors/vscode.sh`](./scripts/editors/vscode.sh) | Installs VS Code and 25+ curated development extensions | `./scripts/editors/vscode.sh` |
 | [`editors/zed.sh`](./scripts/editors/zed.sh) | Installs Zed editor and configures curated plugins and language support | `./scripts/editors/zed.sh` |

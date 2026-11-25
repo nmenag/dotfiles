@@ -110,6 +110,7 @@ impl InstallPlan {
                         || script_path.contains("cosmic-term")
                         || script_path.contains("ghostty")
                         || script_path.contains("android-studio")
+                        || script_path.contains("android-tools")
                         || script_path.contains("pgadmin")
                         || script_path.contains("mongocompass")
                         || script_path.contains("dbgate")
